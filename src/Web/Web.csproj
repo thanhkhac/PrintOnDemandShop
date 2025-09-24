@@ -35,14 +35,6 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="zHttp\http-client.env.json" />
-    <_ContentIncludedByDefault Remove="zHttp\Prompt.js.json" />
-    <_ContentIncludedByDefault Remove="zHttp\QuestionListV3.json" />
-    <_ContentIncludedByDefault Remove="zHttp\QuestionListV4.json" />
-    <_ContentIncludedByDefault Remove="zHttp\QuestionSetDetailV1.json" />
-  </ItemGroup>
-
 
   <!-- Auto-generated Open API specification and Angular TypeScript clients -->
   <PropertyGroup>

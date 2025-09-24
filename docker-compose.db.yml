@@ -1,21 +1,21 @@
-﻿#docker-compose.db.yml
-services:
-  postgres:
-    image: postgres:16.9
+﻿services:
+  mysql:
+    image: mysql:8.0
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}   # root password
+      - MYSQL_DATABASE=${DB_NAME}            # tên DB
+      - MYSQL_USER=${DB_USERNAME}            # user
+      - MYSQL_PASSWORD=${DB_PASSWORD}        # password cho user
     ports:
-      - "5555:5432"
+      - "3307:3306"   
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysqldata:/var/lib/mysql
     # restart: always
     deploy:
       resources:
-        limits: 
+        limits:
           cpus: "3.0"
           memory: 3G
 
 volumes:
-  pgdata:
+  mysqldata:

@@ -1,7 +1,7 @@
 #docker-compose.yml
 services:
   web:
-    image: ${DOCKER_USERNAME}/backend:${TAG:-latest}
+    image: ${DOCKER_USERNAME}/PrintOnDemandShop-backend:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/Dockerfile
@@ -11,7 +11,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_HTTP_PORTS=5000
       - JWTSETTINGS__SECRETKEY=${JWTSETTINGS__SECRETKEY}
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${DB_NAME};Username=${DB_USERNAME};Password=${DB_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=${DB_NAME};Uid=${DB_USERNAME};Pwd=${DB_PASSWORD}
       - EMAILSETTINGS__SMTPPASS=${EMAILSETTINGS__SMTPPASS}
       - GOOGLESETTINGS__CLIENTID=${GOOGLESETTINGS__CLIENTID}
       - GOOGLESETTINGS__CLIENTSECRET=${GOOGLESETTINGS__CLIENTSECRET}
