@@ -4,6 +4,7 @@ using CleanArchitectureBase.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250925104600_AddProduct")]
+    partial class AddProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,9 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<bool>("IsDeleted")
@@ -55,7 +61,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("ParentCategoryId");
 
@@ -75,6 +81,9 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
@@ -103,7 +112,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Products", (string)null);
                 });
@@ -150,9 +159,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<Guid>("ProductOptionId")
                         .HasColumnType("char(36)");
 
@@ -177,9 +183,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
@@ -213,9 +216,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("varchar(2000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -253,8 +253,20 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("char(36)");
+
                     b.Property<bool>("Done")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset>("LastModifiedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("ListId")
                         .HasColumnType("int");
@@ -275,6 +287,8 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedBy");
+
                     b.HasIndex("ListId");
 
                     b.ToTable("TodoItems");
@@ -288,6 +302,18 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("LastModifiedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -297,6 +323,8 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("UserId");
 
@@ -672,8 +700,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                 {
                     b.HasOne("CleanArchitectureBase.Domain.Entities.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreatedByUserId");
 
                     b.HasOne("CleanArchitectureBase.Domain.Entities.Category", "ParentCategory")
                         .WithMany("SubCategories")
@@ -689,8 +716,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                 {
                     b.HasOne("CleanArchitectureBase.Domain.Entities.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreatedByUserId");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -779,17 +805,29 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.TodoItem", b =>
                 {
+                    b.HasOne("CleanArchitectureBase.Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("CleanArchitectureBase.Domain.Entities.TodoList", "List")
                         .WithMany("Items")
                         .HasForeignKey("ListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CreatedByUser");
+
                     b.Navigation("List");
                 });
 
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.TodoList", b =>
                 {
+                    b.HasOne("CleanArchitectureBase.Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("CleanArchitectureBase.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
@@ -813,6 +851,8 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 
                     b.Navigation("Colour")
                         .IsRequired();
+
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("User");
                 });

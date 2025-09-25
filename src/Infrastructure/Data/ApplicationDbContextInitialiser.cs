@@ -1,10 +1,12 @@
 ﻿using System.Runtime.InteropServices;
+using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
 using CleanArchitectureBase.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +23,7 @@ public static class InitialiserExtensions
         await initialiser.InitialiseAsync();
 
         await initialiser.SeedAsync();
-        
+
         await Task.CompletedTask;
     }
 }
@@ -33,14 +35,16 @@ public class ApplicationDbContextInitialiser
     private readonly ApplicationDbContext _context;
     private readonly UserManager<UserAccount> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly IUser _user;
 
     public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context,
-        UserManager<UserAccount> userManager, RoleManager<ApplicationRole> roleManager)
+        UserManager<UserAccount> userManager, RoleManager<ApplicationRole> roleManager, IUser user)
     {
         _logger = logger;
         _context = context;
         _userManager = userManager;
         _roleManager = roleManager;
+        _user = user;
     }
 
     public async Task InitialiseAsync()
@@ -72,7 +76,7 @@ public class ApplicationDbContextInitialiser
             await TrySeedAsync();
             await Task.CompletedTask;
         }
-        
+
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while seeding the database.");
@@ -82,115 +86,219 @@ public class ApplicationDbContextInitialiser
 
     public async Task TrySeedAsync()
     {
-        // Default roles
-        var administratorRole = new ApplicationRole(Roles.Administrator);
-        var moderatorRole = new ApplicationRole(Roles.Moderator);
-        var userRole = new ApplicationRole(Roles.User);
-
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        Guid adminId = Guid.Parse("77777777-7777-7777-7777-777777777777");
+        if (!_context.Users.Any())
         {
-            await _roleManager.CreateAsync(administratorRole);
-        }
+            // Default roles
+            var administratorRole = new ApplicationRole(Roles.Administrator);
+            var moderatorRole = new ApplicationRole(Roles.Moderator);
+            var userRole = new ApplicationRole(Roles.User);
 
-        if (_roleManager.Roles.All(r => r.Name != moderatorRole.Name))
-        {
-            await _roleManager.CreateAsync(moderatorRole);
-        }
-
-        if (_roleManager.Roles.All(r => r.Name != userRole.Name))
-        {
-            await _roleManager.CreateAsync(userRole);
-        }
-
-        var users = _userManager.Users.ToList(); 
-
-
-        // Default users
-        var user = new User
-        {
-            Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
-            FullName = "Admin",
-            Email = "sa@gmail.com",
-            IsBanned = false
-        };
-        var administrator = new UserAccount
-        {
-            Id = user.Id,
-            UserName = "77777777-7777-7777-7777-777777777777",
-            Email = "sa@gmail.com",
-            IsDeleted = false,
-            User = user,
-            EmailConfirmed = true
-        };
-
-        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
-        {
-            await _userManager.CreateAsync(administrator, "Sa@1234");
-            if (!string.IsNullOrWhiteSpace(administratorRole.Name))
+            if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
             {
-                await _userManager.AddToRolesAsync(administrator, new[]
+                await _roleManager.CreateAsync(administratorRole);
+            }
+
+            if (_roleManager.Roles.All(r => r.Name != moderatorRole.Name))
+            {
+                await _roleManager.CreateAsync(moderatorRole);
+            }
+
+            if (_roleManager.Roles.All(r => r.Name != userRole.Name))
+            {
+                await _roleManager.CreateAsync(userRole);
+            }
+
+            var users = _userManager.Users.ToList();
+
+            // Default users
+            var admin = new User
+            {
+                Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
+                FullName = "Admin",
+                Email = "sa@gmail.com",
+                IsBanned = false
+            };
+            var administrator = new UserAccount
+            {
+                Id = admin.Id,
+                UserName = "77777777-7777-7777-7777-777777777777",
+                Email = "sa@gmail.com",
+                IsDeleted = false,
+                User = admin,
+                EmailConfirmed = true
+            };
+
+            if (_userManager.Users.All(u => u.UserName != administrator.UserName))
+            {
+                await _userManager.CreateAsync(administrator, "Sa@1234");
+                if (!string.IsNullOrWhiteSpace(administratorRole.Name))
                 {
-                    administratorRole.Name
-                });
+                    await _userManager.AddToRolesAsync(administrator, new[]
+                    {
+                        administratorRole.Name
+                    });
+                }
+            }
+
+
+            var moderatorUser = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = "Moderator",
+                Email = "moderator@gmail.com",
+                IsBanned = false
+            };
+            var moderatorAccount = new UserAccount
+            {
+                Id = moderatorUser.Id,
+                UserName = moderatorUser.Id.ToString(),
+                Email = "moderator@gmail.com",
+                IsDeleted = false,
+                User = moderatorUser,
+                EmailConfirmed = true
+            };
+
+            if (_userManager.Users.All(u => u.UserName != moderatorAccount.UserName))
+            {
+                await _userManager.CreateAsync(moderatorAccount, "123456");
+                await _userManager.AddToRoleAsync(moderatorAccount, Roles.Moderator);
             }
         }
 
-        // Default data
-        // Seed, if necessary
-        if (!_context.TodoLists.Any())
-        {
-            _context.TodoLists.Add(new TodoList
-            {
-                Title = "Todo List",
-                Items =
-                {
-                    new TodoItem
-                    {
-                        Title = "Make a todo list 📃"
-                    },
-                    new TodoItem
-                    {
-                        Title = "Check off the first item ✅"
-                    },
-                    new TodoItem
-                    {
-                        Title = "Realise you've already done two things on the list! 🤯"
-                    },
-                    new TodoItem
-                    {
-                        Title = "Reward yourself with a nice, long nap 🏆"
-                    },
-                }
-            });
 
+        if (!_context.Categories.Any())
+        {
+            var menCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Men",
+                IsDeleted = false,
+                CreatedBy = adminId
+            };
+            var womenCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Women",
+                IsDeleted = false,
+                CreatedBy = adminId
+            };
+            var tshirtCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "T-Shirts",
+                ParentCategory = menCategory,
+                IsDeleted = false,
+                CreatedBy = adminId
+            };
+
+            _context.Categories.AddRange(menCategory, womenCategory, tshirtCategory);
             await _context.SaveChangesAsync();
         }
 
 
-
-
-
-        var moderatorUser = new User
+        if (!_context.Products.Any())
         {
-            Id = Guid.NewGuid(),
-            FullName = "Moderator",
-            Email = "moderator@gmail.com",
-            IsBanned = false
-        };
-        var moderatorAccount = new UserAccount
-        {
-            Id = moderatorUser.Id,
-            UserName = moderatorUser.Id.ToString(),
-            Email = "moderator@gmail.com",
-            IsDeleted = false,
-            User = moderatorUser,
-            EmailConfirmed = true
-        };
+            var menCategory = _context.Categories.First(c => c.Name == "Men");
+            var tshirtCategory = _context.Categories.First(c => c.Name == "T-Shirts");
 
-        if (_userManager.Users.All(u => u.UserName != moderatorAccount.UserName))
-        {
-            await _userManager.CreateAsync(moderatorAccount, "123456");
-            await _userManager.AddToRoleAsync(moderatorAccount, Roles.Moderator); 
+            var product = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "Basic Black T-Shirt",
+                Description = "Comfortable cotton t-shirt",
+                BasePrice = 150000,
+                ImageUrl = "https://example.com/tshirt-black.jpg",
+                IsDeleted = false,
+                ProductCategories = new List<ProductCategory>
+                {
+                    new ProductCategory
+                    {
+                        CategoryId = menCategory.Id,
+                    },
+                    new ProductCategory
+                    {
+                        CategoryId = tshirtCategory.Id
+                    }
+                },
+                CreatedBy = adminId
+            };
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            // ==== Product Options ====
+            var sizeOption = new ProductOption
+            {
+                Id = Guid.NewGuid(),
+                Name = "Size",
+                ProductId = product.Id,
+                Values = new List<ProductOptionValue>
+                {
+                    new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = "S"
+                    },
+                    new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = "M"
+                    },
+                    new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = "L"
+                    },
+                }
+            };
+
+            var colorOption = new ProductOption
+            {
+                Id = Guid.NewGuid(),
+                Name = "Color",
+                ProductId = product.Id,
+                Values = new List<ProductOptionValue>
+                {
+                    new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = "Black"
+                    },
+                    new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = "White"
+                    }
+                }
+            };
+
+            _context.ProductOptions.AddRange(sizeOption, colorOption);
+            await _context.SaveChangesAsync();
+
+            // ==== Product Variants ====
+            var blackM = new ProductVariant
+            {
+                Id = Guid.NewGuid(),
+                ProductId = product.Id,
+                Price = 150000,
+                Stock = 50,
+                Sku = "TSHIRT-BLK-M",
+                ImageUrl = "https://example.com/tshirt-black.jpg"
+            };
+
+            var whiteL = new ProductVariant
+            {
+                Id = Guid.NewGuid(),
+                ProductId = product.Id,
+                Price = 160000,
+                Stock = 30,
+                Sku = "TSHIRT-WHT-L",
+                ImageUrl = "https://example.com/tshirt-white.jpg"
+            };
+
+            _context.ProductVariants.AddRange(blackM, whiteL);
+            await _context.SaveChangesAsync();
         }
     }
 }

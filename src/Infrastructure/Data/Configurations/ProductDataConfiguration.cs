@@ -1,0 +1,251 @@
+﻿using CleanArchitectureBase.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CleanArchitectureBase.Infrastructure.Data.Configurations;
+
+
+using CleanArchitectureBase.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+
+/// <summary>
+/// Config cho Category
+/// </summary>
+public class CategoryConfig : IEntityTypeConfiguration<Category>
+{
+    public void Configure(EntityTypeBuilder<Category> builder)
+    {
+        builder.ToTable("Categories");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        builder.Property(x => x.IsDeleted)
+            .HasDefaultValue(false);
+
+        // Self-reference cho category cha - con
+        builder.HasOne(c => c.ParentCategory)
+            .WithMany(c => c.SubCategories)
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Quan hệ nhiều–nhiều Category - Product thông qua bảng trung gian
+        builder.HasMany(c => c.ProductCategories)
+            .WithOne(pc => pc.Category)
+            .HasForeignKey(pc => pc.CategoryId);
+    }
+}
+
+
+/// <summary>
+/// Config cho Product
+/// </summary>
+public class ProductConfig : IEntityTypeConfiguration<Product>
+{
+    public void Configure(EntityTypeBuilder<Product> builder)
+    {
+        builder.ToTable("Products");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(x => x.Description)
+            .HasMaxLength(2000);
+
+        builder.Property(x => x.BasePrice)
+            .IsRequired();
+
+        builder.Property(x => x.ImageUrl)
+            .HasMaxLength(2000);
+
+        builder.Property(x => x.IsDeleted)
+            .HasDefaultValue(false);
+
+        // Quan hệ nhiều–nhiều Product - Category thông qua bảng trung gian
+        builder.HasMany(p => p.ProductCategories)
+            .WithOne(pc => pc.Product)
+            .HasForeignKey(pc => pc.ProductId);
+
+        // 1 Product → nhiều Option
+        builder.HasMany(x => x.Options)
+            .WithOne(o => o.Product)
+            .HasForeignKey(o => o.ProductId);
+
+        // 1 Product → nhiều Variant
+        builder.HasMany(x => x.Variants)
+            .WithOne(v => v.Product)
+            .HasForeignKey(v => v.ProductId);
+    }
+}
+
+
+/// <summary>
+/// Config cho ProductCategory (bảng trung gian nhiều–nhiều)
+/// </summary>
+public class ProductCategoryConfig : IEntityTypeConfiguration<ProductCategory>
+{
+    public void Configure(EntityTypeBuilder<ProductCategory> builder)
+    {
+        builder.ToTable("ProductCategories");
+
+        // Composite key
+        builder.HasKey(pc => new { pc.ProductId, pc.CategoryId });
+
+        // Quan hệ với Product
+        builder.HasOne(pc => pc.Product)
+            .WithMany(p => p.ProductCategories)
+            .HasForeignKey(pc => pc.ProductId);
+
+        // Quan hệ với Category
+        builder.HasOne(pc => pc.Category)
+            .WithMany(c => c.ProductCategories)
+            .HasForeignKey(pc => pc.CategoryId);
+    }
+}
+
+/// <summary>
+/// Config cho bảng ProductOption
+/// </summary>
+public class ProductOptionConfig : IEntityTypeConfiguration<ProductOption>
+{
+    public void Configure(EntityTypeBuilder<ProductOption> builder)
+    {
+        builder.ToTable("ProductOptions");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        builder.HasOne(x => x.Product)
+            .WithMany(p => p.Options)
+            .HasForeignKey(x => x.ProductId);
+
+        builder.HasMany(x => x.Values)
+            .WithOne(v => v.ProductOption)
+            .HasForeignKey(v => v.ProductOptionId);
+    }
+}
+
+/// <summary>
+/// Config cho bảng ProductOptionValue
+/// </summary>
+public class ProductOptionValueConfig : IEntityTypeConfiguration<ProductOptionValue>
+{
+    public void Configure(EntityTypeBuilder<ProductOptionValue> builder)
+    {
+        builder.ToTable("ProductOptionValues");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Value)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.HasOne(x => x.ProductOption)
+            .WithMany(o => o.Values)
+            .HasForeignKey(x => x.ProductOptionId);
+
+        builder.HasMany(x => x.VariantValues)
+            .WithOne(vv => vv.ProductOptionValue)
+            .HasForeignKey(vv => vv.ProductOptionValueId);
+    }
+}
+
+/// <summary>
+/// Config cho bảng ProductVariant
+/// </summary>
+public class ProductVariantConfig : IEntityTypeConfiguration<ProductVariant>
+{
+    public void Configure(EntityTypeBuilder<ProductVariant> builder)
+    {
+        builder.ToTable("ProductVariants");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Price)
+            .IsRequired();
+
+        builder.Property(x => x.Stock)
+            .IsRequired();
+
+        builder.Property(x => x.Sku)
+            .HasMaxLength(100);
+
+        builder.HasIndex(x => x.Sku);
+
+        builder.Property(x => x.ImageUrl)
+            .HasMaxLength(500);
+
+        builder.HasOne(x => x.Product)
+            .WithMany(p => p.Variants)
+            .HasForeignKey(x => x.ProductId);
+
+        builder.HasMany(x => x.Images)
+            .WithOne(i => i.ProductVariant)
+            .HasForeignKey(i => i.ProductVariantId);
+
+        builder.HasMany(x => x.VariantValues)
+            .WithOne(vv => vv.ProductVariant)
+            .HasForeignKey(vv => vv.ProductVariantId);
+    }
+}
+
+/// <summary>
+/// Config cho bảng ProductVariantImage
+/// </summary>
+public class ProductVariantImageConfig : IEntityTypeConfiguration<ProductVariantImage>
+{
+    public void Configure(EntityTypeBuilder<ProductVariantImage> builder)
+    {
+        builder.ToTable("ProductVariantImages");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.ImageUrl)
+            .IsRequired()
+            .HasMaxLength(2000);
+
+        builder.Property(x => x.Order)
+            .IsRequired();
+
+        builder.HasOne(x => x.ProductVariant)
+            .WithMany(v => v.Images)
+            .HasForeignKey(x => x.ProductVariantId);
+    }
+}
+
+/// <summary>
+/// Config cho bảng ProductVariantValue (bảng nối nhiều-nhiều)
+/// </summary>
+public class ProductVariantValueConfig : IEntityTypeConfiguration<ProductVariantValue>
+{
+    public void Configure(EntityTypeBuilder<ProductVariantValue> builder)
+    {
+        builder.ToTable("ProductVariantValues");
+
+        // Composite Key
+        builder.HasKey(x => new
+        {
+            x.ProductVariantId,
+            x.ProductOptionValueId
+        });
+
+        builder.HasOne(x => x.ProductVariant)
+            .WithMany(v => v.VariantValues)
+            .HasForeignKey(x => x.ProductVariantId);
+
+        builder.HasOne(x => x.ProductOptionValue)
+            .WithMany(v => v.VariantValues)
+            .HasForeignKey(x => x.ProductOptionValueId);
+    }
+}

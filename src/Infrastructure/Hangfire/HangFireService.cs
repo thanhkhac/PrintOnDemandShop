@@ -5,14 +5,14 @@ namespace CleanArchitectureBase.Infrastructure.Hangfire;
 
 public class HangFireService : IHangFireService
 {
-    private readonly IBackgroundJobClient _backgroundJobClient;
+    // private readonly IBackgroundJobClient _backgroundJobClient;
 
     
-    public HangFireService(IBackgroundJobClient backgroundJobClient)
-    {
-        _backgroundJobClient = backgroundJobClient;
-
-    }
+    // public HangFireService(IBackgroundJobClient backgroundJobClient)
+    // {
+    //     // _backgroundJobClient = backgroundJobClient;
+    //
+    // }
     
 
     public Task DeleteJobByArgument(string content)

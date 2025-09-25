@@ -26,6 +26,15 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<User> DomainUsers => Set<User>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
 
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductOption> ProductOptions => Set<ProductOption>();
+    public DbSet<ProductOptionValue> ProductOptionValues => Set<ProductOptionValue>();
+    public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
+    public DbSet<ProductVariantValue> ProductVariantValues => Set<ProductVariantValue>();
+
     // public override DbSet<ApplicationRole> Roles { get; set; }
     // public override DbSet<ApplicationUserClaim> UserClaims { get; set; }
     // public override DbSet<ApplicationUserLogin> UserLogins { get; set; }
