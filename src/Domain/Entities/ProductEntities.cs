@@ -50,6 +50,7 @@ public class Product : BaseAuditableEntity
 
     public List<ProductOption> Options { get; set; } = new();
     public List<ProductVariant> Variants { get; set; } = new();
+    public List<Template> Templates { get; set; } = new();
 
     public bool IsDeleted { get; set; }
 }
@@ -100,6 +101,33 @@ public class ProductVariant : BaseEntity
     
     public bool IsDeleted { get; set; }
 }
+
+/// <summary>
+/// Bản mock up mẫu
+/// </summary>
+public class Template : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public Guid ProductOptionValueId { get; set; }
+    public string? PrintArea { get; set; }
+    //Các trường thông tin cho mockup
+    
+    public ProductOptionValue? ProductOptionValue { get; set; }
+    public Product? Product { get; set; }
+}
+
+/// <summary>
+/// Bản thiết kế do người dùng tự thiết kế
+/// </summary>
+public class ProductDesign : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid ProductOptionValueId { get; set; }
+    public Guid TemplateId { get; set; }
+    //Các trường thông tin cho mockup
+}
+
 /// <summary>
 /// Các hình ảnh của biến thể
 /// </summary>
@@ -126,6 +154,87 @@ public class ProductVariantValue : BaseEntity
     public ProductOptionValue? ProductOptionValue { get; set; }
 }
 
+public class CartItem : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid CartId { get; set; }
+    public Guid ProductVariantId { get; set; }
+    public int Quantity { get; set; }
+
+    // Liên kết với bản thiết kế
+    public Guid? ProductDesignId { get; set; }
+
+    public ProductVariant? ProductVariant { get; set; }
+    public ProductDesign? ProductDesign { get; set; }
+}
+
+
+
+public class Order : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+
+    public DateTime OrderDate { get; set; }
+    public string? Status { get; set; }
+    public long TotalAmount { get; set; }
+    public long SubTotal { get; set; }
+    public Guid? VoucherId { get; set; }
+    public string? VoucherCode { get; set; }
+    public long Discount { get; set; }
+    
+    public string? ShippingAddress { get; set; }
+    public string? PaymentMethod { get; set; }
+
+    public List<OrderItem> Items { get; set; } = new();
+}
+
+public class OrderItem : BaseEntity
+{
+    public Guid Id { get; set; }
+    public Guid OrderId { get; set; }
+
+    public Guid ProductId { get; set; }
+    public Guid ProductVariantId { get; set; }
+    public Guid? ProductDesignId { get; set; }    
+    
+    // Snapshot data
+    public string Name { get; set; } = string.Empty;
+    public string? VariantSku { get; set; }
+    public string? VariantImageUrl { get; set; }
+
+    public long UnitPrice { get; set; } 
+    public int Quantity { get; set; }
+    public long SubTotal { get; set; }
+    
+    public Order? Order { get; set; }
+    public ProductDesign? ProductDesign { get; set; }
+
+}
+
+
+public class Voucher : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public string Code { get; set; } = string.Empty; 
+    public string? Description { get; set; }
+
+    public long? DiscountAmount { get; set; }   
+    public long? DiscountPercent { get; set; }  
+
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+
+    public int UsageLimit { get; set; }        
+    public int UsedCount { get; set; }          
+    public long? MinOrderValue { get; set; } 
+    public long? MaxDiscountAmount { get; set; } 
+ 
+
+    public bool IsActive => DateTime.UtcNow >= StartDate 
+                            && DateTime.UtcNow <= EndDate 
+                            && UsedCount < UsageLimit;
+}
 
 
 

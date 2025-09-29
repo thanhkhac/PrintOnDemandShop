@@ -4,6 +4,7 @@ using CleanArchitectureBase.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250929123741_DesignDatabase")]
+    partial class DesignDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,45 +431,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.HasIndex("ProductOptionValueId");
 
                     b.ToTable("ProductVariantValues", (string)null);
-                });
-
-            modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.Template", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTimeOffset>("LastModifiedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("PrintArea")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("ProductOptionValueId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductOptionValueId");
-
-                    b.ToTable("Templates", (string)null);
                 });
 
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.TodoItem", b =>
@@ -1124,32 +1088,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Navigation("ProductVariant");
                 });
 
-            modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.Template", b =>
-                {
-                    b.HasOne("CleanArchitectureBase.Domain.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("CleanArchitectureBase.Domain.Entities.Product", "Product")
-                        .WithMany("Templates")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CleanArchitectureBase.Domain.Entities.ProductOptionValue", "ProductOptionValue")
-                        .WithMany()
-                        .HasForeignKey("ProductOptionValueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductOptionValue");
-                });
-
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.TodoItem", b =>
                 {
                     b.HasOne("CleanArchitectureBase.Domain.Entities.TodoList", "List")
@@ -1298,8 +1236,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Navigation("Options");
 
                     b.Navigation("ProductCategories");
-
-                    b.Navigation("Templates");
 
                     b.Navigation("Variants");
                 });

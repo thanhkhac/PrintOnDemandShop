@@ -249,3 +249,111 @@ public class ProductVariantValueConfig : IEntityTypeConfiguration<ProductVariant
             .HasForeignKey(x => x.ProductOptionValueId);
     }
 }
+
+public class CartItemConfig : IEntityTypeConfiguration<CartItem>
+{
+    public void Configure(EntityTypeBuilder<CartItem> builder)
+    {
+        builder.ToTable("CartItems");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Quantity).IsRequired();
+
+        builder.HasOne(ci => ci.ProductVariant)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductVariantId);
+
+        builder.HasOne(ci => ci.ProductDesign)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductDesignId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+    }
+}
+
+
+public class OrderConfig : IEntityTypeConfiguration<Order>
+{
+    public void Configure(EntityTypeBuilder<Order> builder)
+    {
+        builder.ToTable("Orders");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Status).HasMaxLength(50);
+        builder.Property(x => x.ShippingAddress).HasMaxLength(500);
+        builder.Property(x => x.PaymentMethod).HasMaxLength(50);
+
+        builder.HasMany(o => o.Items)
+            .WithOne(oi => oi.Order)
+            .HasForeignKey(oi => oi.OrderId);
+    }
+}
+
+public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
+{
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
+    {
+        builder.ToTable("OrderItems");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(255);
+        builder.Property(x => x.VariantSku).HasMaxLength(100);
+        builder.Property(x => x.VariantImageUrl).HasMaxLength(2000);
+
+        builder.HasOne(oi => oi.ProductDesign)
+            .WithMany()
+            .HasForeignKey(oi => oi.ProductDesignId)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
+}
+
+
+public class VoucherConfig : IEntityTypeConfiguration<Voucher>
+{
+    public void Configure(EntityTypeBuilder<Voucher> builder)
+    {
+        builder.ToTable("Vouchers");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Code)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        builder.Property(x => x.Description).HasMaxLength(500);
+
+        builder.Property(x => x.DiscountAmount);
+        builder.Property(x => x.DiscountPercent);
+        builder.Property(x => x.MinOrderValue);
+        builder.Property(x => x.MaxDiscountAmount);
+    }
+}
+
+
+public class TemplateConfig : IEntityTypeConfiguration<Template>
+{
+    public void Configure(EntityTypeBuilder<Template> builder)
+    {
+        builder.ToTable("Templates");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.PrintArea).HasMaxLength(1000);
+        
+        builder.HasOne(t => t.ProductOptionValue)
+            .WithMany() 
+            .HasForeignKey(t => t.ProductOptionValueId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        builder.HasOne(t => t.Product)
+            .WithMany(p => p.Templates) // bạn cần thêm navigation vào Product
+            .HasForeignKey(t => t.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+
+
