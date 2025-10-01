@@ -35,6 +35,18 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
     public DbSet<ProductVariantValue> ProductVariantValues => Set<ProductVariantValue>();
 
+
+    public DbSet<Template> Templates => Set<Template>();
+    public DbSet<ProductDesign> ProductDesigns => Set<ProductDesign>();
+
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    
+    
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<ProductVoucher> ProductVouchers => Set<ProductVoucher>();
+
     // public override DbSet<ApplicationRole> Roles { get; set; }
     // public override DbSet<ApplicationUserClaim> UserClaims { get; set; }
     // public override DbSet<ApplicationUserLogin> UserLogins { get; set; }
@@ -43,6 +55,8 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     {
         base.OnModelCreating(builder);
 
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             if (typeof(CleanArchitectureBase.Domain.Common.BaseAuditableEntity).IsAssignableFrom(entityType.ClrType))
@@ -54,7 +68,5 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
                     .OnDelete(DeleteBehavior.Restrict);
             }
         }
-
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

@@ -4,6 +4,7 @@ using CleanArchitectureBase.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001041635_AddIsActiveToVoucher")]
+    partial class AddIsActiveToVoucher
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -667,7 +670,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<long?>("DiscountPercent")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsActive")
@@ -685,7 +688,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<long?>("MinOrderValue")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("UsageLimit")

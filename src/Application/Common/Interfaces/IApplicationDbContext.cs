@@ -22,5 +22,17 @@ public interface
     DbSet<ProductVariantImage> ProductVariantImages { get; }
     DbSet<ProductVariantValue> ProductVariantValues { get; }
     
+    DbSet<Template> Templates { get; }
+    DbSet<ProductDesign> ProductDesigns { get; }
+    
+    DbSet<CartItem> CartItems { get; }
+    DbSet<Order> Orders { get; }
+    DbSet<OrderItem> OrderItems { get; }
+    
+    
+    DbSet<Voucher> Vouchers { get; }
+    DbSet<ProductVoucher> ProductVouchers { get; }
+    
+    
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

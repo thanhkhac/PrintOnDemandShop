@@ -58,7 +58,7 @@ public class ApplicationDbContextInitialiser
 
             // if (!databaseExists)
             // {
-            await _context.Database.MigrateAsync();
+            // await _context.Database.MigrateAsync();
             // }
             await Task.CompletedTask;
         }
@@ -73,7 +73,7 @@ public class ApplicationDbContextInitialiser
     {
         try
         {
-            await TrySeedAsync();
+            // await TrySeedAsync();
             await Task.CompletedTask;
         }
 
@@ -281,20 +281,18 @@ public class ApplicationDbContextInitialiser
             {
                 Id = Guid.NewGuid(),
                 ProductId = product.Id,
-                Price = 150000,
+                UnitPrice = 150000,
                 Stock = 50,
                 Sku = "TSHIRT-BLK-M",
-                ImageUrl = "https://example.com/tshirt-black.jpg"
             };
 
             var whiteL = new ProductVariant
             {
                 Id = Guid.NewGuid(),
                 ProductId = product.Id,
-                Price = 160000,
+                UnitPrice = 160000,
                 Stock = 30,
                 Sku = "TSHIRT-WHT-L",
-                ImageUrl = "https://example.com/tshirt-white.jpg"
             };
 
             _context.ProductVariants.AddRange(blackM, whiteL);

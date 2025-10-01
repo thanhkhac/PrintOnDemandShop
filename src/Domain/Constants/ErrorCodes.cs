@@ -62,6 +62,8 @@ public static class ErrorCodes
     public const string IDENTITY_PASSWORD_REQUIRES_LOWER = nameof(IDENTITY_PASSWORD_REQUIRES_LOWER);
     public const string IDENTITY_PASSWORD_REQUIRES_UPPER = nameof(IDENTITY_PASSWORD_REQUIRES_UPPER);
     
+    
+    public const string CATEGORY_NOT_FOUND = nameof(CATEGORY_NOT_FOUND);
 
 
 }    

@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CleanArchitectureBase.Infrastructure.Data.Configurations;
 
-
 using CleanArchitectureBase.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 
 /// <summary>
 /// Config cho Category
@@ -40,7 +38,6 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
             .HasForeignKey(pc => pc.CategoryId);
     }
 }
-
 
 /// <summary>
 /// Config cho Product
@@ -86,7 +83,6 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
     }
 }
 
-
 /// <summary>
 /// Config cho ProductCategory (bảng trung gian nhiều–nhiều)
 /// </summary>
@@ -97,7 +93,11 @@ public class ProductCategoryConfig : IEntityTypeConfiguration<ProductCategory>
         builder.ToTable("ProductCategories");
 
         // Composite key
-        builder.HasKey(pc => new { pc.ProductId, pc.CategoryId });
+        builder.HasKey(pc => new
+        {
+            pc.ProductId,
+            pc.CategoryId
+        });
 
         // Quan hệ với Product
         builder.HasOne(pc => pc.Product)
@@ -172,7 +172,7 @@ public class ProductVariantConfig : IEntityTypeConfiguration<ProductVariant>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Price)
+        builder.Property(x => x.UnitPrice)
             .IsRequired();
 
         builder.Property(x => x.Stock)
@@ -182,9 +182,6 @@ public class ProductVariantConfig : IEntityTypeConfiguration<ProductVariant>
             .HasMaxLength(100);
 
         builder.HasIndex(x => x.Sku);
-
-        builder.Property(x => x.ImageUrl)
-            .HasMaxLength(500);
 
         builder.HasOne(x => x.Product)
             .WithMany(p => p.Variants)
@@ -266,12 +263,9 @@ public class CartItemConfig : IEntityTypeConfiguration<CartItem>
 
         builder.HasOne(ci => ci.ProductDesign)
             .WithMany()
-            .HasForeignKey(ci => ci.ProductDesignId)
-            .OnDelete(DeleteBehavior.SetNull);
-
+            .HasForeignKey(ci => ci.ProductDesignId);
     }
 }
-
 
 public class OrderConfig : IEntityTypeConfiguration<Order>
 {
@@ -282,7 +276,9 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Status).HasMaxLength(50);
-        builder.Property(x => x.ShippingAddress).HasMaxLength(500);
+        builder.Property(x => x.RecipientName).HasMaxLength(500);
+        builder.Property(x => x.RecipientPhone).HasMaxLength(500);
+        builder.Property(x => x.RecipientAddress).HasMaxLength(500);
         builder.Property(x => x.PaymentMethod).HasMaxLength(50);
 
         builder.HasMany(o => o.Items)
@@ -307,9 +303,12 @@ public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
             .WithMany()
             .HasForeignKey(oi => oi.ProductDesignId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(oi => oi.ProductVariant)
+            .WithMany()
+            .HasForeignKey(oi => oi.ProductVariantId);
     }
 }
-
 
 public class VoucherConfig : IEntityTypeConfiguration<Voucher>
 {
@@ -332,7 +331,6 @@ public class VoucherConfig : IEntityTypeConfiguration<Voucher>
     }
 }
 
-
 public class TemplateConfig : IEntityTypeConfiguration<Template>
 {
     public void Configure(EntityTypeBuilder<Template> builder)
@@ -342,18 +340,37 @@ public class TemplateConfig : IEntityTypeConfiguration<Template>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.PrintArea).HasMaxLength(1000);
-        
+
         builder.HasOne(t => t.ProductOptionValue)
-            .WithMany() 
+            .WithMany()
             .HasForeignKey(t => t.ProductOptionValueId)
             .OnDelete(DeleteBehavior.Restrict);
-            
+
         builder.HasOne(t => t.Product)
             .WithMany(p => p.Templates) // bạn cần thêm navigation vào Product
             .HasForeignKey(t => t.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVoucher>
+{
+    public void Configure(EntityTypeBuilder<ProductVoucher> builder)
+    {
+        // Table name (optional, nếu không EF sẽ lấy tên class)
+        builder.ToTable("ProductVouchers");
 
+        // Composite Key
+        builder.HasKey(pv => new { pv.ProductId, pv.VoucherId });
 
+        // Relationships
+        builder.HasOne(pv => pv.Product)
+            .WithMany(p => p.ProductVouchers) // Product.ProductVouchers
+            .HasForeignKey(pv => pv.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(pv => pv.Voucher)
+            .WithMany(v => v.ProductVouchers) // Voucher.ProductVouchers
+            .HasForeignKey(pv => pv.VoucherId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

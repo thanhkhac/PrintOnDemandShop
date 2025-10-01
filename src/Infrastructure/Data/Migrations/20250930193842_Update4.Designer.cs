@@ -4,6 +4,7 @@ using CleanArchitectureBase.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitectureBase.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250930193842_Update4")]
+    partial class Update4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,9 +115,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("char(36)");
 
-                    b.Property<long>("DiscountAmount")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTimeOffset>("LastModifiedAt")
                         .HasColumnType("datetime(6)");
 
@@ -128,15 +128,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("RecipientAddress")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("RecipientName")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("RecipientPhone")
+                    b.Property<string>("ShippingAddress")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
@@ -163,9 +155,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<long>("DiscountAmount")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -186,9 +175,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<long>("SubTotal")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TotalAmount")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("UnitPrice")
                         .HasColumnType("bigint");
 
@@ -200,18 +186,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("VoucherCode")
-                        .HasColumnType("longtext");
-
-                    b.Property<long?>("VoucherDiscountAmount")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("VoucherDiscountPercent")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid?>("VoucherId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
@@ -219,8 +193,6 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.HasIndex("ProductDesignId");
 
                     b.HasIndex("ProductVariantId");
-
-                    b.HasIndex("VoucherId");
 
                     b.ToTable("OrderItems", (string)null);
                 });
@@ -667,11 +639,8 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<long?>("DiscountPercent")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset>("LastModifiedAt")
                         .HasColumnType("datetime(6)");
@@ -685,7 +654,7 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                     b.Property<long?>("MinOrderValue")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("UsageLimit")
@@ -1043,17 +1012,11 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CleanArchitectureBase.Domain.Entities.Voucher", "Voucher")
-                        .WithMany()
-                        .HasForeignKey("VoucherId");
-
                     b.Navigation("Order");
 
                     b.Navigation("ProductDesign");
 
                     b.Navigation("ProductVariant");
-
-                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.Product", b =>
