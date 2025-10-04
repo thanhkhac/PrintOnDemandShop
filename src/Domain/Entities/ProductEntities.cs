@@ -68,7 +68,8 @@ public class ProductOptionValue : BaseEntity
     public ProductOption? ProductOption { get; set; }
     
     public List<ProductVariantValue> VariantValues { get; set; } = new();
-    
+    public List<ProductOptionValueImage> Images { get; set; } = new(); 
+
     public string? Value { get; set; }
     public bool IsDeleted { get; set; }
 }

@@ -34,6 +34,7 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
     // public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
     public DbSet<ProductVariantValue> ProductVariantValues => Set<ProductVariantValue>();
+    public DbSet<ProductOptionValueImage> ProductOptionValueImages  => Set<ProductOptionValueImage>();
 
 
     public DbSet<Template> Templates => Set<Template>();

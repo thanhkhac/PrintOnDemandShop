@@ -73,7 +73,7 @@ public class ApplicationDbContextInitialiser
     {
         try
         {
-            // await TrySeedAsync();
+            await TrySeedAsync();
             await Task.CompletedTask;
         }
 

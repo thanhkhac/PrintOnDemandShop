@@ -395,7 +395,7 @@ public class ProductOptionValueImageConfig : IEntityTypeConfiguration<ProductOpt
             .HasDefaultValue(false);
 
         builder.HasOne(x => x.ProductOptionValue)
-            .WithMany() 
+            .WithMany(v => v.Images) 
             .HasForeignKey(x => x.ProductOptionValueId)
             .OnDelete(DeleteBehavior.Cascade);
     }

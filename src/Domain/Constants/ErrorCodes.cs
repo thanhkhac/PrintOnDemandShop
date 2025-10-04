@@ -66,4 +66,6 @@ public static class ErrorCodes
     public const string CATEGORY_NOT_FOUND = nameof(CATEGORY_NOT_FOUND);
 
 
+    public const string PRODUCT_NOT_FOUND = nameof(PRODUCT_NOT_FOUND);
+
 }    
