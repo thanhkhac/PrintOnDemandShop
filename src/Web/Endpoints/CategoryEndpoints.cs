@@ -20,7 +20,12 @@ public class CategoryEndpoints : EndpointGroupBase
         group.MapDelete(DeleteCategory, "{id:guid}");
     }
     
-    
+    /// <summary>
+    /// Tạo và update role
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="sender"></param>
+    /// <returns></returns>
     public async Task<Ok<ApiResponse<CategoryDto>>> CreateOrUpdateCategory([FromBody] CreateUpdateCategoryCommand command, ISender sender)
     {
         var result = await sender.Send(command);

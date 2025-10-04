@@ -21,7 +21,7 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
 
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(255);
+            .HasMaxLength(200);
 
         builder.Property(x => x.IsDeleted)
             .HasDefaultValue(false);
@@ -124,7 +124,7 @@ public class ProductOptionConfig : IEntityTypeConfiguration<ProductOption>
 
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(255);
+            .HasMaxLength(200);
 
         builder.HasOne(x => x.Product)
             .WithMany(p => p.Options)
@@ -187,9 +187,9 @@ public class ProductVariantConfig : IEntityTypeConfiguration<ProductVariant>
             .WithMany(p => p.Variants)
             .HasForeignKey(x => x.ProductId);
 
-        builder.HasMany(x => x.Images)
-            .WithOne(i => i.ProductVariant)
-            .HasForeignKey(i => i.ProductVariantId);
+        // builder.HasMany(x => x.Images)
+        //     .WithOne(i => i.ProductVariant)
+        //     .HasForeignKey(i => i.ProductVariantId);
 
         builder.HasMany(x => x.VariantValues)
             .WithOne(vv => vv.ProductVariant)
@@ -197,29 +197,29 @@ public class ProductVariantConfig : IEntityTypeConfiguration<ProductVariant>
     }
 }
 
-/// <summary>
-/// Config cho bảng ProductVariantImage
-/// </summary>
-public class ProductVariantImageConfig : IEntityTypeConfiguration<ProductVariantImage>
-{
-    public void Configure(EntityTypeBuilder<ProductVariantImage> builder)
-    {
-        builder.ToTable("ProductVariantImages");
-
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.ImageUrl)
-            .IsRequired()
-            .HasMaxLength(2000);
-
-        builder.Property(x => x.Order)
-            .IsRequired();
-
-        builder.HasOne(x => x.ProductVariant)
-            .WithMany(v => v.Images)
-            .HasForeignKey(x => x.ProductVariantId);
-    }
-}
+// /// <summary>
+// /// Config cho bảng ProductVariantImage
+// /// </summary>
+// public class ProductVariantImageConfig : IEntityTypeConfiguration<ProductVariantImage>
+// {
+//     public void Configure(EntityTypeBuilder<ProductVariantImage> builder)
+//     {
+//         builder.ToTable("ProductVariantImages");
+//
+//         builder.HasKey(x => x.Id);
+//
+//         builder.Property(x => x.ImageUrl)
+//             .IsRequired()
+//             .HasMaxLength(2000);
+//
+//         builder.Property(x => x.Order)
+//             .IsRequired();
+//
+//         builder.HasOne(x => x.ProductVariant)
+//             .WithMany(v => v.Images)
+//             .HasForeignKey(x => x.ProductVariantId);
+//     }
+// }
 
 /// <summary>
 /// Config cho bảng ProductVariantValue (bảng nối nhiều-nhiều)
@@ -295,7 +295,7 @@ public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Name).IsRequired().HasMaxLength(255);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
         builder.Property(x => x.VariantSku).HasMaxLength(100);
         builder.Property(x => x.VariantImageUrl).HasMaxLength(2000);
 
@@ -322,7 +322,7 @@ public class VoucherConfig : IEntityTypeConfiguration<Voucher>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(x => x.Description).HasMaxLength(500);
+        builder.Property(x => x.Description).HasMaxLength(2000);
 
         builder.Property(x => x.DiscountAmount);
         builder.Property(x => x.DiscountPercent);
@@ -371,6 +371,32 @@ public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVouch
         builder.HasOne(pv => pv.Voucher)
             .WithMany(v => v.ProductVouchers) // Voucher.ProductVouchers
             .HasForeignKey(pv => pv.VoucherId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class ProductOptionValueImageConfig : IEntityTypeConfiguration<ProductOptionValueImage>
+{
+    public void Configure(EntityTypeBuilder<ProductOptionValueImage> builder)
+    {
+        builder.ToTable("ProductOptionValueImages");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.ImageUrl)
+            .IsRequired()
+            .HasMaxLength(2000);
+
+        builder.Property(x => x.Order)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(x => x.IsDeleted)
+            .HasDefaultValue(false);
+
+        builder.HasOne(x => x.ProductOptionValue)
+            .WithMany() 
+            .HasForeignKey(x => x.ProductOptionValueId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -19,7 +19,7 @@ public interface
     DbSet<ProductOption> ProductOptions { get; }
     DbSet<ProductOptionValue> ProductOptionValues { get; }
     DbSet<ProductVariant> ProductVariants { get; }
-    DbSet<ProductVariantImage> ProductVariantImages { get; }
+    // DbSet<ProductVariantImage> ProductVariantImages { get; }
     DbSet<ProductVariantValue> ProductVariantValues { get; }
     
     DbSet<Template> Templates { get; }

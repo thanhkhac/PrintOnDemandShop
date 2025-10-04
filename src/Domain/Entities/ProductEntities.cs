@@ -82,7 +82,7 @@ public class ProductVariant : BaseEntity
     
     public Product? Product { get; set; }
    
-    public List<ProductVariantImage> Images { get; set; } = new();
+    // public List<ProductVariantImage> Images { get; set; } = new();
     public List<ProductVariantValue> VariantValues { get; set; } = new();
 
     public long UnitPrice { get; set; }
@@ -90,6 +90,67 @@ public class ProductVariant : BaseEntity
     public string? Sku { get; set; }
     public bool IsDeleted { get; set; }
 }
+
+
+// /// <summary>
+// /// Các hình ảnh của biến thể
+// /// </summary>
+// public class ProductVariantImage : BaseEntity
+// {
+//     public Guid Id { get; set; }
+//     
+//     public Guid ProductVariantId { get; set; }
+//  
+//     public ProductVariant? ProductVariant { get; set; }
+//  
+//     public string? ImageUrl { get; set; }
+//     public int Order { get; set; }
+//     public bool IsDeleted { get; set; }  
+// }
+
+
+
+public class ProductOptionValueImage : BaseEntity
+{
+    public Guid Id { get; set; }
+    
+    public Guid ProductOptionValueId { get; set; }
+    
+    public ProductOptionValue? ProductOptionValue { get; set; }
+    
+    public string? ImageUrl { get; set; }
+    public int Order { get; set; }
+    public bool IsDeleted { get; set; }
+}
+
+
+
+
+/// <summary>
+/// Các giá trị lựa chọn của biến thể
+/// </summary>
+public class ProductVariantValue : BaseEntity
+{
+    public Guid ProductVariantId { get; set; }
+    public Guid ProductOptionValueId { get; set; }
+    
+    public ProductVariant? ProductVariant { get; set; }
+    public ProductOptionValue? ProductOptionValue { get; set; }
+}
+
+public class CartItem : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+
+    public Guid ProductVariantId { get; set; }
+    public Guid? ProductDesignId { get; set; }
+
+    public ProductVariant? ProductVariant { get; set; }
+    public ProductDesign? ProductDesign { get; set; }
+
+    public int Quantity { get; set; }
+}
+
 
 /// <summary>
 /// Bản mock up mẫu
@@ -119,48 +180,6 @@ public class ProductDesign : BaseAuditableEntity
     public Guid TemplateId { get; set; }
     //Các trường thông tin cho mockup
 }
-
-/// <summary>
-/// Các hình ảnh của biến thể
-/// </summary>
-public class ProductVariantImage : BaseEntity
-{
-    public Guid Id { get; set; }
-    
-    public Guid ProductVariantId { get; set; }
- 
-    public ProductVariant? ProductVariant { get; set; }
- 
-    public string? ImageUrl { get; set; }
-    public int Order { get; set; }
-    public bool IsDeleted { get; set; }  
-}
-
-/// <summary>
-/// Các giá trị lựa chọn của biến thể
-/// </summary>
-public class ProductVariantValue : BaseEntity
-{
-    public Guid ProductVariantId { get; set; }
-    public Guid ProductOptionValueId { get; set; }
-    
-    public ProductVariant? ProductVariant { get; set; }
-    public ProductOptionValue? ProductOptionValue { get; set; }
-}
-
-public class CartItem : BaseAuditableEntity
-{
-    public Guid Id { get; set; }
-
-    public Guid ProductVariantId { get; set; }
-    public Guid? ProductDesignId { get; set; }
-
-    public ProductVariant? ProductVariant { get; set; }
-    public ProductDesign? ProductDesign { get; set; }
-
-    public int Quantity { get; set; }
-}
-
 
 
 public class Order : BaseAuditableEntity

@@ -32,7 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<ProductOption> ProductOptions => Set<ProductOption>();
     public DbSet<ProductOptionValue> ProductOptionValues => Set<ProductOptionValue>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
-    public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
+    // public DbSet<ProductVariantImage> ProductVariantImages => Set<ProductVariantImage>();
     public DbSet<ProductVariantValue> ProductVariantValues => Set<ProductVariantValue>();
 
 

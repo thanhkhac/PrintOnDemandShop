@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using CleanArchitectureBase.Application.Common.FileServices;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Settings;
@@ -7,7 +8,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 using CleanArchitectureBase.Infrastructure.Data;
 using CleanArchitectureBase.Infrastructure.Data.Interceptors;
-
+using CleanArchitectureBase.Infrastructure.FileServices;
 using CleanArchitectureBase.Infrastructure.Google;
 using CleanArchitectureBase.Infrastructure.Hangfire;
 using CleanArchitectureBase.Infrastructure.Identity;
@@ -171,6 +172,7 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IHangFireService, HangFireService>();
+        services.AddScoped<IImageService, ImageService>();
         services.AddSingleton<IRedisService, RedisService>();
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>

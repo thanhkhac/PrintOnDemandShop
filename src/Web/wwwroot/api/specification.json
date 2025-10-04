@@ -414,6 +414,7 @@
         "tags": [
           "Category"
         ],
+        "summary": "Tạo và update role",
         "operationId": "CreateOrUpdateCategory",
         "requestBody": {
           "x-name": "command",
@@ -516,6 +517,42 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/File/UploadImage": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "operationId": "UploadImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfString"
                 }
               }
             }
