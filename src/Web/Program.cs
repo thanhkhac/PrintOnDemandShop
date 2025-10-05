@@ -5,6 +5,7 @@ using CleanArchitectureBase.Web;
 using CleanArchitectureBase.Web.Attributes;
 using Hangfire;
 using Hangfire.MySql;
+using Scalar.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,6 +84,15 @@ app.UseSwaggerUi(settings =>
     settings.DocumentPath = "/api/specification.json";
     settings.DocExpansion = "list"; //none/list/full
 });
+
+
+app.MapScalarApiReference("/api-docs",options =>
+{
+    options.Title = "CleanArchitectureBase API Docs";
+    options.WithOpenApiRoutePattern("/api/specification.json");
+});
+
+
 
 
 app.MapControllerRoute(

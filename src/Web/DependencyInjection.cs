@@ -5,6 +5,7 @@ using CleanArchitectureBase.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using Scalar.AspNetCore;
 
 namespace CleanArchitectureBase.Web;
 
@@ -47,6 +48,12 @@ public static class DependencyInjection
 
             configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
         });
+        
+        
+        
+        
+        //SCALAR
+
 
         return services;
     }

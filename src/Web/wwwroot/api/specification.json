@@ -409,6 +409,68 @@
         }
       }
     },
+    "/api/Cart/item": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "operationId": "AddToCart",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfGuid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "operationId": "RemoveFromCart",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveFromCartCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Category/CreateOrUpdate": {
       "post": {
         "tags": [
@@ -629,6 +691,7 @@
         "tags": [
           "Product"
         ],
+        "summary": "Tạo hoặc update sản phẩm. \nCác Options.Name cho phép là: \n- SIZE \n- COLOR",
         "operationId": "CreateOrUpdateProduct",
         "requestBody": {
           "x-name": "command",
@@ -780,6 +843,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseOfProductDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Product"
+        ],
+        "operationId": "DeleteProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBoolean"
                 }
               }
             }
@@ -1338,6 +1431,101 @@
           }
         }
       },
+      "ApiResponseOfGuid": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "type": "string",
+            "format": "guid"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AddToCartCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productVariantId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "productDesignId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseOfBoolean": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "type": "boolean"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RemoveFromCartCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cartItemIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        }
+      },
       "ApiResponseOfCategoryDto": {
         "type": "object",
         "additionalProperties": false,
@@ -1518,37 +1706,6 @@
             "description": "Account balance (cumulative)",
             "format": "decimal",
             "nullable": true
-          }
-        }
-      },
-      "ApiResponseOfGuid": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "errors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "validationErrors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "data": {
-            "type": "string",
-            "format": "guid"
-          },
-          "success": {
-            "type": "boolean"
           }
         }
       },

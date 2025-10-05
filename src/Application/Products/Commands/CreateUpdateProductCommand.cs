@@ -11,6 +11,9 @@ namespace CleanArchitectureBase.Application.Products.Commands;
 [Authorize(Roles = Roles.Administrator + "," + Roles.Moderator)]
 public class CreateUpdateProductCommand : IRequest<Guid>
 {
+    /// <summary>
+    /// ProductId
+    /// </summary>
     public Guid? ProductId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }

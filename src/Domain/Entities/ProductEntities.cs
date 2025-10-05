@@ -142,7 +142,7 @@ public class ProductVariantValue : BaseEntity
 public class CartItem : BaseAuditableEntity
 {
     public Guid Id { get; set; }
-
+    
     public Guid ProductVariantId { get; set; }
     public Guid? ProductDesignId { get; set; }
 
@@ -150,6 +150,8 @@ public class CartItem : BaseAuditableEntity
     public ProductDesign? ProductDesign { get; set; }
 
     public int Quantity { get; set; }
+    
+    public Guid? ProductId { get; set; }
 }
 
 

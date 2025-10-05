@@ -18,8 +18,15 @@ public class ProductEndpoints : EndpointGroupBase
         group.MapPost(CreateOrUpdateProduct, "/CreateOrUpdateProduct");
         group.MapGet(SearchProducts, "/Search");
         group.MapGet(GetProductDetail, "/{productId:guid}");
+        group.MapDelete(DeleteProduct, "/{productId:guid}");
     }
-
+    
+    /// <summary>
+    /// Tạo hoặc update sản phẩm. <br/>
+    /// Các <c>Options.Name</c> cho phép là: <br/>
+    /// - SIZE <br/>
+    /// - COLOR
+    /// </summary>
     public async Task<Ok<ApiResponse<Guid>>> CreateOrUpdateProduct(
         [FromBody] CreateUpdateProductCommand command,
         ISender sender)
@@ -46,6 +53,15 @@ public class ProductEndpoints : EndpointGroupBase
             ProductId = productId
         };
         var result = await sender.Send(query);
+        return result.ToOk();
+    }
+    
+    public async Task<Ok<ApiResponse<bool>>> DeleteProduct(
+        Guid productId,
+        ISender sender)
+    {
+        var command = new DeleteProductCommand { ProductId = productId };
+        var result = await sender.Send(command);
         return result.ToOk();
     }
 }

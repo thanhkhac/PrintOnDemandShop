@@ -67,5 +67,16 @@ public static class ErrorCodes
 
 
     public const string PRODUCT_NOT_FOUND = nameof(PRODUCT_NOT_FOUND);
+    
+    
+    public const string PRODUCT_VARIANT_NOT_FOUND = nameof(PRODUCT_VARIANT_NOT_FOUND);
+    public const string INSUFFICIENT_STOCK = nameof(INSUFFICIENT_STOCK);
+    
+    
+    public const string PRODUCT_DESIGN_NOT_FOUND = nameof(PRODUCT_DESIGN_NOT_FOUND);
+    
+    public const string CART_ITEM_NOT_FOUND = nameof(CART_ITEM_NOT_FOUND);
+    
+    
 
 }    
