@@ -19,3 +19,5 @@ services:
       - GEMINISETTINGS__APIKEY=${GEMINISETTINGS__APIKEY}
       - GOOGLE_APPLICATION_CREDENTIALS_JSON=${GOOGLE_APPLICATION_CREDENTIALS_JSON}
     # restart: always
+    volumes:
+      - ./src/Web/wwwroot/uploads:/app/wwwroot/uploads
