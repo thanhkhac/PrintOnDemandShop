@@ -105,7 +105,7 @@ public class AuthenticationEndpoints : EndpointGroupBase
         var expiredOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = false,
             SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddDays(jwtSettings.RefreshTokenExpiryDays)
         };
@@ -119,7 +119,7 @@ public class AuthenticationEndpoints : EndpointGroupBase
         var expiredOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = false,
             SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddDays(-1)
         };

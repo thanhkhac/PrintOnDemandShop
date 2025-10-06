@@ -3,9 +3,7 @@ using CleanArchitectureBase.Application.Common.FileServices;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Settings;
-
 using CleanArchitectureBase.Domain.Constants;
-
 using CleanArchitectureBase.Infrastructure.Data;
 using CleanArchitectureBase.Infrastructure.Data.Interceptors;
 using CleanArchitectureBase.Infrastructure.FileServices;
@@ -44,7 +42,7 @@ public static class DependencyInjection
 
             options.UseMySql(
                 connectionString,
-                new MySqlServerVersion(new Version(8, 0, 36)) 
+                new MySqlServerVersion(new Version(8, 0, 36))
             );
         });
 
@@ -126,20 +124,14 @@ public static class DependencyInjection
             });
 
         services.AddAuthorizationBuilder();
-        var allowedOrigins2 = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
-                             new[]
-                             {
-                                 "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000"
-                             };
         services.AddCors(options =>
         {
-
             options.AddPolicy("AllowSpecificOrigins", policy =>
             {
                 var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
                                      new[]
                                      {
-                                         "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000"
+                                         "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000"
                                      };
 
                 policy.WithOrigins(allowedOrigins)
@@ -179,7 +171,7 @@ public static class DependencyInjection
         });
         services.AddHttpClient<IGoogleAuthService, GoogleAuthService>();
 
-        
+
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
