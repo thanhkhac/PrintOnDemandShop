@@ -1,5 +1,5 @@
 ﻿
-namespace CleanArchitectureBase.Application.Products.Dtos.ResponseDtos;
+namespace CleanArchitectureBase.Application.Products.Dtos.Response;
 
 public class ProductDetailResponseDto
 {

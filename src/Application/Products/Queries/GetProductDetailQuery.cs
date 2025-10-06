@@ -1,6 +1,6 @@
 ﻿using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Interfaces;
-using CleanArchitectureBase.Application.Products.Dtos.ResponseDtos;
+using CleanArchitectureBase.Application.Products.Dtos.Response;
 using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Products.Queries;

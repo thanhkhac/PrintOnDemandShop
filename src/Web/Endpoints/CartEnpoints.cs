@@ -1,5 +1,7 @@
 ﻿using CleanArchitectureBase.Application.Carts;
 using CleanArchitectureBase.Application.Carts.Commands;
+using CleanArchitectureBase.Application.Carts.Dtos.Response;
+using CleanArchitectureBase.Application.Carts.Queries;
 using CleanArchitectureBase.Application.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +16,7 @@ public class CartEndpoints : EndpointGroupBase
 
         group.MapPost(AddToCart, "/item");
         group.MapDelete(RemoveFromCart, "/item");
-        // group.MapGet(GetCartItems, "/item");
+        group.MapGet(GetCartItems, "/item");
     }
 
     public async Task<Ok<ApiResponse<Guid>>> AddToCart(
@@ -34,11 +36,11 @@ public class CartEndpoints : EndpointGroupBase
     }
 
 
-    // public async Task<Ok<ApiResponse<List<CartItemResponseDto>>>> GetCartItems(
-    //     ISender sender)
-    // {
-    //     var query = new GetCartItemsQuery();
-    //     var result = await sender.Send(query);
-    //     return result.ToOk();
-    // }
+    public async Task<Ok<ApiResponse<List<CartItemResponseDto>>>> GetCartItems(
+        ISender sender)
+    {
+        var query = new GetCartItemsQuery();
+        var result = await sender.Send(query);
+        return result.ToOk();
+    }
 }

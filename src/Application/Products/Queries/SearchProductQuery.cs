@@ -2,7 +2,7 @@
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Products.Dtos;
-using CleanArchitectureBase.Application.Products.Dtos.ResponseDtos;
+using CleanArchitectureBase.Application.Products.Dtos.Response;
 
 namespace CleanArchitectureBase.Application.Products.Queries;
 

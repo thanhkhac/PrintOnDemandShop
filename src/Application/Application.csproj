@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Carts\Dtos\Request\" />
-    <Folder Include="Carts\Queries\" />
     <Folder Include="zExample\" />
   </ItemGroup>
 

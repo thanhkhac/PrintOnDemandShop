@@ -469,6 +469,24 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Cart"
+        ],
+        "operationId": "GetCartItems",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfListOfCartItemResponseDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/Category/CreateOrUpdate": {
@@ -1523,6 +1541,115 @@
               "type": "string",
               "format": "guid"
             }
+          }
+        }
+      },
+      "ApiResponseOfListOfCartItemResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartItemResponseDto"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CartItemResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "productImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "productVariantId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productVariantSku": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPrice": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "productDesignId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "variantOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantOptionDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProductVariantOptionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "optionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "optionValue": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

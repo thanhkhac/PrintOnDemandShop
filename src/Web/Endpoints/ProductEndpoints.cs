@@ -1,7 +1,7 @@
 ﻿using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Payments.Queries;
 using CleanArchitectureBase.Application.Products.Commands;
-using CleanArchitectureBase.Application.Products.Dtos.ResponseDtos;
+using CleanArchitectureBase.Application.Products.Dtos.Response;
 using CleanArchitectureBase.Application.Products.Queries;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
