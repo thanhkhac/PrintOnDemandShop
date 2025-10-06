@@ -1715,6 +1715,7 @@
         "properties": {
           "productId": {
             "type": "string",
+            "description": "ProductId",
             "format": "guid",
             "nullable": true
           },

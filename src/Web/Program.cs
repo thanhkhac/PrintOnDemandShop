@@ -66,6 +66,7 @@ else
 
 app.UseHealthChecks("/health");
 // app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 // CORS MIDDLEWARE
 // if (app.Environment.IsDevelopment())
@@ -74,7 +75,6 @@ app.UseHealthChecks("/health");
     app.UseCors("AllowSpecificOrigins");
 
 
-app.UseStaticFiles();
 app.UseAuthentication();
 // app.UseHangfireDashboard("/hangfire");
 

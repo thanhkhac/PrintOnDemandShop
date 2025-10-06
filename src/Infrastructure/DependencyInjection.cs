@@ -126,23 +126,20 @@ public static class DependencyInjection
             });
 
         services.AddAuthorizationBuilder();
-
+        var allowedOrigins2 = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
+                             new[]
+                             {
+                                 "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000",
+                             };
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithExposedHeaders("Authorization");
-            });
 
             options.AddPolicy("AllowSpecificOrigins", policy =>
             {
                 var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
                                      new[]
                                      {
-                                         "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:5173", "https://localhost:5173",
+                                         "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000",
                                      };
 
                 policy.WithOrigins(allowedOrigins)
