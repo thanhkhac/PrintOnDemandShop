@@ -129,7 +129,7 @@ public static class DependencyInjection
         var allowedOrigins2 = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
                              new[]
                              {
-                                 "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000",
+                                 "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000"
                              };
         services.AddCors(options =>
         {
@@ -139,7 +139,7 @@ public static class DependencyInjection
                 var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
                                      new[]
                                      {
-                                         "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000",
+                                         "https://thanhkhac.id.vn", "https://aiquizizz.com", "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000"
                                      };
 
                 policy.WithOrigins(allowedOrigins)
