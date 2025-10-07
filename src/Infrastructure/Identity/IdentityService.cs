@@ -100,7 +100,8 @@ public class IdentityService : IIdentityService
         {
             Id = Guid.NewGuid(),
             Email = email,
-            FullName = fullName ?? email
+            FullName = fullName ?? email,
+            TokenCount = 10
         };
         var userAccount = new UserAccount
         {

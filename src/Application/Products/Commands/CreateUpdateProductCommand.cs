@@ -75,19 +75,25 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
 
     public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
     {
+        // 1. Kiểm tra category có tồn tại không
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == request.CategoryId, cancellationToken);
+
+        if (!categoryExists)
+            throw new ErrorCodeException(ErrorCodes.CATEGORY_NOT_FOUND);
+
         Product? product;
-        //ID != null => Update sản phẩm
         if (request.ProductId.HasValue)
         {
             // @formatter:off
             product = await _context.Products
                 .Include(p => p.Options)
-                    .ThenInclude(o => o.Values)
-                    .ThenInclude(v => v.Images)
-                .Include(p => p.Variants)
+                    .ThenInclude(o => o.Values.Where(v => !v.IsDeleted))
+                    .ThenInclude(v => v.Images.Where(i => !i.IsDeleted))
+                .Include(p => p.Variants.Where(v => !v.IsDeleted))
                     .ThenInclude(v => v.VariantValues)
                 .Include(p => p.ProductCategories)
-                .FirstOrDefaultAsync(p => p.Id == request.ProductId.Value, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == request.ProductId.Value && !p.IsDeleted, cancellationToken);
             // @formatter:on
             if (product == null)
                 throw new ErrorCodeException(ErrorCodes.PRODUCT_NOT_FOUND);
@@ -112,8 +118,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
 
             // Update options và values
             UpdateProductOptions(product, request.Options, cancellationToken);
-
-            // Update variants
+            //
+            // // Update variants
             UpdateProductVariants(product, request.Variants, cancellationToken);
         }
         else
@@ -129,92 +135,91 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 IsDeleted = false
             };
 
-            _context.Products.Add(product);
-        }
-
-        // Add Category
-        product.ProductCategories.Add(new ProductCategory
-        {
-            ProductId = product.Id,
-            CategoryId = request.CategoryId
-        });
-
-        // Xử lý option
-        foreach (var optionRequest in request.Options)
-        {
-            var option = new ProductOption
+            product.ProductCategories.Add(new ProductCategory
             {
-                Id = Guid.NewGuid(),
                 ProductId = product.Id,
-                Name = optionRequest.Name
-            };
+                CategoryId = request.CategoryId
+            });
 
-            foreach (var valueRequest in optionRequest.Values)
+            foreach (var optionRequest in request.Options)
             {
-                var optionValue = new ProductOptionValue
+                var option = new ProductOption
                 {
                     Id = Guid.NewGuid(),
-                    ProductOptionId = option.Id,
-                    Value = valueRequest.Value,
+                    ProductId = product.Id,
+                    Name = optionRequest.Name
+                };
+
+                foreach (var valueRequest in optionRequest.Values)
+                {
+                    var optionValue = new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        ProductOptionId = option.Id,
+                        Value = valueRequest.Value,
+                        IsDeleted = false
+                    };
+
+                    // Add images for option values
+                    for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
+                    {
+                        var image = new ProductOptionValueImage
+                        {
+                            Id = Guid.NewGuid(),
+                            ProductOptionValueId = optionValue.Id,
+                            ImageUrl = valueRequest.ImageUrl[i],
+                            Order = i,
+                            IsDeleted = false
+                        };
+                        optionValue.Images.Add(image);
+                    }
+
+                    option.Values.Add(optionValue);
+                }
+
+                product.Options.Add(option);
+            }
+
+
+            foreach (var variantRequest in request.Variants)
+            {
+                var variant = new ProductVariant
+                {
+                    Id = Guid.NewGuid(),
+                    ProductId = product.Id,
+                    Sku = variantRequest.Sku,
+                    UnitPrice = variantRequest.Price,
+                    Stock = variantRequest.Stock,
                     IsDeleted = false
                 };
 
-                // Add images for option values
-                for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
+
+                foreach (var optionValuePair in variantRequest.OptionValues)
                 {
-                    var image = new ProductOptionValueImage
+                    var optionName = optionValuePair.Key;
+                    var optionValueText = optionValuePair.Value;
+
+                    var optionValue = product.Options
+                        .Where(o => o.Name == optionName)
+                        .SelectMany(o => o.Values)
+                        .FirstOrDefault(v => v.Value == optionValueText);
+
+                    if (optionValue != null)
                     {
-                        Id = Guid.NewGuid(),
-                        ProductOptionValueId = optionValue.Id,
-                        ImageUrl = valueRequest.ImageUrl[i],
-                        Order = i,
-                        IsDeleted = false
-                    };
-                    optionValue.Images.Add(image);
+                        variant.VariantValues.Add(new ProductVariantValue
+                        {
+                            ProductVariantId = variant.Id,
+                            ProductOptionValueId = optionValue.Id
+                        });
+                    }
                 }
 
-                option.Values.Add(optionValue);
+                product.Variants.Add(variant);
             }
 
-            product.Options.Add(option);
+            _context.Products.Add(product);
         }
 
-        // Process variants
-        foreach (var variantRequest in request.Variants)
-        {
-            var variant = new ProductVariant
-            {
-                Id = Guid.NewGuid(),
-                ProductId = product.Id,
-                Sku = variantRequest.Sku,
-                UnitPrice = variantRequest.Price,
-                Stock = variantRequest.Stock,
-                IsDeleted = false
-            };
-
-            // Link variant with option values
-            foreach (var optionValuePair in variantRequest.OptionValues)
-            {
-                var optionName = optionValuePair.Key;
-                var optionValueText = optionValuePair.Value;
-
-                var optionValue = product.Options
-                    .Where(o => o.Name == optionName)
-                    .SelectMany(o => o.Values)
-                    .FirstOrDefault(v => v.Value == optionValueText);
-
-                if (optionValue != null)
-                {
-                    variant.VariantValues.Add(new ProductVariantValue
-                    {
-                        ProductVariantId = variant.Id,
-                        ProductOptionValueId = optionValue.Id
-                    });
-                }
-            }
-
-            product.Variants.Add(variant);
-        }
 
         await _context.SaveChangesAsync(cancellationToken);
         return product.Id;
@@ -227,7 +232,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
 
         // Xóa values không còn trong request
         var valuesToDelete = option.Values.Where(v => !requestValueIds.Contains(v.Id)).ToList();
-        _context.ProductOptionValues.RemoveRange(valuesToDelete);
+        valuesToDelete.ForEach(x => x.IsDeleted = true);
 
         foreach (var valueRequest in valueRequests)
         {
@@ -239,11 +244,12 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 {
                     existingValue.Value = valueRequest.Value;
 
-                    // Update images
-                    _context.ProductOptionValueImages.RemoveRange(existingValue.Images);
+                    existingValue.Images.ForEach(i => i.IsDeleted = true);
                     for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
-                    {
-                        existingValue.Images.Add(new ProductOptionValueImage
+                    {    
+                        //TODO: Tìm hiểu tại sao code cũ lỗi
+                        //Code cũ existingValue.Images.Add(new ProductOptionValueImage 
+                        _context.ProductOptionValueImages.Add(new ProductOptionValueImage
                         {
                             Id = Guid.NewGuid(),
                             ProductOptionValueId = existingValue.Id,
@@ -298,44 +304,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     option.Name = optionRequest.Name;
                     UpdateOptionValues(option, optionRequest.Values, cancellationToken);
                 }
-            }
-            else
-            {
-                // Create new option
-                option = new ProductOption
-                {
-                    Id = Guid.NewGuid(),
-                    ProductId = product.Id,
-                    Name = optionRequest.Name
-                };
-
-                foreach (var valueRequest in optionRequest.Values)
-                {
-                    var optionValue = new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductOptionId = option.Id,
-                        Value = valueRequest.Value,
-                        IsDeleted = false
-                    };
-
-                    // Add images
-                    for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
-                    {
-                        optionValue.Images.Add(new ProductOptionValueImage
-                        {
-                            Id = Guid.NewGuid(),
-                            ProductOptionValueId = optionValue.Id,
-                            ImageUrl = valueRequest.ImageUrl[i],
-                            Order = i,
-                            IsDeleted = false
-                        });
-                    }
-
-                    option.Values.Add(optionValue);
-                }
-
-                product.Options.Add(option);
             }
         }
     }
