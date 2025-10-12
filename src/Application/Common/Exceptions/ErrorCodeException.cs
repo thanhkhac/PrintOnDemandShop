@@ -8,7 +8,7 @@ public class ErrorCodeException : Exception
 {
     public IDictionary<string, string[]> Errors { get; set; } = new Dictionary<string, string[]>();
     public IDictionary<string, string[]> ValidationErrors { get; set; } = new Dictionary<string, string[]>();
-
+    public object? CustomData { get; set; }
 
     public ErrorCodeException(string errorCode)
     {
@@ -20,6 +20,14 @@ public class ErrorCodeException : Exception
     {
         Errors[errorCode] = new[] { message };
     }
+    
+    public ErrorCodeException(string errorCode, object? customData ,string message)
+        : base(message)
+    {
+        Errors[errorCode] = new[] { message };
+        CustomData = customData;
+    }
+    
     
     public ErrorCodeException(string[] errors)
     {
@@ -42,3 +50,4 @@ public class ErrorCodeException : Exception
             .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
     }
 }
+

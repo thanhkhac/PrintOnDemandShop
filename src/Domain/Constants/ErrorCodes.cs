@@ -77,6 +77,16 @@ public static class ErrorCodes
     
     public const string CART_ITEM_NOT_FOUND = nameof(CART_ITEM_NOT_FOUND);
     
+    public const string VOUCHER_NOT_FOUND =  nameof(VOUCHER_NOT_FOUND);
+    public const string VOUCHER_INVALID_DATE =  nameof(VOUCHER_INVALID_DATE);
+    
+    
+    /// <summary>
+    /// Cho API POST /api/Order
+    /// Data sẽ là list ids của các variant không tồn tại
+    /// Có có thể lấy các id đó để xử lý danh sách các sản phẩm trong order (nếu muốn)
+    /// </summary>
+    public const string ORDER_VARIANTS_NOT_FOUND = nameof(ORDER_VARIANTS_NOT_FOUND);
     
 
 }    

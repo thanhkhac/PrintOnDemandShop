@@ -134,7 +134,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 BasePrice = request.BasePrice,
                 IsDeleted = false
             };
-
+            
+            //Gán category cho nó
             product.ProductCategories.Add(new ProductCategory
             {
                 ProductId = product.Id,

@@ -82,7 +82,7 @@ public class ProductVariant : BaseEntity
     public Guid ProductId { get; set; }
     
     public Product? Product { get; set; }
-   
+    public string? ImageUrl { get; set; }
     // public List<ProductVariantImage> Images { get; set; } = new();
     public List<ProductVariantValue> VariantValues { get; set; } = new();
 
@@ -182,6 +182,8 @@ public class ProductDesign : BaseAuditableEntity
     public Guid ProductOptionValueId { get; set; }
     public Guid TemplateId { get; set; }
     //Các trường thông tin cho mockup
+    
+    
 }
 
 
@@ -241,8 +243,8 @@ public class Voucher : BaseAuditableEntity
 
     public string Code { get; set; } = string.Empty; 
     public string? Description { get; set; }
-    public long? DiscountAmount { get; set; }   
-    public long? DiscountPercent { get; set; }  
+    public string? DiscountType { get; set; }
+    public long? DiscountValue { get; set; }   
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
     public int UsageLimit { get; set; }        
@@ -259,6 +261,9 @@ public class ProductVoucher : BaseEntity
 
     public Product? Product { get; set; }
     public Voucher? Voucher { get; set; }
+    
+    // ReSharper disable once InconsistentNaming
+    public string? _TempFieldToDisableJunctionAble { get; set; }
 }
 
 

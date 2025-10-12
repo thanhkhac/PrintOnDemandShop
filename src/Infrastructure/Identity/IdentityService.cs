@@ -1,6 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Dynamic.Core;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using CleanArchitectureBase.Application.Common.Exceptions;

@@ -1,10 +1,5 @@
-﻿using System.Reflection;
-using CleanArchitectureBase.Application.Common.Exceptions;
-using CleanArchitectureBase.Application.Common.Interfaces;
+﻿using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Models;
-using CleanArchitectureBase.Domain.Constants;
-using CleanArchitectureBase.Domain.Entities;
-using System.Linq.Dynamic.Core;
 using CleanArchitectureBase.Application.Common.Security;
 
 namespace CleanArchitectureBase.Application.Users;
