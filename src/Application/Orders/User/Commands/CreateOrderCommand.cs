@@ -70,7 +70,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var order = new Order
         {
             Id = Guid.NewGuid(),
-            OrderDate = _dateTime.GetUtcNow(),
+            // OrderDate = _dateTime.GetUtcNow(),
             Status = orderStatus,
             RecipientName = request.RecipientName,
             RecipientPhone = request.RecipientPhone,

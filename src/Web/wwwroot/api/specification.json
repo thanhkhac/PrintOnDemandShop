@@ -670,6 +670,87 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "GetMyOrders",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfPaginatedListOfOrderDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/{orderId}": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "GetApiOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfOrderDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/Payment/WebHook/Sepay": {
@@ -1883,6 +1964,14 @@
             "items": {
               "$ref": "#/components/schemas/OrderItemResponseDto"
             }
+          },
+          "createdBy": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreatedByDto"
+              }
+            ]
           }
         }
       },
@@ -1915,7 +2004,7 @@
             "type": "string",
             "nullable": true
           },
-          "variantImageUrl": {
+          "imageUrl": {
             "type": "string",
             "nullable": true
           },
@@ -1951,6 +2040,21 @@
           "voucherDiscountPercent": {
             "type": "integer",
             "format": "int64",
+            "nullable": true
+          }
+        }
+      },
+      "CreatedByDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
             "nullable": true
           }
         }
@@ -2009,6 +2113,75 @@
           "quantity": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "ApiResponseOfPaginatedListOfOrderDetailResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaginatedListOfOrderDetailResponseDto"
+              }
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PaginatedListOfOrderDetailResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetailResponseDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
           }
         }
       },
@@ -2300,21 +2473,6 @@
                 "$ref": "#/components/schemas/CreatedByDto"
               }
             ]
-          }
-        }
-      },
-      "CreatedByDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
           }
         }
       },

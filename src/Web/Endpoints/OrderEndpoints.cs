@@ -16,6 +16,7 @@ public class OrderEndpoints : EndpointGroupBase
 
         group.MapPost(CreateOrder);
         group.MapGet(GetMyOrders);
+        group.MapGet("{orderId:guid}", GetOrderDetail);
     }
 
     public async Task<Ok<ApiResponse<OrderDetailResponseDto>>> CreateOrder(
@@ -30,6 +31,15 @@ public class OrderEndpoints : EndpointGroupBase
         [AsParameters] GetMyOrdersQuery query,
         ISender sender)
     {
+        var result = await sender.Send(query);
+        return result.ToOk();
+    }
+
+    public async Task<Ok<ApiResponse<OrderDetailResponseDto>>> GetOrderDetail(
+        Guid orderId,
+        ISender sender)
+    {
+        var query = new GetOrderDetailQuery { OrderId = orderId };
         var result = await sender.Send(query);
         return result.ToOk();
     }
