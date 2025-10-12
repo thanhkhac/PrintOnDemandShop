@@ -1,4 +1,6 @@
-﻿namespace CleanArchitectureBase.Application.Orders.Dtos;
+﻿using CleanArchitectureBase.Application.Common.Models;
+
+namespace CleanArchitectureBase.Application.Orders.Dtos;
 
 public class OrderDetailResponseDto
 {
@@ -17,8 +19,8 @@ public class OrderDetailResponseDto
     public long TotalAmount { get; set; }
 
     public List<OrderItemResponseDto> Items { get; set; } = new();
+    public CreatedByDto? CreatedBy { get; set; }
 }
-
 
 public class OrderItemResponseDto
 {
