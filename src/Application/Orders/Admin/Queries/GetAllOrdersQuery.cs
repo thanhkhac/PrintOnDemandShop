@@ -9,10 +9,11 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Orders.Admin.Queries;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Administrator)]
 public class GetAllOrdersQuery : PaginatedQuery, IRequest<PaginatedList<OrderDetailResponseDto>>
 {
     public OrderStatus? Status { get; set; }
+    public OrderPaymentStatus? PaymentStatus { get; set; }
     public string? CustomerName { get; set; }
     public string? CustomerEmail { get; set; }
 }
@@ -25,6 +26,11 @@ public class GetAllOrdersQueryValidator : PaginatedQueryValidator<GetAllOrdersQu
             .IsInEnum()
             .When(x => x.Status.HasValue)
             .WithMessage("Invalid order status");
+
+        RuleFor(x => x.PaymentStatus)
+            .IsInEnum()
+            .When(x => x.PaymentStatus.HasValue)
+            .WithMessage("Invalid payment status");
 
         RuleFor(x => x.CustomerName)
             .MaximumLength(100)
@@ -58,6 +64,11 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
             query = query.Where(x => x.Status == request.Status.ToString());
         }
 
+        if (request.PaymentStatus.HasValue)
+        {
+            query = query.Where(x => x.PaymentStatus == request.PaymentStatus.ToString());
+        }
+
         if (!string.IsNullOrEmpty(request.CustomerName))
         {
             query = query.Where(x => x.CreatedByUser!.FullName!.Contains(request.CustomerName));
@@ -76,6 +87,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
                 OrderId = order.Id,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
+                PaymentStatus = order.PaymentStatus,
                 RecipientName = order.RecipientName,
                 RecipientPhone = order.RecipientPhone,
                 RecipientAddress = order.RecipientAddress,
@@ -83,6 +95,8 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
                 SubTotal = order.SubTotal,
                 DiscountAmount = order.DiscountAmount,
                 TotalAmount = order.TotalAmount,
+                UserFeedback = order.UserFeedback,
+                Rating = order.Rating > 0 ? order.Rating : null,
                 CreatedBy = new CreatedByDto
                 {
                     UserId = order.CreatedBy,

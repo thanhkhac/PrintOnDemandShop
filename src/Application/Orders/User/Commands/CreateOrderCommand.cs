@@ -59,19 +59,32 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
     public async Task<OrderDetailResponseDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        string orderStatus = request.PaymentMethod switch
+        // Determine order status and payment status based on payment method
+        string orderStatus;
+        string paymentStatus;
+        
+        switch (request.PaymentMethod)
         {
-            "ONLINE_PAYMENT" => nameof(OrderStatus.AWAITING_PAYMENT),
-            "COD" => nameof(OrderStatus.PENDING),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            case "ONLINE_PAYMENT":
+                orderStatus = nameof(OrderStatus.PENDING);
+                paymentStatus = nameof(OrderPaymentStatus.AWAITING_PAYMENT);
+                break;
+            case "COD":
+                orderStatus = nameof(OrderStatus.PENDING);
+                paymentStatus = nameof(OrderPaymentStatus.COD);
+                break;
+            default:
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, request.PaymentMethod, 
+                    "Invalid payment method");
+        }
 
         //Tạo order mới
         var order = new Order
         {
             Id = Guid.NewGuid(),
-            // OrderDate = _dateTime.GetUtcNow(),
+            OrderDate = _dateTime.GetUtcNow(),
             Status = orderStatus,
+            PaymentStatus = paymentStatus,
             RecipientName = request.RecipientName,
             RecipientPhone = request.RecipientPhone,
             RecipientAddress = request.RecipientAddress,
@@ -333,6 +346,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             OrderId = order.Id,
             OrderDate = order.OrderDate,
             Status = order.Status,
+            PaymentStatus = order.PaymentStatus,
             RecipientName = order.RecipientName,
             RecipientPhone = order.RecipientPhone,
             RecipientAddress = order.RecipientAddress,
@@ -340,6 +354,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             SubTotal = order.SubTotal,
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
+            UserFeedback = order.UserFeedback,
+            Rating = order.Rating > 0 ? order.Rating : null,
             Items = order.Items.Select(i => new OrderItemResponseDto
             {
                 Id = i.Id,

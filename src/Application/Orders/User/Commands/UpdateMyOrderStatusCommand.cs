@@ -92,18 +92,17 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
 
     private async Task HandleCancelOrder(Order order, string? currentStatus, CancellationToken cancellationToken)
     {
-        // Chỉ cho phép hủy khi đơn hàng chưa được xử lý hoặc đang chờ thanh toán
+        // Chỉ cho phép hủy khi đơn hàng ở trạng thái PENDING
         var cancellableStatuses = new[] 
         { 
-            nameof(OrderStatus.PENDING), 
-            nameof(OrderStatus.AWAITING_PAYMENT) 
+            nameof(OrderStatus.PENDING)
         };
 
         if (!cancellableStatuses.Contains(currentStatus))
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
                 new { currentStatus, action = "CANCEL" }, 
-                "Cannot cancel order in current status");
+                "Cannot cancel order in current status. Only PENDING orders can be cancelled.");
         }
 
         // Hoàn lại stock khi user hủy đơn
@@ -114,7 +113,7 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
 
     private static void HandleConfirmReceived(Order order, string? currentStatus, string? feedback, int? rating)
     {
-        // Chỉ cho phép xác nhận nhận hàng khi đơn hàng đã được giao
+        // Chỉ cho phép xác nhận nhận hàng khi đơn hàng đã được ship
         if (currentStatus != nameof(OrderStatus.DELIVERED))
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 

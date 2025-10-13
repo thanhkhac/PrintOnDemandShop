@@ -7,7 +7,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Orders.Admin.Queries;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Administrator)]
 public class GetOrderDetailQuery : IRequest<OrderDetailResponseDto>
 {
     public Guid OrderId { get; set; }
@@ -49,6 +49,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             OrderId = order.Id,
             OrderDate = order.OrderDate,
             Status = order.Status,
+            PaymentStatus = order.PaymentStatus,
             RecipientName = order.RecipientName,
             RecipientPhone = order.RecipientPhone,
             RecipientAddress = order.RecipientAddress,
@@ -56,6 +57,8 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             SubTotal = order.SubTotal,
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
+            UserFeedback = order.UserFeedback,
+            Rating = order.Rating > 0 ? order.Rating : null,
             CreatedBy = order.CreatedByUser != null ? new CreatedByDto
             {
                 UserId = order.CreatedBy,

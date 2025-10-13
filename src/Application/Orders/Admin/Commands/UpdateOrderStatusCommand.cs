@@ -7,7 +7,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Orders.Admin.Commands;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = Roles.Administrator)]
 public class UpdateOrderStatusCommand : IRequest
 {
     public Guid OrderId { get; set; }
@@ -74,14 +74,12 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         var activeStatuses = new[] { 
             nameof(OrderStatus.PENDING), 
             nameof(OrderStatus.PROCESSING), 
-            nameof(OrderStatus.AWAITING_PAYMENT),
             nameof(OrderStatus.SHIPPED) 
         };
         
         var cancelledStatuses = new[] { 
             nameof(OrderStatus.CANCELLED), 
-            nameof(OrderStatus.REJECTED),
-            nameof(OrderStatus.REFUNDED) 
+            nameof(OrderStatus.REJECTED)
         };
 
         bool shouldRestoreStock = activeStatuses.Contains(oldStatus) && cancelledStatuses.Contains(newStatus);
@@ -128,9 +126,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         {
             [OrderStatus.CANCELLED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
             [OrderStatus.REJECTED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
-            [OrderStatus.REFUNDED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
-            [OrderStatus.REFUNDING] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED],
-            [OrderStatus.CONFIRM_RECEIVED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.AWAITING_PAYMENT]
+            [OrderStatus.CONFIRM_RECEIVED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]
         };
 
         if (invalidTransitions.ContainsKey(current) && invalidTransitions[current].Contains(target))
@@ -143,28 +139,25 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         if (current == OrderStatus.SHIPPED && target == OrderStatus.CANCELLED)
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
-                "Cannot cancel a shipped order. Use REFUNDING/REFUNDED instead.");
+                "Cannot cancel a shipped order. Use REJECTED if needed.");
         }
 
         // Prevent going back to earlier stages
         var statusOrder = new Dictionary<OrderStatus, int>
         {
-            [OrderStatus.AWAITING_PAYMENT] = 1,
-            [OrderStatus.PENDING] = 2,
-            [OrderStatus.REJECTED] = 2, // Same level as PENDING
-            [OrderStatus.PROCESSING] = 3,
-            [OrderStatus.SHIPPED] = 4,
-            [OrderStatus.DELIVERED] = 5,
-            [OrderStatus.CONFIRM_RECEIVED] = 6
+            [OrderStatus.PENDING] = 1,
+            [OrderStatus.REJECTED] = 1, // Same level as PENDING
+            [OrderStatus.PROCESSING] = 2,
+            [OrderStatus.SHIPPED] = 3,
+            [OrderStatus.DELIVERED] = 4,
+            [OrderStatus.CONFIRM_RECEIVED] = 5
         };
 
         if (statusOrder.ContainsKey(current) && statusOrder.ContainsKey(target))
         {
             if (statusOrder[target] < statusOrder[current] && 
                 target != OrderStatus.CANCELLED && 
-                target != OrderStatus.REJECTED &&
-                target != OrderStatus.REFUNDING && 
-                target != OrderStatus.REFUNDED)
+                target != OrderStatus.REJECTED)
             {
                 throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
                     "Cannot move order backwards in the process");
