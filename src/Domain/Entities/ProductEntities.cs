@@ -203,6 +203,9 @@ public class Order : BaseAuditableEntity
     public long SubTotal { get; set; }
     public long TotalAmount { get; set; }
     public long DiscountAmount { get; set; }
+    
+    public string? UserFeedBack { get; set; }
+    public int Rating { get; set; }
 }
 
 public class OrderItem : BaseEntity

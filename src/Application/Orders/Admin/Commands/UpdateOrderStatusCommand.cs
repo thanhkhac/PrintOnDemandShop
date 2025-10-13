@@ -46,6 +46,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
     public async Task Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
     {
         var order = await _context.Orders
+            .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == request.OrderId, cancellationToken);
 
         if (order == null)
@@ -53,12 +54,56 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND, request.OrderId, "Order not found");
         }
 
-        // Validate status transitions
-        ValidateStatusTransition(order.Status, request.Status.ToString());
+        var oldStatus = order.Status;
+        var newStatus = request.Status.ToString();
 
-        order.Status = request.Status.ToString();
+        // Validate status transitions
+        ValidateStatusTransition(oldStatus, newStatus);
+
+        // Xử lý logic hoàn lại stock khi hủy/từ chối order
+        await HandleStockRestoration(order, oldStatus, newStatus, cancellationToken);
+
+        order.Status = newStatus;
         
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task HandleStockRestoration(Order order, string? oldStatus, string newStatus, CancellationToken cancellationToken)
+    {
+        // Chỉ hoàn lại stock khi chuyển từ trạng thái active sang cancelled/rejected
+        var activeStatuses = new[] { 
+            nameof(OrderStatus.PENDING), 
+            nameof(OrderStatus.PROCESSING), 
+            nameof(OrderStatus.AWAITING_PAYMENT),
+            nameof(OrderStatus.SHIPPED) 
+        };
+        
+        var cancelledStatuses = new[] { 
+            nameof(OrderStatus.CANCELLED), 
+            nameof(OrderStatus.REFUNDED) 
+        };
+
+        bool shouldRestoreStock = activeStatuses.Contains(oldStatus) && cancelledStatuses.Contains(newStatus);
+
+        if (shouldRestoreStock)
+        {
+            // Lấy tất cả ProductVariant liên quan đến order items
+            var variantIds = order.Items.Select(x => x.ProductVariantId).ToList();
+            var variants = await _context.ProductVariants
+                .Where(x => variantIds.Contains(x.Id))
+                .ToListAsync(cancellationToken);
+
+            // Hoàn lại stock cho từng variant
+            foreach (var item in order.Items)
+            {
+                var variant = variants.FirstOrDefault(x => x.Id == item.ProductVariantId);
+                if (variant != null)
+                {
+                    variant.Stock += item.Quantity;
+                    _context.ProductVariants.Update(variant);
+                }
+            }
+        }
     }
 
     private static void ValidateStatusTransition(string? currentStatus, string newStatus)

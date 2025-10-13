@@ -81,7 +81,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             DiscountAmount = 0
         };
         
-        var (items, subTotal, discountAmount, totalAmount) = CreateProductItem(request.OrderItems, request.VoucherCodes, order.Id);
+        var (items, subTotal, discountAmount, totalAmount, variantsToUpdate) = CreateProductItem(request.OrderItems, request.VoucherCodes, order.Id);
         
         order.SubTotal = subTotal;
         order.DiscountAmount = discountAmount;
@@ -90,6 +90,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         
         if (request.IsCreated)
         {
+            // Trừ stock cho các ProductVariant
+            foreach (var variant in variantsToUpdate)
+            {
+                _context.ProductVariants.Update(variant);
+            }
+            
             _context.Orders.Add(order);
             _context.OrderItems.AddRange(items);
             await _context.SaveChangesAsync(cancellationToken);
@@ -99,7 +105,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     }
 
 
-    private (List<OrderItem>, long, long, long) CreateProductItem(List<CreateOrderItemRequestDto> orderItems, List<string> vouchers, Guid orderId)
+    private (List<OrderItem>, long, long, long, List<ProductVariant>) CreateProductItem(List<CreateOrderItemRequestDto> orderItems, List<string> vouchers, Guid orderId)
     {
         var items = new List<OrderItem>();
         long totalSubTotal = 0;
@@ -214,6 +220,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
         // === Áp dụng voucher và tính giá
         
+        // Track các variant cần update stock
+        var variantsToUpdate = new List<ProductVariant>();
         
         //Lọc các sản phẩm trong order item
         foreach (var item in orderItems)
@@ -228,6 +236,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var unitPrice = variant.UnitPrice;
             //Tổng tiền (chưa discount)
             var totalBeforeDiscount = quantity * unitPrice;
+
+            // Trừ stock cho variant
+            variant.Stock -= quantity;
+            variantsToUpdate.Add(variant);
 
             long finalUnitPrice = unitPrice;
             long discountPerUnit = 0;
@@ -311,7 +323,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             
         }
         
-        return (items, totalSubTotal, totalDiscountAmount, totalAmount);
+        return (items, totalSubTotal, totalDiscountAmount, totalAmount, variantsToUpdate);
     }
     
     private static OrderDetailResponseDto MapToDto(Order order)
