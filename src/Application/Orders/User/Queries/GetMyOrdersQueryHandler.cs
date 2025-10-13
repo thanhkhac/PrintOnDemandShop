@@ -34,11 +34,6 @@ public class GetMyOrdersQueryHandler : IRequestHandler<GetMyOrdersQuery, Paginat
 
         var orders = await query.OrderByDescending(o => o.CreatedAt)
             .Include(o => o.Items)
-            .ThenInclude(oi => oi.ProductVariant)
-            .Include(o => o.Items)
-            .ThenInclude(oi => oi.ProductDesign)
-            .Include(o => o.Items)
-            .ThenInclude(oi => oi.Voucher)
             .Select(o => new OrderDetailResponseDto
             {
                 OrderId = o.Id,

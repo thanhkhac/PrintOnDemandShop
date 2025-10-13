@@ -2,6 +2,7 @@
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Orders.Dtos;
+using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,9 +28,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             .FirstOrDefaultAsync(cancellationToken);
 
         if (order == null)
-        {
-            // throw new NotFoundException(nameof(Order), request.OrderId);
-        }
+            throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND);
 
         return new OrderDetailResponseDto
         {

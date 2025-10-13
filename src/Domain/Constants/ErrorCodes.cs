@@ -88,5 +88,5 @@ public static class ErrorCodes
     /// </summary>
     public const string ORDER_VARIANTS_NOT_FOUND = nameof(ORDER_VARIANTS_NOT_FOUND);
     
-
+    public const string ORDER_NOT_FOUND = nameof(ORDER_NOT_FOUND);    
 }    
