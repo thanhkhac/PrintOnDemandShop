@@ -67,7 +67,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             case "ONLINE_PAYMENT":
                 orderStatus = nameof(OrderStatus.PENDING);
-                paymentStatus = nameof(OrderPaymentStatus.AWAITING_PAYMENT);
+                paymentStatus = nameof(OrderPaymentStatus.AWAITING_ONLINE_PAYMENT);
                 break;
             case "COD":
                 orderStatus = nameof(OrderStatus.PENDING);

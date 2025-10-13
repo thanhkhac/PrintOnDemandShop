@@ -206,7 +206,7 @@ public class Order : BaseAuditableEntity
     public long DiscountAmount { get; set; }
     
     public string? UserFeedback { get; set; }
-    public int Rating { get; set; }
+    public int? Rating { get; set; }
     public bool IsUserReceived { get; set; }
 }
 

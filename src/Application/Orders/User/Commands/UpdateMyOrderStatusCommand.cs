@@ -108,7 +108,20 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
         // Hoàn lại stock khi user hủy đơn
         await RestoreStock(order, cancellationToken);
         
+        // Xử lý payment status nếu đã thanh toán
+        HandlePaymentRefunding(order);
+        
         order.Status = nameof(OrderStatus.CANCELLED);
+    }
+
+    private static void HandlePaymentRefunding(Order order)
+    {
+        // Nếu đơn hàng đã được thanh toán online, chuyển về REFUNDING
+        if (order.PaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID))
+        {
+            order.PaymentStatus = nameof(OrderPaymentStatus.REFUNDING);
+        }
+        // COD và AWAITING_ONLINE_PAYMENT không cần xử lý refund vì chưa thanh toán
     }
 
     private static void HandleConfirmReceived(Order order, string? currentStatus, string? feedback, int? rating)

@@ -60,15 +60,15 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         // Validate status transitions
         ValidateStatusTransition(oldStatus, newStatus);
 
-        // Xử lý logic hoàn lại stock khi hủy/từ chối order
-        await HandleStockRestoration(order, oldStatus, newStatus, cancellationToken);
+        // Xử lý logic hoàn lại stock và payment status khi hủy/từ chối order
+        await HandleStockAndPaymentRestoration(order, oldStatus, newStatus, cancellationToken);
 
         order.Status = newStatus;
         
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task HandleStockRestoration(Order order, string? oldStatus, string newStatus, CancellationToken cancellationToken)
+    private async Task HandleStockAndPaymentRestoration(Order order, string? oldStatus, string newStatus, CancellationToken cancellationToken)
     {
         // Chỉ hoàn lại stock khi chuyển từ trạng thái active sang cancelled/rejected
         var activeStatuses = new[] { 
@@ -86,13 +86,12 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 
         if (shouldRestoreStock)
         {
-            // Lấy tất cả ProductVariant liên quan đến order items
+            // Hoàn lại stock
             var variantIds = order.Items.Select(x => x.ProductVariantId).ToList();
             var variants = await _context.ProductVariants
                 .Where(x => variantIds.Contains(x.Id))
                 .ToListAsync(cancellationToken);
 
-            // Hoàn lại stock cho từng variant
             foreach (var item in order.Items)
             {
                 var variant = variants.FirstOrDefault(x => x.Id == item.ProductVariantId);
@@ -102,7 +101,21 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
                     _context.ProductVariants.Update(variant);
                 }
             }
+
+            // Xử lý payment status nếu đã thanh toán
+            HandlePaymentRefunding(order);
         }
+    }
+
+    private static void HandlePaymentRefunding(Order order)
+    {
+        // Nếu đơn hàng đã được thanh toán online, chuyển về REFUNDING
+        if (order.PaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID))
+        {
+            order.PaymentStatus = nameof(OrderPaymentStatus.REFUNDING);
+        }
+        // COD không cần xử lý refund vì chưa thanh toán
+        // AWAITING_ONLINE_PAYMENT cũng không cần vì chưa thanh toán
     }
 
     private static void ValidateStatusTransition(string? currentStatus, string newStatus)
