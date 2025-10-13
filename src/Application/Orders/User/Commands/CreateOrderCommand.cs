@@ -67,7 +67,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             case "ONLINE_PAYMENT":
                 orderStatus = nameof(OrderStatus.PENDING);
-                paymentStatus = nameof(OrderPaymentStatus.AWAITING_ONLINE_PAYMENT);
+                paymentStatus = nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING);
                 break;
             case "COD":
                 orderStatus = nameof(OrderStatus.PENDING);
@@ -89,7 +89,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             RecipientPhone = request.RecipientPhone,
             RecipientAddress = request.RecipientAddress,
             PaymentMethod = request.PaymentMethod,
-            // PaymentCode = PaymentConst.OrderCodePrefix + Guid.NewGuid().ToString("N")[..30],
+            PaymentCode = PaymentConst.OrderCodePrefix + Guid.NewGuid().ToString("N")[..30],
             SubTotal = 0,
             TotalAmount = 0,
             DiscountAmount = 0

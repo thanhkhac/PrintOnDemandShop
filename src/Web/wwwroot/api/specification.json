@@ -2502,9 +2502,9 @@
       },
       "OrderPaymentStatus": {
         "type": "integer",
-        "description": "0 = AWAITING_ONLINE_PAYMENT\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED",
+        "description": "0 = ONLINE_PAYMENT_AWAITING\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED",
         "x-enumNames": [
-          "AWAITING_ONLINE_PAYMENT",
+          "ONLINE_PAYMENT_AWAITING",
           "ONLINE_PAYMENT_PAID",
           "COD",
           "REFUNDING",

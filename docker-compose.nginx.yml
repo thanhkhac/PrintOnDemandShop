@@ -1,4 +1,5 @@
-﻿services:
+﻿#docker-compose.nginx.yml
+services:
   nginx:
     image: nginx:alpine
     ports:

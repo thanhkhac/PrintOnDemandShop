@@ -15,7 +15,7 @@ public enum OrderStatus
 
 public enum OrderPaymentStatus
 {
-    AWAITING_ONLINE_PAYMENT,
+    ONLINE_PAYMENT_AWAITING,
     ONLINE_PAYMENT_PAID,
     COD,
     REFUNDING,

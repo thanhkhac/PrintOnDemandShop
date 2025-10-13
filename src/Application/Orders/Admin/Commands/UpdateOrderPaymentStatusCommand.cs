@@ -69,9 +69,9 @@ public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrde
         // Define invalid payment status transitions
         var invalidTransitions = new Dictionary<OrderPaymentStatus, OrderPaymentStatus[]>
         {
-            [OrderPaymentStatus.ONLINE_PAYMENT_PAID] = [OrderPaymentStatus.AWAITING_ONLINE_PAYMENT],
-            [OrderPaymentStatus.REFUNDED] = [OrderPaymentStatus.AWAITING_ONLINE_PAYMENT, OrderPaymentStatus.ONLINE_PAYMENT_PAID, OrderPaymentStatus.COD],
-            [OrderPaymentStatus.COD] = [OrderPaymentStatus.AWAITING_ONLINE_PAYMENT, OrderPaymentStatus.ONLINE_PAYMENT_PAID]
+            [OrderPaymentStatus.ONLINE_PAYMENT_PAID] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING],
+            [OrderPaymentStatus.REFUNDED] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING, OrderPaymentStatus.ONLINE_PAYMENT_PAID, OrderPaymentStatus.COD],
+            [OrderPaymentStatus.COD] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING, OrderPaymentStatus.ONLINE_PAYMENT_PAID]
         };
 
         if (invalidTransitions.ContainsKey(current) && invalidTransitions[current].Contains(target))

@@ -201,13 +201,16 @@ public class Order : BaseAuditableEntity
     public string? RecipientAddress { get; set; }
     public string? PaymentMethod { get; set; }
     
+    // Tổng số tiền khi chưa tính giảm giá
     public long SubTotal { get; set; }
+    // Tổng số tiền sau khi đã giảm giá
     public long TotalAmount { get; set; }
+    // Tổng số tiền được giảm
     public long DiscountAmount { get; set; }
     
     public string? UserFeedback { get; set; }
     public int? Rating { get; set; }
-    // public string? PaymentCode { get; set; }
+    public string? PaymentCode { get; set; }
 }
 
 public class OrderItem : BaseEntity

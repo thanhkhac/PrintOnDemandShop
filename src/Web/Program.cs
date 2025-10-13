@@ -27,28 +27,28 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
 builder.Services.AddScoped<PaymentAuthEndpointFilter>();
 
-// builder.Services.AddHangfire(configuration => configuration
-//     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-//     .UseSimpleAssemblyNameTypeSerializer()
-//     .UseRecommendedSerializerSettings()
-//     .UseStorage(
-//         new MySqlStorage(
-//             builder.Configuration.GetConnectionString("DefaultConnection"),
-//             new MySqlStorageOptions
-//             {
-//                 TransactionIsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
-//                 QueuePollInterval = TimeSpan.FromSeconds(15),
-//                 JobExpirationCheckInterval = TimeSpan.FromHours(1),
-//                 CountersAggregateInterval = TimeSpan.FromMinutes(5),
-//                 PrepareSchemaIfNecessary = true,
-//                 DashboardJobListLimit = 50000,
-//                 TransactionTimeout = TimeSpan.FromMinutes(1),
-//                 TablesPrefix = "Hangfire_"
-//             }
-//         )
-//     ));
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseStorage(
+        new MySqlStorage(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            new MySqlStorageOptions
+            {
+                TransactionIsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
+                QueuePollInterval = TimeSpan.FromSeconds(15),
+                JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                PrepareSchemaIfNecessary = true,
+                DashboardJobListLimit = 50000,
+                TransactionTimeout = TimeSpan.FromMinutes(1),
+                TablesPrefix = "Hangfire_"
+            }
+        )
+    ));
 
-// builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer();
 
 
 var app = builder.Build();
@@ -76,7 +76,7 @@ app.UseHealthChecks("/health");
 
     app.UseStaticFiles();
 app.UseAuthentication();
-// app.UseHangfireDashboard("/hangfire");
+app.UseHangfireDashboard("/hangfire");
 
 app.UseSwaggerUi(settings =>
 {
