@@ -80,6 +80,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         
         var cancelledStatuses = new[] { 
             nameof(OrderStatus.CANCELLED), 
+            nameof(OrderStatus.REJECTED),
             nameof(OrderStatus.REFUNDED) 
         };
 
@@ -114,12 +115,22 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         var current = Enum.Parse<OrderStatus>(currentStatus);
         var target = Enum.Parse<OrderStatus>(newStatus);
 
+        // Admin không được phép thay đổi order đã DELIVERED hoặc CONFIRM_RECEIVED
+        if (current == OrderStatus.DELIVERED || current == OrderStatus.CONFIRM_RECEIVED)
+        {
+            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
+                new { currentStatus, newStatus }, 
+                "Cannot modify order status once it has been delivered or confirmed by user.");
+        }
+
         // Define invalid transitions
         var invalidTransitions = new Dictionary<OrderStatus, OrderStatus[]>
         {
-            [OrderStatus.CANCELLED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED],
-            [OrderStatus.DELIVERED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED],
-            [OrderStatus.REFUNDED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]
+            [OrderStatus.CANCELLED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
+            [OrderStatus.REJECTED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
+            [OrderStatus.REFUNDED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.CONFIRM_RECEIVED],
+            [OrderStatus.REFUNDING] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED],
+            [OrderStatus.CONFIRM_RECEIVED] = [OrderStatus.PENDING, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.AWAITING_PAYMENT]
         };
 
         if (invalidTransitions.ContainsKey(current) && invalidTransitions[current].Contains(target))
@@ -132,7 +143,32 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         if (current == OrderStatus.SHIPPED && target == OrderStatus.CANCELLED)
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
-                "Cannot cancel a shipped order");
+                "Cannot cancel a shipped order. Use REFUNDING/REFUNDED instead.");
+        }
+
+        // Prevent going back to earlier stages
+        var statusOrder = new Dictionary<OrderStatus, int>
+        {
+            [OrderStatus.AWAITING_PAYMENT] = 1,
+            [OrderStatus.PENDING] = 2,
+            [OrderStatus.REJECTED] = 2, // Same level as PENDING
+            [OrderStatus.PROCESSING] = 3,
+            [OrderStatus.SHIPPED] = 4,
+            [OrderStatus.DELIVERED] = 5,
+            [OrderStatus.CONFIRM_RECEIVED] = 6
+        };
+
+        if (statusOrder.ContainsKey(current) && statusOrder.ContainsKey(target))
+        {
+            if (statusOrder[target] < statusOrder[current] && 
+                target != OrderStatus.CANCELLED && 
+                target != OrderStatus.REJECTED &&
+                target != OrderStatus.REFUNDING && 
+                target != OrderStatus.REFUNDED)
+            {
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
+                    "Cannot move order backwards in the process");
+            }
         }
     }
 }
