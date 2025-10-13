@@ -915,7 +915,7 @@
         }
       }
     },
-    "/api/Order/admin/{orderId}/status": {
+    "/api/Order/admin/{orderId}/Status": {
       "put": {
         "tags": [
           "Order"
@@ -959,7 +959,7 @@
         }
       }
     },
-    "/api/Order/admin/{orderId}/payment-status": {
+    "/api/Order/admin/{orderId}/PaymentStatus": {
       "put": {
         "tags": [
           "Order"
@@ -2468,7 +2468,7 @@
       },
       "UserOrderAction": {
         "type": "integer",
-        "description": "",
+        "description": "0 = CANCEL\n1 = CONFIRM_RECEIVED",
         "x-enumNames": [
           "CANCEL",
           "CONFIRM_RECEIVED"
@@ -2480,7 +2480,7 @@
       },
       "OrderStatus": {
         "type": "integer",
-        "description": "",
+        "description": "0 = PENDING\n1 = REJECTED\n2 = PROCESSING\n3 = SHIPPED\n4 = DELIVERED\n5 = CONFIRM_RECEIVED\n6 = CANCELLED",
         "x-enumNames": [
           "PENDING",
           "REJECTED",
@@ -2502,7 +2502,7 @@
       },
       "OrderPaymentStatus": {
         "type": "integer",
-        "description": "",
+        "description": "0 = AWAITING_ONLINE_PAYMENT\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED",
         "x-enumNames": [
           "AWAITING_ONLINE_PAYMENT",
           "ONLINE_PAYMENT_PAID",

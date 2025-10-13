@@ -5,7 +5,6 @@ using CleanArchitectureBase.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSwag;
 using NSwag.Generation.Processors.Security;
-using Scalar.AspNetCore;
 
 namespace CleanArchitectureBase.Web;
 
@@ -45,6 +44,8 @@ public static class DependencyInjection
                 Description = "Type into the textbox: Bearer {your JWT token}.",
                 Scheme = "Api key"
             });
+            
+            configure.SchemaSettings.GenerateEnumMappingDescription = true;
 
             configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
         });

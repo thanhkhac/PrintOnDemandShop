@@ -29,8 +29,8 @@ public class OrderEndpoints : EndpointGroupBase
         // Admin endpoints
         group.MapGet("admin/all", GetAllOrders);
         group.MapGet("admin/{orderId:guid}", GetAdminOrderDetail);
-        group.MapPut("admin/{orderId:guid}/status", UpdateOrderStatus);
-        group.MapPut("admin/{orderId:guid}/payment-status", UpdateOrderPaymentStatus);
+        group.MapPut("admin/{orderId:guid}/Status", UpdateOrderStatus);
+        group.MapPut("admin/{orderId:guid}/PaymentStatus", UpdateOrderPaymentStatus);
     }
 
     public async Task<Ok<ApiResponse<OrderDetailResponseDto>>> CreateOrder(
