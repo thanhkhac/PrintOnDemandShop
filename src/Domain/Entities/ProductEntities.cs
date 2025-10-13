@@ -207,6 +207,7 @@ public class Order : BaseAuditableEntity
     
     public string? UserFeedback { get; set; }
     public int? Rating { get; set; }
+    // public string? PaymentCode { get; set; }
 }
 
 public class OrderItem : BaseEntity

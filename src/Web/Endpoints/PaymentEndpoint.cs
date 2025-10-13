@@ -22,7 +22,7 @@ public class PaymentEndpoints : EndpointGroupBase
     }
 
     public async Task<Ok<ApiResponse>> BuyPoint(
-        [FromBody] BuyPointCommand command,
+        [FromBody] PaymentCommand command,
         ISender sender,
         HttpContext httpContext)
     {

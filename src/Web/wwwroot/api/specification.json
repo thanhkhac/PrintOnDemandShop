@@ -1014,7 +1014,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BuyPointCommand"
+                "$ref": "#/components/schemas/PaymentCommand"
               }
             }
           },
@@ -2544,7 +2544,7 @@
           }
         }
       },
-      "BuyPointCommand": {
+      "PaymentCommand": {
         "type": "object",
         "additionalProperties": false,
         "properties": {

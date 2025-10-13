@@ -4,10 +4,11 @@ using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Utils;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
+using CleanArchitectureBase.Domain.Enums;
 
 namespace CleanArchitectureBase.Application.Payments.Commands;
 
-public class BuyPointCommand : IRequest
+public class PaymentCommand : IRequest
 {
     /// <summary>
     /// Transaction ID on SePay
@@ -73,7 +74,7 @@ public class BuyPointCommand : IRequest
 
 }
 
-public class BuyPointCommandValidator : AbstractValidator<BuyPointCommand>
+public class BuyPointCommandValidator : AbstractValidator<PaymentCommand>
 {
     public BuyPointCommandValidator()
     {
@@ -90,7 +91,7 @@ public class BuyPointCommandValidator : AbstractValidator<BuyPointCommand>
     }
 }
 
-public class BuyPointCommandHandler : IRequestHandler<BuyPointCommand>
+public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
 {
     public IApplicationDbContext _context;
     public BuyPointCommandHandler(IApplicationDbContext context)
@@ -99,8 +100,20 @@ public class BuyPointCommandHandler : IRequestHandler<BuyPointCommand>
     }
 
 
-    public async Task Handle(BuyPointCommand command, CancellationToken cancellationToken)
+    public async Task Handle(PaymentCommand command, CancellationToken cancellationToken)
     {
+        // if (command.Code!.StartsWith(PaymentConst.OrderCodePrefix))
+        // {
+        //     var order = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
+        //     if (order == null)
+        //         throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND);
+        //     if (order.PaymentStatus == nameof(OrderPaymentStatus.AWAITING_ONLINE_PAYMENT))
+        //     {
+        //         
+        //     }
+        // }
+        //
+        //
         // var user = await _context.DomainUsers.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
         // if (user == null)
         //     throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
@@ -111,10 +124,10 @@ public class BuyPointCommandHandler : IRequestHandler<BuyPointCommand>
         //
         //
         // var existedTransaction = await _context.Transactions.FirstOrDefaultAsync(x => x.PaymentId == paymentId, cancellationToken);
-        // if(existedTransaction != null)
+        // if (existedTransaction != null)
         //     throw new ErrorCodeException(ErrorCodes.PAYMENT_TRANSACTION_EXISTED);
         //
-        // if(command.TransactionDate != null)
+        // if (command.TransactionDate != null)
         // {
         //     string timeZoneId;
         //
@@ -147,7 +160,8 @@ public class BuyPointCommandHandler : IRequestHandler<BuyPointCommand>
         //     Created = DateTimeOffset.UtcNow,
         // };
         // _context.Transactions.Add(transaction);
-
-        await _context.SaveChangesAsync(cancellationToken);
+        //
+        // await _context.SaveChangesAsync(cancellationToken);
+        await Task.CompletedTask;
     }
 }

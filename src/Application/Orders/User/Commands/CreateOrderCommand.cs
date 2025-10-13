@@ -62,7 +62,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         // Determine order status and payment status based on payment method
         string orderStatus;
         string paymentStatus;
-        
+
         switch (request.PaymentMethod)
         {
             case "ONLINE_PAYMENT":
@@ -74,7 +74,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 paymentStatus = nameof(OrderPaymentStatus.COD);
                 break;
             default:
-                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, request.PaymentMethod, 
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, request.PaymentMethod,
                     "Invalid payment method");
         }
 
@@ -89,18 +89,19 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             RecipientPhone = request.RecipientPhone,
             RecipientAddress = request.RecipientAddress,
             PaymentMethod = request.PaymentMethod,
+            // PaymentCode = PaymentConst.OrderCodePrefix + Guid.NewGuid().ToString("N")[..30],
             SubTotal = 0,
             TotalAmount = 0,
             DiscountAmount = 0
         };
-        
+
         var (items, subTotal, discountAmount, totalAmount, variantsToUpdate) = CreateProductItem(request.OrderItems, request.VoucherCodes, order.Id);
-        
+
         order.SubTotal = subTotal;
         order.DiscountAmount = discountAmount;
         order.TotalAmount = totalAmount;
         order.Items = items;
-        
+
         if (request.IsCreated)
         {
             // Trừ stock cho các ProductVariant
@@ -108,23 +109,24 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 _context.ProductVariants.Update(variant);
             }
-            
+
             _context.Orders.Add(order);
             _context.OrderItems.AddRange(items);
             await _context.SaveChangesAsync(cancellationToken);
         }
-        
+
         return MapToDto(order);
     }
 
 
-    private (List<OrderItem>, long, long, long, List<ProductVariant>) CreateProductItem(List<CreateOrderItemRequestDto> orderItems, List<string> vouchers, Guid orderId)
+    private (List<OrderItem>, long, long, long, List<ProductVariant>) CreateProductItem(List<CreateOrderItemRequestDto> orderItems, List<string> vouchers,
+        Guid orderId)
     {
         var items = new List<OrderItem>();
         long totalSubTotal = 0;
         long totalDiscountAmount = 0;
         long totalAmount = 0;
-    
+
         var requestProductVariantIds = orderItems.Select(x => x.ProductVariantId!.Value).Distinct().ToList();
 
         var existingProductVariants = _context
@@ -232,10 +234,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             .ToDictionary(g => g.Key, g => g.Select(x => x.Voucher).ToList());
 
         // === Áp dụng voucher và tính giá
-        
+
         // Track các variant cần update stock
         var variantsToUpdate = new List<ProductVariant>();
-        
+
         //Lọc các sản phẩm trong order item
         foreach (var item in orderItems)
         {
@@ -306,7 +308,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 Id = Guid.NewGuid(),
                 OrderId = orderId,
                 ProductVariantId = item.ProductVariantId!.Value,
-                ProductDesignId = item.ProductVariantId,
+                ProductDesignId = item.DesignId,
                 VoucherId = appliedVoucher?.Id,
                 Name = variantDict[item.ProductVariantId.Value]!.Product?.Name ?? string.Empty,
                 VariantSku = variantDict[item.ProductVariantId.Value]!.Variant?.Sku ?? string.Empty,
@@ -322,7 +324,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             };
 
             items.Add(newOrderItem);
-            
+
             // Cộng dồn các thông số
             totalSubTotal += totalBeforeDiscount;
             totalDiscountAmount += totalDiscount;
@@ -333,12 +335,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 var voucher = validVouchers.First(v => v.Id == appliedVoucher.Id);
                 voucher.UsedCount += 1;
             }
-            
         }
-        
+
         return (items, totalSubTotal, totalDiscountAmount, totalAmount, variantsToUpdate);
     }
-    
+
     private static OrderDetailResponseDto MapToDto(Order order)
     {
         return new OrderDetailResponseDto
