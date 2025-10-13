@@ -12,7 +12,6 @@ public class UpdateOrderPaymentStatusCommand : IRequest
 {
     public Guid OrderId { get; set; }
     public OrderPaymentStatus PaymentStatus { get; set; }
-    public string? Notes { get; set; }
 }
 
 public class UpdateOrderPaymentStatusCommandValidator : AbstractValidator<UpdateOrderPaymentStatusCommand>
@@ -26,11 +25,6 @@ public class UpdateOrderPaymentStatusCommandValidator : AbstractValidator<Update
         RuleFor(x => x.PaymentStatus)
             .IsInEnum()
             .WithMessage("Invalid payment status");
-
-        RuleFor(x => x.Notes)
-            .MaximumLength(500)
-            .When(x => !string.IsNullOrEmpty(x.Notes))
-            .WithMessage("Notes cannot exceed 500 characters");
     }
 }
 

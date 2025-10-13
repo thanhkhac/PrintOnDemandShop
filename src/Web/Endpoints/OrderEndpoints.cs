@@ -8,6 +8,8 @@ using CleanArchitectureBase.Domain.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using static CleanArchitectureBase.Application.Orders.User.Commands.UpdateMyOrderStatusCommand;
+using UserGetOrderDetailQuery = CleanArchitectureBase.Application.Orders.User.Queries.GetOrderDetailQuery;
+using AdminGetOrderDetailQuery = CleanArchitectureBase.Application.Orders.Admin.Queries.GetOrderDetailQuery;
 
 namespace CleanArchitectureBase.Web.Endpoints;
 
@@ -28,6 +30,7 @@ public class OrderEndpoints : EndpointGroupBase
         group.MapGet("admin/all", GetAllOrders);
         group.MapGet("admin/{orderId:guid}", GetAdminOrderDetail);
         group.MapPut("admin/{orderId:guid}/status", UpdateOrderStatus);
+        group.MapPut("admin/{orderId:guid}/payment-status", UpdateOrderPaymentStatus);
     }
 
     public async Task<Ok<ApiResponse<OrderDetailResponseDto>>> CreateOrder(
@@ -50,7 +53,7 @@ public class OrderEndpoints : EndpointGroupBase
         Guid orderId,
         ISender sender)
     {
-        var query = new GetOrderDetailQuery { OrderId = orderId };
+        var query = new UserGetOrderDetailQuery { OrderId = orderId };
         var result = await sender.Send(query);
         return result.ToOk();
     }
@@ -76,7 +79,7 @@ public class OrderEndpoints : EndpointGroupBase
             _ => "Order updated successfully"
         };
         
-        return ApiResponse.Success(message).ToOk();
+        return (message).ToOk();
     }
 
     // Admin methods
@@ -92,7 +95,7 @@ public class OrderEndpoints : EndpointGroupBase
         Guid orderId,
         ISender sender)
     {
-        var query = new GetOrderDetailQuery { OrderId = orderId };
+        var query = new AdminGetOrderDetailQuery { OrderId = orderId };
         var result = await sender.Send(query);
         return result.ToOk();
     }
@@ -109,13 +112,33 @@ public class OrderEndpoints : EndpointGroupBase
             Notes = request.Notes
         };
         await sender.Send(command);
-        return ApiResponse.Success("Order status updated successfully").ToOk();
+        return ("Order status updated successfully").ToOk();
+    }
+
+    public async Task<Ok<ApiResponse<string>>> UpdateOrderPaymentStatus(
+        Guid orderId,
+        [FromBody] UpdateOrderPaymentStatusRequest request,
+        ISender sender)
+    {
+        var command = new UpdateOrderPaymentStatusCommand 
+        { 
+            OrderId = orderId,
+            PaymentStatus = request.PaymentStatus,
+        };
+        await sender.Send(command);
+        return ("Payment status updated successfully").ToOk();
     }
 }
 
 public class UpdateOrderStatusRequest
 {
     public OrderStatus Status { get; set; }
+    public string? Notes { get; set; }
+}
+
+public class UpdateOrderPaymentStatusRequest
+{
+    public OrderPaymentStatus PaymentStatus { get; set; }
     public string? Notes { get; set; }
 }
 

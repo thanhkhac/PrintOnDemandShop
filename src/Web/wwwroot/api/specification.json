@@ -678,17 +678,16 @@
         "operationId": "GetMyOrders",
         "parameters": [
           {
-            "name": "PageNumber",
+            "name": "Status",
             "in": "query",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string",
+              "nullable": true
             },
             "x-position": 1
           },
           {
-            "name": "PageSize",
+            "name": "PageNumber",
             "in": "query",
             "required": true,
             "schema": {
@@ -698,11 +697,12 @@
             "x-position": 2
           },
           {
-            "name": "Status",
+            "name": "PageSize",
             "in": "query",
+            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": true
+              "type": "integer",
+              "format": "int32"
             },
             "x-position": 3
           }
@@ -746,6 +746,256 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseOfOrderDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/{orderId}/status": {
+      "put": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "PutApiOrderStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMyOrderStatusRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/admin/all": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "GetApiOrderAdminAll",
+        "parameters": [
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/OrderStatus"
+                }
+              ]
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PaymentStatus",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/OrderPaymentStatus"
+                }
+              ]
+            },
+            "x-position": 2
+          },
+          {
+            "name": "CustomerName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "CustomerEmail",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 5
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 6
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfPaginatedListOfOrderDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/admin/{orderId}": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "GetApiOrderAdmin",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfOrderDetailResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/admin/{orderId}/status": {
+      "put": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "PutApiOrderAdminStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderStatusRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Order/admin/{orderId}/payment-status": {
+      "put": {
+        "tags": [
+          "Order"
+        ],
+        "operationId": "PutApiOrderAdminPaymentStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderPaymentStatusRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfString"
                 }
               }
             }
@@ -1931,6 +2181,10 @@
             "type": "string",
             "nullable": true
           },
+          "paymentStatus": {
+            "type": "string",
+            "nullable": true
+          },
           "recipientName": {
             "type": "string",
             "nullable": true
@@ -1972,6 +2226,15 @@
                 "$ref": "#/components/schemas/CreatedByDto"
               }
             ]
+          },
+          "userFeedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         }
       },
@@ -2182,6 +2445,102 @@
           },
           "hasNextPage": {
             "type": "boolean"
+          }
+        }
+      },
+      "UpdateMyOrderStatusRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/UserOrderAction"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "UserOrderAction": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "CANCEL",
+          "CONFIRM_RECEIVED"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "OrderStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "PENDING",
+          "REJECTED",
+          "PROCESSING",
+          "SHIPPED",
+          "DELIVERED",
+          "CONFIRM_RECEIVED",
+          "CANCELLED"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "OrderPaymentStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "AWAITING_ONLINE_PAYMENT",
+          "ONLINE_PAYMENT_PAID",
+          "COD",
+          "REFUNDING",
+          "REFUNDED"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "UpdateOrderStatusRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateOrderPaymentStatusRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "paymentStatus": {
+            "$ref": "#/components/schemas/OrderPaymentStatus"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
