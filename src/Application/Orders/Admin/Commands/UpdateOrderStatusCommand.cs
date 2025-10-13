@@ -3,6 +3,7 @@ using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Security;
 using CleanArchitectureBase.Domain.Entities;
 using CleanArchitectureBase.Domain.Enums;
+using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Orders.Admin.Commands;
 
@@ -49,7 +50,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 
         if (order == null)
         {
-            throw new NotFoundException(nameof(Order), request.OrderId);
+            throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND, request.OrderId, "Order not found");
         }
 
         // Validate status transitions
@@ -78,13 +79,15 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 
         if (invalidTransitions.ContainsKey(current) && invalidTransitions[current].Contains(target))
         {
-            throw new BadRequestException($"Cannot change order status from {current} to {target}");
+            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
+                $"Cannot change order status from {current} to {target}");
         }
 
         // Additional business rules
         if (current == OrderStatus.SHIPPED && target == OrderStatus.CANCELLED)
         {
-            throw new BadRequestException("Cannot cancel a shipped order");
+            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, new { currentStatus, newStatus }, 
+                "Cannot cancel a shipped order");
         }
     }
 }
