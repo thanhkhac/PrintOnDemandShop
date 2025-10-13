@@ -58,7 +58,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
             UserFeedback = order.UserFeedback,
-            Rating = order.Rating > 0 ? order.Rating : null,
+            Rating = order.Rating, // Giữ nguyên nullable, không cần check > 0
             CreatedBy = order.CreatedByUser != null ? new CreatedByDto
             {
                 UserId = order.CreatedBy,

@@ -355,7 +355,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
             UserFeedback = order.UserFeedback,
-            Rating = order.Rating > 0 ? order.Rating : null,
+            Rating = order.Rating, // Giữ nguyên nullable
             Items = order.Items.Select(i => new OrderItemResponseDto
             {
                 Id = i.Id,

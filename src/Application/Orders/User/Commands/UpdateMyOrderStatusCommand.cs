@@ -126,7 +126,7 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
 
     private static void HandleConfirmReceived(Order order, string? currentStatus, string? feedback, int? rating)
     {
-        // Chỉ cho phép xác nhận nhận hàng khi đơn hàng đã được ship
+        // Chỉ cho phép xác nhận nhận hàng khi đơn hàng đã được giao
         if (currentStatus != nameof(OrderStatus.DELIVERED))
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
@@ -134,18 +134,21 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
                 "Can only confirm receipt when order is delivered");
         }
 
-        // Thay đổi status thành CONFIRM_RECEIVED thay vì set IsUserReceived flag
+        // Thay đổi status thành CONFIRM_RECEIVED
         order.Status = nameof(OrderStatus.CONFIRM_RECEIVED);
         
+        // Lưu feedback nếu có
         if (!string.IsNullOrEmpty(feedback))
         {
             order.UserFeedback = feedback;
         }
         
-        if (rating.HasValue)
+        // Lưu rating nếu có và hợp lệ (1-5)
+        if (rating.HasValue && rating.Value >= 1 && rating.Value <= 5)
         {
             order.Rating = rating.Value;
         }
+        // Nếu không có rating hoặc rating không hợp lệ, giữ nguyên Rating = null
     }
 
     private async Task RestoreStock(Order order, CancellationToken cancellationToken)
