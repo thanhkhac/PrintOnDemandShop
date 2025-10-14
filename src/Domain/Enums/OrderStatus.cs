@@ -11,6 +11,7 @@ public enum OrderStatus
     DELIVERED, // Bên vận chuyển đã báo đã tới nơi
     CONFIRM_RECEIVED, // User xác nhận đã nhận hàng
     CANCELLED, // Đã hủy trước khi admin xác nhận
+    EXPIRED // Hết hạn thanh toán (tự động hủy sau 5 phút)
 }
 
 public enum OrderPaymentStatus
@@ -19,5 +20,6 @@ public enum OrderPaymentStatus
     ONLINE_PAYMENT_PAID,
     COD,
     REFUNDING,
-    REFUNDED
+    REFUNDED,
+    EXPIRED // Hết hạn thanh toán
 }

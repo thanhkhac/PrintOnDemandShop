@@ -161,6 +161,7 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IHangFireService, HangFireService>();
+        services.AddScoped<IStockRestorationService, StockRestorationService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddSingleton<IRedisService, RedisService>();
 

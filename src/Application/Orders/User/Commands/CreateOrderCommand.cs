@@ -9,7 +9,7 @@ using CleanArchitectureBase.Domain.Enums;
 
 namespace CleanArchitectureBase.Application.Orders.User.Commands;
 
-// [Authorize]
+[Authorize]
 public class CreateOrderCommand : IRequest<OrderDetailResponseDto>
 {
     public string? RecipientPhone { get; set; }
@@ -50,11 +50,16 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 {
     private readonly IApplicationDbContext _context;
     private readonly TimeProvider _dateTime;
+    private readonly IStockRestorationService _stockRestorationService;
 
-    public CreateOrderCommandHandler(IApplicationDbContext context, TimeProvider dateTime)
+    public CreateOrderCommandHandler(
+        IApplicationDbContext context, 
+        TimeProvider dateTime,
+        IStockRestorationService stockRestorationService)
     {
         _context = context;
         _dateTime = dateTime;
+        _stockRestorationService = stockRestorationService;
     }
 
     public async Task<OrderDetailResponseDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -113,6 +118,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             _context.Orders.Add(order);
             _context.OrderItems.AddRange(items);
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Schedule stock restoration job cho đơn hàng online payment
+            if (request.PaymentMethod == "ONLINE_PAYMENT")
+            {
+                await _stockRestorationService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 5);
+            }
         }
 
         return MapToDto(order);

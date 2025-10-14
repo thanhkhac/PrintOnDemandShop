@@ -31,10 +31,14 @@ public class UpdateOrderPaymentStatusCommandValidator : AbstractValidator<Update
 public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrderPaymentStatusCommand>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IStockRestorationService _stockRestorationService;
 
-    public UpdateOrderPaymentStatusCommandHandler(IApplicationDbContext context)
+    public UpdateOrderPaymentStatusCommandHandler(
+        IApplicationDbContext context,
+        IStockRestorationService stockRestorationService)
     {
         _context = context;
+        _stockRestorationService = stockRestorationService;
     }
 
     public async Task Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
@@ -54,6 +58,14 @@ public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrde
         ValidatePaymentStatusTransition(oldPaymentStatus, newPaymentStatus);
 
         order.PaymentStatus = newPaymentStatus;
+        
+        //TODO: Liệu có nên để admin có thể đặt Online payment thành paid không
+        // Hủy job hoàn stock nếu thanh toán thành công
+        if (oldPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING) && 
+            newPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID))
+        {
+            await _stockRestorationService.CancelStockRestorationAsync(order.Id);
+        }
         
         await _context.SaveChangesAsync(cancellationToken);
     }

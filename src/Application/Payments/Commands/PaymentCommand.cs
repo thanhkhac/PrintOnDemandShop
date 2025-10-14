@@ -102,6 +102,7 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
 
     public async Task Handle(PaymentCommand command, CancellationToken cancellationToken)
     {
+        var tranferAmount = (long)Math.Floor(command.TransferAmount);
         if (command.Code!.StartsWith(PaymentConst.OrderCodePrefix))
         {
             var order = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
@@ -126,7 +127,6 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
         if (user == null)
             throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
 
-        var tranferAmount = (long)Math.Floor(command.TransferAmount);
         var paymentId = command.Id!.ToString();
 
 

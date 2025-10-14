@@ -2480,7 +2480,7 @@
       },
       "OrderStatus": {
         "type": "integer",
-        "description": "0 = PENDING\n1 = REJECTED\n2 = PROCESSING\n3 = SHIPPED\n4 = DELIVERED\n5 = CONFIRM_RECEIVED\n6 = CANCELLED",
+        "description": "0 = PENDING\n1 = REJECTED\n2 = PROCESSING\n3 = SHIPPED\n4 = DELIVERED\n5 = CONFIRM_RECEIVED\n6 = CANCELLED\n7 = EXPIRED",
         "x-enumNames": [
           "PENDING",
           "REJECTED",
@@ -2488,7 +2488,8 @@
           "SHIPPED",
           "DELIVERED",
           "CONFIRM_RECEIVED",
-          "CANCELLED"
+          "CANCELLED",
+          "EXPIRED"
         ],
         "enum": [
           0,
@@ -2497,25 +2498,28 @@
           3,
           4,
           5,
-          6
+          6,
+          7
         ]
       },
       "OrderPaymentStatus": {
         "type": "integer",
-        "description": "0 = ONLINE_PAYMENT_AWAITING\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED",
+        "description": "0 = ONLINE_PAYMENT_AWAITING\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED\n5 = EXPIRED",
         "x-enumNames": [
           "ONLINE_PAYMENT_AWAITING",
           "ONLINE_PAYMENT_PAID",
           "COD",
           "REFUNDING",
-          "REFUNDED"
+          "REFUNDED",
+          "EXPIRED"
         ],
         "enum": [
           0,
           1,
           2,
           3,
-          4
+          4,
+          5
         ]
       },
       "UpdateOrderStatusRequest": {

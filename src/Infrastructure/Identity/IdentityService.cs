@@ -236,7 +236,7 @@ public class IdentityService : IIdentityService
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
+        var expires = DateTime.UtcNow.AddMonths(10);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
