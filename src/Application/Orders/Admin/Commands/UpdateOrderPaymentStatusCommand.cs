@@ -31,14 +31,14 @@ public class UpdateOrderPaymentStatusCommandValidator : AbstractValidator<Update
 public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrderPaymentStatusCommand>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IStockRestorationService _stockRestorationService;
+    private readonly IHangfireService _hangfireService;
 
     public UpdateOrderPaymentStatusCommandHandler(
         IApplicationDbContext context,
-        IStockRestorationService stockRestorationService)
+        IHangfireService hangfireService)
     {
         _context = context;
-        _stockRestorationService = stockRestorationService;
+        _hangfireService = hangfireService;
     }
 
     public async Task Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
@@ -64,7 +64,7 @@ public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrde
         if (oldPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING) && 
             newPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID))
         {
-            await _stockRestorationService.CancelStockRestorationAsync(order.Id);
+            await _hangfireService.CancelStockRestorationAsync(order.Id);
         }
         
         await _context.SaveChangesAsync(cancellationToken);

@@ -920,6 +920,7 @@
         "tags": [
           "Order"
         ],
+        "summary": "Update trạng thái của đơn hàng",
         "operationId": "PutApiOrderAdminStatus",
         "parameters": [
           {
@@ -964,6 +965,7 @@
         "tags": [
           "Order"
         ],
+        "summary": "Update thông tin thanh toán (Chuyển trạng thái refunding, refunding...)",
         "operationId": "PutApiOrderAdminPaymentStatus",
         "parameters": [
           {
@@ -2234,6 +2236,10 @@
           "rating": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "paymentCode": {
+            "type": "string",
             "nullable": true
           }
         }

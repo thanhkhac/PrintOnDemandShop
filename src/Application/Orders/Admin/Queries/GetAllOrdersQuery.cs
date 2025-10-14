@@ -111,6 +111,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
                     UserId = order.CreatedBy,
                     Name = order.CreatedByUser != null ? order.CreatedByUser.FullName : string.Empty
                 },
+                PaymentCode = order.PaymentCode,
                 Items = order.Items.Select(item => new OrderItemResponseDto
                 {
                     Id = item.Id,

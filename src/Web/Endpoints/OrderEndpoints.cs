@@ -99,7 +99,14 @@ public class OrderEndpoints : EndpointGroupBase
         var result = await sender.Send(query);
         return result.ToOk();
     }
-
+    
+    /// <summary>
+    /// Update trạng thái của đơn hàng
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="request"></param>
+    /// <param name="sender"></param>
+    /// <returns></returns>
     public async Task<Ok<ApiResponse<string>>> UpdateOrderStatus(
         Guid orderId,
         [FromBody] UpdateOrderStatusRequest request,
@@ -114,7 +121,14 @@ public class OrderEndpoints : EndpointGroupBase
         await sender.Send(command);
         return ("Order status updated successfully").ToOk();
     }
-
+    
+    /// <summary>
+    /// Update thông tin thanh toán (Chuyển trạng thái refunding, refunding...)
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="request"></param>
+    /// <param name="sender"></param>
+    /// <returns></returns>
     public async Task<Ok<ApiResponse<string>>> UpdateOrderPaymentStatus(
         Guid orderId,
         [FromBody] UpdateOrderPaymentStatusRequest request,

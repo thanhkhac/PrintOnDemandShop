@@ -42,29 +42,33 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             SubTotal = order.SubTotal,
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
+
             Items = order.Items.Select(oi => new OrderItemResponseDto
-            {
-                Id = oi.Id,
-                ProductVariantId = oi.ProductVariantId,
-                ProductDesignId = oi.ProductDesignId,
-                VoucherId = oi.VoucherId,
-                Name = oi.Name,
-                VariantSku = oi.VariantSku,
-                ImageUrl = oi.VariantImageUrl,
-                UnitPrice = oi.UnitPrice,
-                Quantity = oi.Quantity,
-                SubTotal = oi.SubTotal,
-                DiscountAmount = oi.DiscountAmount,
-                TotalAmount = oi.TotalAmount,
-                VoucherCode = oi.VoucherCode,
-                VoucherDiscountAmount = oi.VoucherDiscountAmount,
-                VoucherDiscountPercent = oi.VoucherDiscountPercent
-            }).ToList(),
+                {
+                    Id = oi.Id,
+                    ProductVariantId = oi.ProductVariantId,
+                    ProductDesignId = oi.ProductDesignId,
+                    VoucherId = oi.VoucherId,
+                    Name = oi.Name,
+                    VariantSku = oi.VariantSku,
+                    ImageUrl = oi.VariantImageUrl,
+                    UnitPrice = oi.UnitPrice,
+                    Quantity = oi.Quantity,
+                    SubTotal = oi.SubTotal,
+                    DiscountAmount = oi.DiscountAmount,
+                    TotalAmount = oi.TotalAmount,
+                    VoucherCode = oi.VoucherCode,
+                    VoucherDiscountAmount = oi.VoucherDiscountAmount,
+                    VoucherDiscountPercent = oi.VoucherDiscountPercent
+                })
+                .ToList(),
             CreatedBy = new CreatedByDto
             {
                 UserId = order.CreatedBy,
                 Name = order.CreatedByUser?.FullName ?? string.Empty
-            }
+            },
+            PaymentStatus = order.PaymentStatus,
+            PaymentCode = order.PaymentCode
         };
     }
 }

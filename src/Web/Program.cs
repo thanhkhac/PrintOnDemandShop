@@ -49,9 +49,12 @@ builder.Services.AddHangfire(configuration => configuration
         )
     ));
 
-builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer(options =>
+{
+    options.Queues = new[] { "stock" };
+});
 
-builder.Services.AddScoped<IStockRestorationService, StockRestorationService>();
+builder.Services.AddScoped<IHangfireService, HangfireService>();
 
 var app = builder.Build();
 

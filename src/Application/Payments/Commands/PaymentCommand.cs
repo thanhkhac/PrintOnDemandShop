@@ -110,7 +110,7 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
                 throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND);
             if (order.PaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING))
             {
-                if (order.TotalAmount > command.TransferAmount)
+                if (order.TotalAmount > tranferAmount)
                     throw new ErrorCodeException(ErrorCodes.ORDER_INSUFFICIENT_PAYMENT_AMOUNT);
                 order.PaymentStatus = nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID);
                 _context.Orders.Update(order);
@@ -134,19 +134,19 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
         if (existedTransaction != null)
             throw new ErrorCodeException(ErrorCodes.PAYMENT_TRANSACTION_EXISTED);
 
-        if (command.TransactionDate != null)
-        {
-            string timeZoneId;
-
-            if (OperatingSystem.IsWindows())
-                timeZoneId = "SE Asia Standard Time";
-            else
-                timeZoneId = "Asia/Ho_Chi_Minh";
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-            var utcTransactionDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(command.TransactionDate!.Value, DateTimeKind.Unspecified),
-                timeZone);
-        }
+        // if (command.TransactionDate != null)
+        // {
+        //     string timeZoneId;
+        //
+        //     if (OperatingSystem.IsWindows())
+        //         timeZoneId = "SE Asia Standard Time";
+        //     else
+        //         timeZoneId = "Asia/Ho_Chi_Minh";
+        //     var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        //     var utcTransactionDate = TimeZoneInfo.ConvertTimeToUtc(
+        //         DateTime.SpecifyKind(command.TransactionDate!.Value, DateTimeKind.Unspecified),
+        //         timeZone);
+        // }
 
 
         var transaction = new Transaction
@@ -166,6 +166,7 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
             Description = command.Description,
             Created = DateTimeOffset.UtcNow,
         };
+        
         _context.Transactions.Add(transaction);
 
         await _context.SaveChangesAsync(cancellationToken);

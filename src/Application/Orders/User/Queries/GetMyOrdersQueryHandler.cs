@@ -47,28 +47,33 @@ public class GetMyOrdersQueryHandler : IRequestHandler<GetMyOrdersQuery, Paginat
                 DiscountAmount = o.DiscountAmount,
                 TotalAmount = o.TotalAmount,
                 Items = o.Items.Select(oi => new OrderItemResponseDto
-                {
-                    Id = oi.Id,
-                    ProductVariantId = oi.ProductVariantId,
-                    ProductDesignId = oi.ProductDesignId,
-                    VoucherId = oi.VoucherId,
-                    Name = oi.Name,
-                    VariantSku = oi.VariantSku,
-                    ImageUrl = oi.VariantImageUrl,
-                    UnitPrice = oi.UnitPrice,
-                    Quantity = oi.Quantity,
-                    SubTotal = oi.SubTotal,
-                    DiscountAmount = oi.DiscountAmount,
-                    TotalAmount = oi.TotalAmount,
-                    VoucherCode = oi.VoucherCode,
-                    VoucherDiscountAmount = oi.VoucherDiscountAmount,
-                    VoucherDiscountPercent = oi.VoucherDiscountPercent
-                }).ToList(),
+                    {
+                        Id = oi.Id,
+                        ProductVariantId = oi.ProductVariantId,
+                        ProductDesignId = oi.ProductDesignId,
+                        VoucherId = oi.VoucherId,
+                        Name = oi.Name,
+                        VariantSku = oi.VariantSku,
+                        ImageUrl = oi.VariantImageUrl,
+                        UnitPrice = oi.UnitPrice,
+                        Quantity = oi.Quantity,
+                        SubTotal = oi.SubTotal,
+                        DiscountAmount = oi.DiscountAmount,
+                        TotalAmount = oi.TotalAmount,
+                        VoucherCode = oi.VoucherCode,
+                        VoucherDiscountAmount = oi.VoucherDiscountAmount,
+                        VoucherDiscountPercent = oi.VoucherDiscountPercent
+                    })
+                    .ToList(),
                 CreatedBy = new CreatedByDto
                 {
                     UserId = o.CreatedBy!,
-                    Name = o.CreatedByUser != null ? o.CreatedByUser.FullName : string.Empty
-                }
+                    Name = o.CreatedByUser != null
+                        ? o.CreatedByUser.FullName
+                        : string.Empty
+                },
+                PaymentStatus = o.PaymentStatus,
+                PaymentCode = o.PaymentCode
             })
             .PaginatedListAsync(request.PageNumber, request.PageSize);
 

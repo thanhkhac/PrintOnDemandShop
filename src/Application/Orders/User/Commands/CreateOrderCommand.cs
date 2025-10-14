@@ -50,16 +50,16 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 {
     private readonly IApplicationDbContext _context;
     private readonly TimeProvider _dateTime;
-    private readonly IStockRestorationService _stockRestorationService;
+    private readonly IHangfireService _hangfireService;
 
     public CreateOrderCommandHandler(
-        IApplicationDbContext context, 
+        IApplicationDbContext context,
         TimeProvider dateTime,
-        IStockRestorationService stockRestorationService)
+        IHangfireService hangfireService)
     {
         _context = context;
         _dateTime = dateTime;
-        _stockRestorationService = stockRestorationService;
+        _hangfireService = hangfireService;
     }
 
     public async Task<OrderDetailResponseDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -67,12 +67,13 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         // Determine order status and payment status based on payment method
         string orderStatus;
         string paymentStatus;
-
+        string? paymentCode = null;
         switch (request.PaymentMethod)
         {
             case "ONLINE_PAYMENT":
                 orderStatus = nameof(OrderStatus.PENDING);
                 paymentStatus = nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING);
+                paymentCode = PaymentConst.OrderCodePrefix + Guid.NewGuid().ToString("N")[..30];
                 break;
             case "COD":
                 orderStatus = nameof(OrderStatus.PENDING);
@@ -94,7 +95,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             RecipientPhone = request.RecipientPhone,
             RecipientAddress = request.RecipientAddress,
             PaymentMethod = request.PaymentMethod,
-            PaymentCode = PaymentConst.OrderCodePrefix + Guid.NewGuid().ToString("N")[..30],
+            PaymentCode = paymentCode,
             SubTotal = 0,
             TotalAmount = 0,
             DiscountAmount = 0
@@ -122,7 +123,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             // Schedule stock restoration job cho đơn hàng online payment
             if (request.PaymentMethod == "ONLINE_PAYMENT")
             {
-                await _stockRestorationService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 5);
+                await _hangfireService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 5);
             }
         }
 
@@ -368,6 +369,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             TotalAmount = order.TotalAmount,
             UserFeedback = order.UserFeedback,
             Rating = order.Rating, // Giữ nguyên nullable
+            PaymentCode = order.PaymentCode,
             Items = order.Items.Select(i => new OrderItemResponseDto
             {
                 Id = i.Id,

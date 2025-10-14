@@ -11,6 +11,7 @@ namespace CleanArchitectureBase.Application.Payments.Queries;
 public class GetQrCodeQuery : IRequest<string>
 {
     public int Amount { get; set; }
+    public string? PaymentCode { get; set; }
 }
 
 public class GetQrCodeQueryValidator : AbstractValidator<GetQrCodeQuery>
@@ -18,6 +19,8 @@ public class GetQrCodeQueryValidator : AbstractValidator<GetQrCodeQuery>
     public GetQrCodeQueryValidator()
     {
         RuleFor(x => x.Amount).GreaterThan(5000);
+
+        RuleFor(x => x.PaymentCode).NotEmpty();
     }
 }
 
@@ -42,7 +45,7 @@ public class GetQrCodeQueryHandler : IRequestHandler<GetQrCodeQuery, string>
         var bank = _settings.Bank;
         var account = _settings.Account;
 
-        // var url = $"https://qr.sepay.vn/img?acc={account}&bank={bank}&amount={request.Amount}&des={user.PaymentCode}";
+        var url = $"https://qr.sepay.vn/img?acc={account}&bank={bank}&amount={request.Amount}&des={request.PaymentCode}";
         return "";
     }
 }

@@ -3,6 +3,7 @@ using CleanArchitectureBase.Application.Common.FileServices;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Settings;
+using CleanArchitectureBase.Application.Orders.Interfaces;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Infrastructure.Data;
 using CleanArchitectureBase.Infrastructure.Data.Interceptors;
@@ -160,9 +161,10 @@ public static class DependencyInjection
 
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IHangFireService, HangFireService>();
+        // services.AddScoped<IHangFireService, HangFireService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IPlayGroundService, PlayGroundService>();
+        services.AddScoped<IOrderService, OrderService>();
         services.AddSingleton<IRedisService, RedisService>();
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>

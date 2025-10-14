@@ -6,8 +6,8 @@ public class OrderDetailResponseDto
 {
     public Guid OrderId { get; set; }
     public DateTimeOffset OrderDate { get; set; }
-    public string? Status { get; set; }
-    public string? PaymentStatus { get; set; }
+    public required string? Status { get; set; }
+    public required string? PaymentStatus { get; set; }
 
     public string? RecipientName { get; set; }
     public string? RecipientPhone { get; set; }
@@ -25,6 +25,8 @@ public class OrderDetailResponseDto
     // User feedback fields
     public string? UserFeedback { get; set; }
     public int? Rating { get; set; }
+    
+    public required string? PaymentCode { get; set; }
 }
 
 public class OrderItemResponseDto
