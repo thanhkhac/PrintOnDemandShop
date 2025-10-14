@@ -6,6 +6,7 @@ using CleanArchitectureBase.Infrastructure.Hangfire;
 using CleanArchitectureBase.Web;
 using CleanArchitectureBase.Web.Attributes;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.MySql;
 using Scalar.AspNetCore;
 
@@ -54,6 +55,8 @@ builder.Services.AddHangfireServer(options =>
     options.Queues = new[] { "stock" };
 });
 
+
+
 builder.Services.AddScoped<IHangfireService, HangfireService>();
 
 var app = builder.Build();
@@ -81,7 +84,11 @@ app.UseHealthChecks("/health");
 
     app.UseStaticFiles();
 app.UseAuthentication();
-app.UseHangfireDashboard("/hangfire");
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = []
+});
+
 app.UseSwaggerUi(settings =>
 {
     settings.Path = "/api";
