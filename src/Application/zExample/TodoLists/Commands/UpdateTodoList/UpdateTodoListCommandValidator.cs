@@ -1,6 +1,6 @@
 ﻿using CleanArchitectureBase.Application.Common.Interfaces;
 
-namespace CleanArchitectureBase.Application.TodoLists.Commands.UpdateTodoList;
+namespace CleanArchitectureBase.Application.zExample.TodoLists.Commands.UpdateTodoList;
 
 public class UpdateTodoListCommandValidator : AbstractValidator<UpdateTodoListCommand>
 {

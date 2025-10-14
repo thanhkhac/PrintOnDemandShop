@@ -1,4 +1,5 @@
-﻿using CleanArchitectureBase.Application.Common.Models;
+﻿using CleanArchitectureBase.Application.Accounts;
+using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Users;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

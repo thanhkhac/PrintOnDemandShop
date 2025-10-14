@@ -2,7 +2,7 @@
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Models;
 
-namespace CleanArchitectureBase.Application.TodoItems.Queries.GetTodoItemsWithPagination;
+namespace CleanArchitectureBase.Application.zExample.TodoItems.Queries.GetTodoItemsWithPagination;
 
 public record GetTodoItemsWithPaginationQuery : IRequest<PaginatedList<TodoItemBriefDto>>
 {

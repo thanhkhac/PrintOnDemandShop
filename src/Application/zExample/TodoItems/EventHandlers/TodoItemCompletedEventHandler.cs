@@ -1,7 +1,7 @@
 ﻿using CleanArchitectureBase.Domain.Events;
 using Microsoft.Extensions.Logging;
 
-namespace CleanArchitectureBase.Application.TodoItems.EventHandlers;
+namespace CleanArchitectureBase.Application.zExample.TodoItems.EventHandlers;
 
 public class TodoItemCompletedEventHandler : INotificationHandler<TodoItemCompletedEvent>
 {

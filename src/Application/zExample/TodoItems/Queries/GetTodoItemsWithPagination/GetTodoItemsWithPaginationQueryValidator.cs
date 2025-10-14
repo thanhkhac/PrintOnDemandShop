@@ -1,4 +1,4 @@
-﻿namespace CleanArchitectureBase.Application.TodoItems.Queries.GetTodoItemsWithPagination;
+﻿namespace CleanArchitectureBase.Application.zExample.TodoItems.Queries.GetTodoItemsWithPagination;
 
 public class GetTodoItemsWithPaginationQueryValidator : AbstractValidator<GetTodoItemsWithPaginationQuery>
 {

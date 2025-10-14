@@ -1,7 +1,6 @@
 ﻿using CleanArchitectureBase.Application.Common.Interfaces;
-using CleanArchitectureBase.Application.zExample.TodoLists.Commands.CreateTodoList;
 
-namespace CleanArchitectureBase.Application.TodoLists.Commands.CreateTodoList;
+namespace CleanArchitectureBase.Application.zExample.TodoLists.Commands.CreateTodoList;
 
 public class CreateTodoListCommandValidator : AbstractValidator<CreateTodoListCommand>
 {

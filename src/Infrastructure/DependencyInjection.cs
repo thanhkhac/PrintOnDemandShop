@@ -161,8 +161,8 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IHangFireService, HangFireService>();
-        services.AddScoped<IStockRestorationService, StockRestorationService>();
         services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<IPlayGroundService, PlayGroundService>();
         services.AddSingleton<IRedisService, RedisService>();
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>

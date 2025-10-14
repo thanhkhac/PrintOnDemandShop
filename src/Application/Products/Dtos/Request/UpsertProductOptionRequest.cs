@@ -1,4 +1,4 @@
-﻿namespace CleanArchitectureBase.Application.Products.Dtos.RequestDtos;
+﻿namespace CleanArchitectureBase.Application.Products.Dtos.Request;
 
 public class UpsertProductOptionRequest
 {

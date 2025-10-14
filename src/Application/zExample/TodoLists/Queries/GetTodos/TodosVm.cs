@@ -1,6 +1,6 @@
 ﻿using CleanArchitectureBase.Application.Common.Models;
 
-namespace CleanArchitectureBase.Application.TodoLists.Queries.GetTodos;
+namespace CleanArchitectureBase.Application.zExample.TodoLists.Queries.GetTodos;
 
 public class TodosVm
 {

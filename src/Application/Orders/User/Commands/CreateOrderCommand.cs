@@ -179,7 +179,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
         if (insufficientStockVariantIds.Any())
         {
-            var message = $"Không tìm thấy các biến thể sản phẩm với id {string.Join(", ", insufficientStockVariantIds)}";
+            var message = $"Các sản phẩm đã hết hàng:  id {string.Join(", ", insufficientStockVariantIds)}";
             throw new ErrorCodeException(ErrorCodes.INSUFFICIENT_STOCK, insufficientStockVariantIds, message);
         }
 

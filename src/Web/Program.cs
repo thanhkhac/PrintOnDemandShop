@@ -1,12 +1,13 @@
 using CleanArchitectureBase.Application;
+using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Infrastructure;
 using CleanArchitectureBase.Infrastructure.Data;
+using CleanArchitectureBase.Infrastructure.Hangfire;
 using CleanArchitectureBase.Web;
 using CleanArchitectureBase.Web.Attributes;
 using Hangfire;
 using Hangfire.MySql;
 using Scalar.AspNetCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,7 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
+builder.Services.AddScoped<IStockRestorationService, StockRestorationService>();
 
 var app = builder.Build();
 
@@ -77,7 +79,6 @@ app.UseHealthChecks("/health");
     app.UseStaticFiles();
 app.UseAuthentication();
 app.UseHangfireDashboard("/hangfire");
-
 app.UseSwaggerUi(settings =>
 {
     settings.Path = "/api";
@@ -109,6 +110,9 @@ app.MapEndpoints();
 app.Run();
 
 
-public partial class Program
+namespace CleanArchitectureBase.Web
 {
+    public partial class Program
+    {
+    }
 }

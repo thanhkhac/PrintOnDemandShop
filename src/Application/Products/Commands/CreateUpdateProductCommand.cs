@@ -2,7 +2,7 @@
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Security;
 using CleanArchitectureBase.Application.Products.Dtos;
-using CleanArchitectureBase.Application.Products.Dtos.RequestDtos;
+using CleanArchitectureBase.Application.Products.Dtos.Request;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
 

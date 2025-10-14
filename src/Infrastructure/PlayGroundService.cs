@@ -1,54 +1,17 @@
-using CleanArchitectureBase.Application.Common.Interfaces;
-using CleanArchitectureBase.Domain.Entities;
-using CleanArchitectureBase.Domain.Enums;
+﻿using CleanArchitectureBase.Application.Common.Interfaces;
 using Hangfire;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace CleanArchitectureBase.Infrastructure.Hangfire;
+namespace CleanArchitectureBase.Infrastructure;
 
-public class StockRestorationService : IStockRestorationService
+public class PlayGroundService : IPlayGroundService
 {
 
-    private readonly IBackgroundJobClient _backgroundJobClient;
-    private readonly IPlayGroundService _playGroundService;
-    public StockRestorationService(
-        IBackgroundJobClient backgroundJobClient, IPlayGroundService playGroundService)
+    public async Task PrintHelloAsync()
     {
-        _backgroundJobClient = backgroundJobClient;
-        _playGroundService = playGroundService;
+        Console.WriteLine("HELLLLLLLLLLLLLLLOOOOOOOOOOOOOOOOOO");
+        await Task.CompletedTask;  // Hoặc dùng: await Task.Delay(0);
     }
-
-    public Task<string> ScheduleStockRestorationAsync(Guid orderId, int delayMinutes = 5)
-    {
-        var jobId = _backgroundJobClient.Schedule(
-            () => _playGroundService.PrintHelloAsync(),
-            TimeSpan.FromMinutes(delayMinutes));
-
-        return Task.FromResult(jobId);
-    }
-
-    public async Task CancelStockRestorationAsync(Guid orderId)
-    {
-        // Lấy API giám sát của Hangfire từ storage hiện tại
-        var monitorApi = JobStorage.Current.GetMonitoringApi();
-
-        // Lấy tất cả job đang được lên lịch
-        var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue);
-
-        int deletedCount = 0;    
-        
-        foreach (var (jobId, jobDetails) in scheduledJobs)
-        {
-            var job = jobDetails.Job;
-            
-            bool match = job
-            
-        }
-
-        await Task.CompletedTask;
-    }
-
+    
     [AutomaticRetry(Attempts = 3)]
     public async Task RestoreStockForUnpaidOrderAsync(Guid orderId)
     {

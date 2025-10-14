@@ -3,7 +3,7 @@ using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Security;
 using CleanArchitectureBase.Domain.Constants;
 
-namespace CleanArchitectureBase.Application.Users;
+namespace CleanArchitectureBase.Application.Accounts;
 
 public class UserProfileDto
 {

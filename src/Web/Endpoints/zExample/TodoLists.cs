@@ -1,10 +1,9 @@
-﻿using CleanArchitectureBase.Application.TodoLists.Commands.CreateTodoList;
-using CleanArchitectureBase.Application.TodoLists.Commands.DeleteTodoList;
-using CleanArchitectureBase.Application.TodoLists.Commands.UpdateTodoList;
-using CleanArchitectureBase.Application.TodoLists.Queries.GetTodos;
-using CleanArchitectureBase.Application.zExample.TodoLists.Commands.CreateTodoList;
+﻿using CleanArchitectureBase.Application.zExample.TodoLists.Commands.CreateTodoList;
+using CleanArchitectureBase.Application.zExample.TodoLists.Commands.DeleteTodoList;
+using CleanArchitectureBase.Application.zExample.TodoLists.Commands.UpdateTodoList;
+using CleanArchitectureBase.Application.zExample.TodoLists.Queries.GetTodos;
 
-namespace CleanArchitectureBase.Web.Endpoints;
+namespace CleanArchitectureBase.Web.Endpoints.zExample;
 
 public class TodoLists : EndpointGroupBase
 {

@@ -1,11 +1,11 @@
 ﻿using CleanArchitectureBase.Application.Common.Models;
-using CleanArchitectureBase.Application.TodoItems.Commands.DeleteTodoItem;
-using CleanArchitectureBase.Application.TodoItems.Commands.UpdateTodoItem;
-using CleanArchitectureBase.Application.TodoItems.Commands.UpdateTodoItemDetail;
-using CleanArchitectureBase.Application.TodoItems.Queries.GetTodoItemsWithPagination;
 using CleanArchitectureBase.Application.zExample.TodoItems.Commands.CreateTodoItem;
+using CleanArchitectureBase.Application.zExample.TodoItems.Commands.DeleteTodoItem;
+using CleanArchitectureBase.Application.zExample.TodoItems.Commands.UpdateTodoItem;
+using CleanArchitectureBase.Application.zExample.TodoItems.Commands.UpdateTodoItemDetail;
+using CleanArchitectureBase.Application.zExample.TodoItems.Queries.GetTodoItemsWithPagination;
 
-namespace CleanArchitectureBase.Web.Endpoints;
+namespace CleanArchitectureBase.Web.Endpoints.zExample;
 
 public class TodoItems : EndpointGroupBase
 {

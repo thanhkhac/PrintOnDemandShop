@@ -29,7 +29,7 @@ public class HangFireService : IHangFireService
                 if (jobData?.Args != null && jobData.Args.Any(a => a != null && a.ToString()!.Contains(content)))
                 {
                     BackgroundJob.Delete(jobId);
-                }
+                }    
             }
             
             return Task.CompletedTask;

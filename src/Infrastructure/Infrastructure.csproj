@@ -30,9 +30,9 @@
     <PackageReference Include="UglyToad.PdfPig" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-  </ItemGroup>
+      <ItemGroup>
+        <ProjectReference Include="..\Application\Application.csproj" />
+      </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
