@@ -36,15 +36,15 @@ public class StockRestorationService : IStockRestorationService
         // Lấy tất cả job đang được lên lịch
         var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue);
 
-        int deletedCount = 0;    
-        
-        foreach (var (jobId, jobDetails) in scheduledJobs)
-        {
-            var job = jobDetails.Job;
-            
-            bool match = job
-            
-        }
+        // int deletedCount = 0;    
+        //
+        // foreach (var (jobId, jobDetails) in scheduledJobs)
+        // {
+        //     var job = jobDetails.Job;
+        //     
+        //     bool match = job
+        //     
+        // }
 
         await Task.CompletedTask;
     }

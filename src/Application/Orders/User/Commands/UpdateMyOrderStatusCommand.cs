@@ -127,7 +127,7 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
     private static void HandleConfirmReceived(Order order, string? currentStatus, string? feedback, int? rating)
     {
         // Chỉ cho phép xác nhận nhận hàng khi đơn hàng đã được giao
-        if (currentStatus != nameof(OrderStatus.DELIVERED))
+        if (currentStatus != nameof(OrderStatus.SHIPPED))
         {
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
                 new { currentStatus, action = "CONFIRM_RECEIVED" }, 
