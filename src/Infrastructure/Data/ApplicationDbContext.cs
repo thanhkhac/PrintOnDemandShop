@@ -39,6 +39,8 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
 
     public DbSet<Template> Templates => Set<Template>();
     public DbSet<ProductDesign> ProductDesigns => Set<ProductDesign>();
+    public DbSet<ProductDesignIcons> ProductDesignIcons => Set<ProductDesignIcons>();
+    public DbSet<ProductDesignTemplate> ProductDesignTemplates => Set<ProductDesignTemplate>();
 
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Order> Orders => Set<Order>();

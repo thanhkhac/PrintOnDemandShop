@@ -24,6 +24,8 @@ public interface
     DbSet<ProductOptionValueImage> ProductOptionValueImages { get; }
     DbSet<Template> Templates { get; }
     DbSet<ProductDesign> ProductDesigns { get; }
+    DbSet<ProductDesignIcons> ProductDesignIcons { get; }
+    DbSet<ProductDesignTemplate> ProductDesignTemplates { get; }
     
     DbSet<CartItem> CartItems { get; }
     DbSet<Order> Orders { get; }

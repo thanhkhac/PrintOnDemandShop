@@ -1069,6 +1069,218 @@
         }
       }
     },
+    "/api/ProductDesign/CreateOrUpdateProductDesign": {
+      "post": {
+        "tags": [
+          "ProductDesign"
+        ],
+        "summary": "Tạo hoặc update thiết kế sản phẩm của người dùng",
+        "operationId": "CreateOrUpdateProductDesign",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateProductDesignCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfGuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProductDesign/Search": {
+      "get": {
+        "tags": [
+          "ProductDesign"
+        ],
+        "summary": "Tìm kiếm thiết kế sản phẩm của người dùng hiện tại với phân trang",
+        "operationId": "SearchProductDesigns",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "SearchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "ProductId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "ProductOptionValueId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
+            },
+            "x-position": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfPaginatedListOfProductDesignDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProductDesign/{productDesignId}": {
+      "get": {
+        "tags": [
+          "ProductDesign"
+        ],
+        "summary": "Lấy chi tiết thiết kế sản phẩm",
+        "operationId": "GetProductDesignDetail",
+        "parameters": [
+          {
+            "name": "productDesignId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfProductDesignDetailDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProductDesign"
+        ],
+        "summary": "Xóa thiết kế sản phẩm của người dùng",
+        "operationId": "DeleteProductDesign",
+        "parameters": [
+          {
+            "name": "productDesignId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ProductDesign/Product/{productId}": {
+      "get": {
+        "tags": [
+          "ProductDesign"
+        ],
+        "summary": "Lấy tất cả thiết kế của người dùng cho một sản phẩm cụ thể",
+        "operationId": "GetProductDesignsByProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "productOptionValueId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfListOfProductDesignDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Product/CreateOrUpdateProduct": {
       "post": {
         "tags": [
@@ -2837,6 +3049,364 @@
           }
         }
       },
+      "CreateOrUpdateProductDesignCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productDesignId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "productId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productOptionValueId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateProductDesignIconRequest"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateProductDesignTemplateRequest"
+            }
+          }
+        }
+      },
+      "CreateProductDesignIconRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "imageUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateProductDesignTemplateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "designImageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfPaginatedListOfProductDesignDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaginatedListOfProductDesignDto"
+              }
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PaginatedListOfProductDesignDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDesignDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProductDesignDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productOptionValueId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "productOptionValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDesignIconDto"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDesignTemplateDto"
+            }
+          }
+        }
+      },
+      "ProductDesignIconDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productDesignId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ProductDesignTemplateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productDesignId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "templateId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "designImageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "printAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateImageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfProductDesignDetailDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProductDesignDetailDto"
+              }
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProductDesignDetailDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductDesignDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "product": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ProductDto"
+                  }
+                ]
+              },
+              "productOptionValueDetail": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ProductOptionValueDto"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ProductDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ProductOptionValueDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "optionName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfListOfProductDesignDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductDesignDto"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
       "CreateUpdateProductCommand": {
         "type": "object",
         "additionalProperties": false,
@@ -3169,12 +3739,12 @@
           "values": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ProductOptionValueDto"
+              "$ref": "#/components/schemas/ProductOptionValueDto2"
             }
           }
         }
       },
-      "ProductOptionValueDto": {
+      "ProductOptionValueDto2": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3410,7 +3980,7 @@
                 "nullable": true,
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/ProductDto"
+                    "$ref": "#/components/schemas/ProductDto2"
                   }
                 ]
               },
@@ -3418,7 +3988,7 @@
                 "nullable": true,
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/ProductOptionValueDto2"
+                    "$ref": "#/components/schemas/ProductOptionValueDto3"
                   }
                 ]
               }
@@ -3426,7 +3996,7 @@
           }
         ]
       },
-      "ProductDto": {
+      "ProductDto2": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3448,7 +4018,7 @@
           }
         }
       },
-      "ProductOptionValueDto2": {
+      "ProductOptionValueDto3": {
         "type": "object",
         "additionalProperties": false,
         "properties": {

@@ -212,6 +212,9 @@ public class ProductDesignTemplate : BaseEntity
 
     // Các trường riêng của bản thiết kế trên mockup này:
     public string? DesignImageUrl { get; set; } // ảnh thiết kế thực tế gắn lên template
+    /// <summary>
+    /// Snapshot của Template
+    /// </summary>
     public string? PrintAreaName { get; set; }
 }
 
