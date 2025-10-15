@@ -48,8 +48,8 @@ public class SearchProductDesignsQueryHandler : IRequestHandler<SearchProductDes
             .Include(pd => pd.Product)
             .Include(pd => pd.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
-            .Include(pd => pd.Icons)
-            .Where(pd => pd.CreatedBy == _user.UserId) // Only user's own designs
+            .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
+            .Where(pd => pd.CreatedBy == _user.UserId && !pd.IsDeleted) // Only user's own non-deleted designs
             .AsQueryable();
 
         // Apply filters

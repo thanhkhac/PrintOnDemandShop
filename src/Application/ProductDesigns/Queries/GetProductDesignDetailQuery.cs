@@ -39,8 +39,8 @@ public class GetProductDesignDetailQueryHandler : IRequestHandler<GetProductDesi
             .Include(pd => pd.Product)
             .Include(pd => pd.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
-            .Include(pd => pd.Icons)
-            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId && pd.CreatedBy == _user.UserId, cancellationToken);
+            .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
+            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId && pd.CreatedBy == _user.UserId && !pd.IsDeleted, cancellationToken);
 
         if (productDesign == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "ProductDesign not found or you don't have permission to view it");
@@ -48,7 +48,7 @@ public class GetProductDesignDetailQueryHandler : IRequestHandler<GetProductDesi
         // Get design templates
         var designTemplates = await _context.ProductDesignTemplates
             .Include(pdt => pdt.Template)
-            .Where(pdt => pdt.ProductDesignId == request.ProductDesignId)
+            .Where(pdt => pdt.ProductDesignId == request.ProductDesignId && !pdt.IsDeleted)
             .ToListAsync(cancellationToken);
 
         return new ProductDesignDetailDto

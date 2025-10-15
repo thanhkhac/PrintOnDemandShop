@@ -17,7 +17,7 @@ public class GetTemplatesByProductQueryValidator : AbstractValidator<GetTemplate
             .NotEmpty()
             .WithMessage("ProductId is required");
     }
-}
+}    
 
 public class GetTemplatesByProductQueryHandler : IRequestHandler<GetTemplatesByProductQuery, List<TemplateDto>>
 {
@@ -34,7 +34,7 @@ public class GetTemplatesByProductQueryHandler : IRequestHandler<GetTemplatesByP
             .Include(t => t.Product)
             .Include(t => t.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
-            .Where(t => t.ProductId == request.ProductId);
+            .Where(t => t.ProductId == request.ProductId && !t.IsDeleted);
 
         if (request.ProductOptionValueId.HasValue)
         {

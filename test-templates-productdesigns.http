@@ -1,0 +1,289 @@
+﻿### Test Templates and ProductDesigns APIs
+### Base URL and Authentication
+@baseUrl = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijc3Nzc3Nzc3LTc3NzctNzc3Ny03Nzc3LTc3Nzc3Nzc3Nzc3NyIsImV4cCI6MTc4Njc3MjQ3OSwiaXNzIjoiSXNzdWVyIiwiYXVkIjoiQXVkaWVuY2UifQ.qWgqh3DmCXB0e1jOYPL0bAG49FnFN2uzDa43HR4ui6c
+
+### Template APIs
+
+### 1. Create Template for Áo Thun Cotton Premium - Red - Size M
+POST {{baseUrl}}/api/Template/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "printAreaName": "Front Chest Area",
+    "imageUrl": "https://example.com/templates/cotton-tshirt-front-red.jpg"
+}
+
+### 2. Create Template for Áo Thun Cotton Premium - Blue - Size L
+POST {{baseUrl}}/api/Template/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "9ad42862-5ffe-4d10-aa4d-426d04b051f2",
+    "printAreaName": "Back Full Area",
+    "imageUrl": "https://example.com/templates/cotton-tshirt-back-blue.jpg"
+}
+
+### 3. Create Template for Basic Black T-Shirt - White - Size M
+POST {{baseUrl}}/api/Template/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "e09cd096-295e-40bc-9c14-07f98e114310",
+    "productOptionValueId": "5a674f6e-967e-400a-bef9-a39bf63e8f8c",
+    "printAreaName": "Center Logo Area",
+    "imageUrl": "https://example.com/templates/basic-tshirt-center-white.jpg"
+}
+
+### 4. Search Templates
+GET {{baseUrl}}/api/Template/Search?pageNumber=1&pageSize=10&searchTerm=Front
+Authorization: Bearer {{token}}
+
+### 5. Search Templates by Product
+GET {{baseUrl}}/api/Template/Search?productId=9a37d5d6-65f3-4a28-9512-da578a39b26c&pageNumber=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### 6. Get Templates by Product ID
+GET {{baseUrl}}/api/Template/Product/9a37d5d6-65f3-4a28-9512-da578a39b26c
+Authorization: Bearer {{token}}
+
+### 7. Get Template Detail (replace with actual template ID from create response)
+@templateId = replace-with-actual-template-id
+GET {{baseUrl}}/api/Template/{{templateId}}
+Authorization: Bearer {{token}}
+
+### 8. Update Template (replace with actual template ID)
+PUT {{baseUrl}}/api/Template/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "templateId": "{{templateId}}",
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "printAreaName": "Front Chest Area - Updated",
+    "imageUrl": "https://example.com/templates/cotton-tshirt-front-red-v2.jpg"
+}
+
+### ProductDesign APIs
+
+### 9. Create ProductDesign for Áo Thun Cotton Premium - Red Size M
+POST {{baseUrl}}/api/ProductDesigns/CreateOrUpdateProductDesign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "name": "Thiết kế áo Tết 2025 - Màu Đỏ",
+    "icons": [
+        {
+            "imageUrl": "https://example.com/designs/icons/dragon-icon.png"
+        },
+        {
+            "imageUrl": "https://example.com/designs/icons/flowers-icon.png"
+        }
+    ],
+    "templates": [
+        {
+            "templateId": "{{templateId}}",
+            "designImageUrl": "https://example.com/designs/my-custom-front-design.png"
+        }
+    ]
+}
+
+### 10. Create ProductDesign for Basic Black T-Shirt - White
+POST {{baseUrl}}/api/ProductDesigns/CreateOrUpdateProductDesign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "e09cd096-295e-40bc-9c14-07f98e114310",
+    "productOptionValueId": "5a674f6e-967e-400a-bef9-a39bf63e8f8c",
+    "name": "Minimal Logo Design",
+    "icons": [
+        {
+            "imageUrl": "https://example.com/designs/icons/minimal-logo.png"
+        }
+    ],
+    "templates": []
+}
+
+### 11. Search User's ProductDesigns
+GET {{baseUrl}}/api/ProductDesigns/Search?pageNumber=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### 12. Search ProductDesigns by Name
+GET {{baseUrl}}/api/ProductDesigns/Search?searchTerm=Tết&pageNumber=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### 13. Search ProductDesigns by Product
+GET {{baseUrl}}/api/ProductDesigns/Search?productId=9a37d5d6-65f3-4a28-9512-da578a39b26c
+Authorization: Bearer {{token}}
+
+### 14. Get ProductDesigns by Product ID
+GET {{baseUrl}}/api/ProductDesigns/Product/9a37d5d6-65f3-4a28-9512-da578a39b26c
+Authorization: Bearer {{token}}
+
+### 15. Get ProductDesigns by Product and Option Value
+GET {{baseUrl}}/api/ProductDesigns/Product/9a37d5d6-65f3-4a28-9512-da578a39b26c?productOptionValueId=22963201-a886-4128-b435-2409221c6a3b
+Authorization: Bearer {{token}}
+
+### 16. Get ProductDesign Detail (replace with actual design ID from create response)
+@designId = replace-with-actual-design-id
+GET {{baseUrl}}/api/ProductDesigns/{{designId}}
+Authorization: Bearer {{token}}
+
+### 17. Update ProductDesign (add more icons and templates)
+PUT {{baseUrl}}/api/ProductDesigns/CreateOrUpdateProductDesign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productDesignId": "{{designId}}",
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "name": "Thiết kế áo Tết 2025 - Màu Đỏ - Updated",
+    "icons": [
+        {
+            "imageUrl": "https://example.com/designs/icons/dragon-icon-v2.png"
+        },
+        {
+            "imageUrl": "https://example.com/designs/icons/flowers-icon.png"
+        },
+        {
+            "imageUrl": "https://example.com/designs/icons/lucky-coin.png"
+        }
+    ],
+    "templates": [
+        {
+            "templateId": "{{templateId}}",
+            "designImageUrl": "https://example.com/designs/my-custom-front-design-v2.png"
+        }
+    ]
+}
+
+### Error Test Cases
+
+### 18. Create Template with Invalid Product ID
+POST {{baseUrl}}/api/Templates/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "00000000-0000-0000-0000-000000000000",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "printAreaName": "Test Area",
+    "imageUrl": "https://example.com/test.jpg"
+}
+
+### 19. Create Template with Mismatched ProductOptionValue
+POST {{baseUrl}}/api/Templates/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "5a674f6e-967e-400a-bef9-a39bf63e8f8c",
+    "printAreaName": "Test Area",
+    "imageUrl": "https://example.com/test.jpg"
+}
+
+### 20. Create ProductDesign with Invalid Template ID
+POST {{baseUrl}}/api/ProductDesigns/CreateOrUpdateProductDesign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "name": "Test Design",
+    "icons": [],
+    "templates": [
+        {
+            "templateId": "00000000-0000-0000-0000-000000000000",
+            "designImageUrl": "https://example.com/test-design.png"
+        }
+    ]
+}
+
+### Validation Test Cases
+
+### 21. Create Template with Empty PrintAreaName
+POST {{baseUrl}}/api/Templates/CreateOrUpdateTemplate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "printAreaName": "",
+    "imageUrl": "https://example.com/test.jpg"
+}
+
+### 22. Create ProductDesign with Empty Name
+POST {{baseUrl}}/api/ProductDesigns/CreateOrUpdateProductDesign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productId": "9a37d5d6-65f3-4a28-9512-da578a39b26c",
+    "productOptionValueId": "22963201-a886-4128-b435-2409221c6a3b",
+    "name": "",
+    "icons": [],
+    "templates": []
+}
+
+### Delete Test Cases
+
+### 23. Delete Template (replace with actual template ID)
+DELETE {{baseUrl}}/api/Templates/{{templateId}}
+Authorization: Bearer {{token}}
+
+### 24. Delete ProductDesign (replace with actual design ID)
+DELETE {{baseUrl}}/api/ProductDesigns/{{designId}}
+Authorization: Bearer {{token}}
+
+### Pagination Test Cases
+
+### 25. Test Template Pagination
+GET {{baseUrl}}/api/Templates/Search?pageNumber=1&pageSize=2
+Authorization: Bearer {{token}}
+
+### 26. Test ProductDesign Pagination
+GET {{baseUrl}}/api/ProductDesigns/Search?pageNumber=1&pageSize=2
+Authorization: Bearer {{token}}
+
+### 27. Test Large Page Size (should be limited to 100)
+GET {{baseUrl}}/api/Templates/Search?pageNumber=1&pageSize=150
+Authorization: Bearer {{token}}
+
+### Database Lookup Helpers
+
+### 28. Get All Products (to find Product IDs)
+GET {{baseUrl}}/api/Products/Search
+Authorization: Bearer {{token}}
+
+### 29. Get Product Detail to see Options and Values
+GET {{baseUrl}}/api/Products/9a37d5d6-65f3-4a28-9512-da578a39b26c
+Authorization: Bearer {{token}}
+
+### 30. Get Product Detail for Basic Black T-Shirt
+GET {{baseUrl}}/api/Products/e09cd096-295e-40bc-9c14-07f98e114310
+Authorization: Bearer {{token}}
+
+### Notes:
+# 1. Replace {{templateId}} and {{designId}} with actual IDs returned from create operations
+# 2. The ProductOptionValue IDs used are:
+#    - 22963201-a886-4128-b435-2409221c6a3b = Áo Cotton Red Color
+#    - 9ad42862-5ffe-4d10-aa4d-426d04b051f2 = Áo Cotton Blue Color
+#    - 5a674f6e-967e-400a-bef9-a39bf63e8f8c = Basic T-Shirt White Color
+# 3. All APIs require authentication with Bearer token
+# 4. Templates can only be created/updated/deleted by Admin/Moderator roles
+# 5. ProductDesigns can be managed by any authenticated user (own designs only)

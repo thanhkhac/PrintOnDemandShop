@@ -35,7 +35,7 @@ public class GetTemplateDetailQueryHandler : IRequestHandler<GetTemplateDetailQu
             .Include(t => t.Product)
             .Include(t => t.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
-            .FirstOrDefaultAsync(t => t.Id == request.TemplateId, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == request.TemplateId && !t.IsDeleted, cancellationToken);
 
         if (template == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "Template not found");

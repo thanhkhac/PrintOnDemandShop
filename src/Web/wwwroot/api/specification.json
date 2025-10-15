@@ -26,6 +26,27 @@
         }
       }
     },
+    "/api/AiToken/DecreaseUserToken": {
+      "post": {
+        "tags": [
+          "AiToken"
+        ],
+        "summary": "Giảm token của người dùng hiện tại",
+        "operationId": "DecreaseUserToken",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfInteger"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Authentication/Register": {
       "post": {
         "tags": [
@@ -1983,6 +2004,37 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "ApiResponseOfInteger": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "success": {
+            "type": "boolean"
           }
         }
       },

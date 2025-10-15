@@ -36,32 +36,30 @@ public class DeleteProductDesignCommandHandler : IRequestHandler<DeleteProductDe
     {
         var productDesign = await _context.ProductDesigns
             .Include(pd => pd.Icons)
-            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId && pd.CreatedBy == _user.UserId, cancellationToken);
+            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId && pd.CreatedBy == _user.UserId && !pd.IsDeleted, cancellationToken);
 
         if (productDesign == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "ProductDesign not found or you don't have permission to delete it");
 
-        // Check if design is being used in any cart items or orders
-        var isDesignInUse = await _context.CartItems
-            .AnyAsync(ci => ci.ProductDesignId == request.ProductDesignId, cancellationToken);
-
-        if (!isDesignInUse)
-        {
-            isDesignInUse = await _context.OrderItems
-                .AnyAsync(oi => oi.ProductDesignId == request.ProductDesignId, cancellationToken);
-        }
-
-        if (isDesignInUse)
-            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "Cannot delete design as it is being used in cart or orders");
-
-        // Remove related entities
+        // Soft delete related entities
         var designTemplates = await _context.ProductDesignTemplates
-            .Where(pdt => pdt.ProductDesignId == request.ProductDesignId)
+            .Where(pdt => pdt.ProductDesignId == request.ProductDesignId && !pdt.IsDeleted)
             .ToListAsync(cancellationToken);
 
-        _context.ProductDesignTemplates.RemoveRange(designTemplates);
-        _context.ProductDesignIcons.RemoveRange(productDesign.Icons);
-        _context.ProductDesigns.Remove(productDesign);
+        // Soft delete ProductDesign
+        productDesign.IsDeleted = true;
+
+        // Soft delete all related icons
+        foreach (var icon in productDesign.Icons.Where(i => !i.IsDeleted))
+        {
+            icon.IsDeleted = true;
+        }
+
+        // Soft delete all related templates
+        foreach (var template in designTemplates)
+        {
+            template.IsDeleted = true;
+        }
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -189,7 +189,8 @@ public class ProductDesign : BaseAuditableEntity
     
     public string? Name { get; set; } // ví dụ "Thiết kế áo Tết 2025"
     
-    public List<ProductDesignIcons> Icons { get; set; } = new(); 
+    public List<ProductDesignIcons> Icons { get; set; } = new();
+    public bool IsDeleted { get; set; }
 }    
 
 public class ProductDesignIcons : BaseEntity
@@ -200,6 +201,7 @@ public class ProductDesignIcons : BaseEntity
     public ProductDesign? ProductDesign { get; set; }
     
     public string? ImageUrl { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 public class ProductDesignTemplate : BaseEntity
@@ -216,6 +218,7 @@ public class ProductDesignTemplate : BaseEntity
     /// Snapshot của Template
     /// </summary>
     public string? PrintAreaName { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 
@@ -307,7 +310,3 @@ public class ProductVoucher : BaseEntity
     // ReSharper disable once InconsistentNaming
     public string? _TempFieldToDisableJunctionAble { get; set; }
 }
-
-
-
-

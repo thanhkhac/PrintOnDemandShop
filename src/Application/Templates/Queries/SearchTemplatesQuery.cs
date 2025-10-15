@@ -1,4 +1,5 @@
-﻿using CleanArchitectureBase.Application.Common.Interfaces;
+﻿using System.ComponentModel;
+using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Templates.Dtos;
@@ -7,7 +8,9 @@ namespace CleanArchitectureBase.Application.Templates.Queries;
 
 public class SearchTemplatesQuery : IRequest<PaginatedList<TemplateDto>>
 {
+    [DefaultValue(1)] 
     public int PageNumber { get; set; } = 1;
+    [DefaultValue(10)] 
     public int PageSize { get; set; } = 10;
     public string? SearchTerm { get; set; }
     public Guid? ProductId { get; set; }
@@ -44,6 +47,7 @@ public class SearchTemplatesQueryHandler : IRequestHandler<SearchTemplatesQuery,
             .Include(t => t.Product)
             .Include(t => t.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
+            .Where(t => !t.IsDeleted)
             .AsQueryable();
 
         // Apply filters

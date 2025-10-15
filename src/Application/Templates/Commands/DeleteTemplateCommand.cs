@@ -33,13 +33,13 @@ public class DeleteTemplateCommandHandler : IRequestHandler<DeleteTemplateComman
     public async Task<bool> Handle(DeleteTemplateCommand request, CancellationToken cancellationToken)
     {
         var template = await _context.Templates
-            .FirstOrDefaultAsync(t => t.Id == request.TemplateId, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == request.TemplateId && !t.IsDeleted, cancellationToken);
 
         if (template == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "Template not found");
-        
+
+        // Soft delete template
         template.IsDeleted = true;
-        _context.Templates.Update(template);
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;

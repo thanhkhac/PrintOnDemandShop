@@ -38,8 +38,8 @@ public class GetProductDesignsByProductQueryHandler : IRequestHandler<GetProduct
             .Include(pd => pd.Product)
             .Include(pd => pd.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
-            .Include(pd => pd.Icons)
-            .Where(pd => pd.ProductId == request.ProductId && pd.CreatedBy == _user.UserId);
+            .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
+            .Where(pd => pd.ProductId == request.ProductId && pd.CreatedBy == _user.UserId && !pd.IsDeleted);
 
         if (request.ProductOptionValueId.HasValue)
         {
