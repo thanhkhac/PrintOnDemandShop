@@ -168,8 +168,11 @@ public class Template : BaseAuditableEntity
     public Product? Product { get; set; }
     public ProductOptionValue? ProductOptionValue { get; set; }
 
-    public string? PrintArea { get; set; }
+    public string? PrintAreaName { get; set; }
     //Các trường thông tin cho mockup   
+    public string? ImageUrl { get; set; }
+    
+    public bool IsDeleted { get; set; }
 }
 
 /// <summary>

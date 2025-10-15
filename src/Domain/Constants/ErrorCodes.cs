@@ -11,6 +11,7 @@ public static class ErrorCodes
     public const string COMMON_SERVER_INTERNAL_ERROR = nameof(COMMON_SERVER_INTERNAL_ERROR);
     public const string COMMON_NOT_FOUND = nameof(COMMON_NOT_FOUND);
     public const string FIELD_NAME_NOT_FOUND = nameof(FIELD_NAME_NOT_FOUND);
+    public const string COMMON_INVALID_REQUEST = nameof(COMMON_INVALID_REQUEST);
 
     //ACCOUNT
     public const string ACCOUNT_NOTFOUND = nameof(ACCOUNT_NOTFOUND);
@@ -92,4 +93,5 @@ public static class ErrorCodes
     public const string ORDER_NOT_FOUND = nameof(ORDER_NOT_FOUND);
     public const string ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT = nameof(ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT);
     public const string ORDER_INSUFFICIENT_PAYMENT_AMOUNT = nameof(ORDER_INSUFFICIENT_PAYMENT_AMOUNT);
+    
 }

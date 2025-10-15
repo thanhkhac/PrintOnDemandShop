@@ -43,7 +43,6 @@ public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, UserProfi
 
         var roles = await _identityService.GetUserRolesAsync(user.Id);
 
-
         var result = new UserProfileDto
         {
             Email = user.Email,

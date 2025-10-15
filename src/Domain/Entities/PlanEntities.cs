@@ -22,3 +22,4 @@ public class Transaction
     public User? User { get; set; }
 
 }
+

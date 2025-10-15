@@ -1,0 +1,6 @@
+﻿POST https://47db5a77fb93.ngrok-free.app/ask_user
+
+{
+  "uuid": "string",
+  "question": "string"
+}
