@@ -183,10 +183,36 @@ public class ProductDesign : BaseAuditableEntity
     public Guid Id { get; set; }
  
     public Guid ProductOptionValueId { get; set; }
+    public ProductOptionValue ? ProductOptionValue { get; set; }
+    public Guid ProductId { get; set; } // tham chiếu sản phẩm gốc
+    public Product? Product { get; set; }
+    
+    public string? Name { get; set; } // ví dụ "Thiết kế áo Tết 2025"
+    
+    public List<ProductDesignIcons> Icons { get; set; } = new(); 
+}    
+
+public class ProductDesignIcons : BaseEntity
+{
+    public Guid Id { get; set; }
+    
+    public Guid ProductDesignId { get; set; }
+    public ProductDesign? ProductDesign { get; set; }
+    
+    public string? ImageUrl { get; set; }
+}
+
+public class ProductDesignTemplate : BaseEntity
+{
+    public Guid ProductDesignId { get; set; }
     public Guid TemplateId { get; set; }
-    //Các trường thông tin cho mockup
-    
-    
+
+    public ProductDesign? ProductDesign { get; set; }
+    public Template? Template { get; set; }
+
+    // Các trường riêng của bản thiết kế trên mockup này:
+    public string? DesignImageUrl { get; set; } // ảnh thiết kế thực tế gắn lên template
+    public string? PrintAreaName { get; set; }
 }
 
 

@@ -399,3 +399,95 @@ public class ProductOptionValueImageConfig : IEntityTypeConfiguration<ProductOpt
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+public class ProductDesignConfig : IEntityTypeConfiguration<ProductDesign>
+{
+    public void Configure(EntityTypeBuilder<ProductDesign> builder)
+    {
+        // Đặt tên bảng
+        builder.ToTable("ProductDesigns");
+
+        // Định nghĩa khóa chính
+        builder.HasKey(x => x.Id);
+
+        // Cấu hình các thuộc tính
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        // Quan hệ 1-n với Product
+        builder.HasOne(x => x.Product)
+            .WithMany() // Giả sử Product có navigation property ProductDesigns
+            .HasForeignKey(x => x.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Quan hệ với ProductOptionValue
+        builder.HasOne(x => x.ProductOptionValue)
+            .WithMany() // Không có navigation ngược từ ProductOptionValue
+            .HasForeignKey(x => x.ProductOptionValueId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Quan hệ 1-n với ProductDesignIcons
+        builder.HasMany(x => x.Icons)
+            .WithOne(i => i.ProductDesign)
+            .HasForeignKey(i => i.ProductDesignId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Kế thừa từ BaseAuditableEntity sẽ tự động có các trường như CreatedAt, UpdatedAt, v.v.
+    }
+}
+
+public class ProductDesignIconsConfig : IEntityTypeConfiguration<ProductDesignIcons>
+{
+    public void Configure(EntityTypeBuilder<ProductDesignIcons> builder)
+    {
+        // Đặt tên bảng
+        builder.ToTable("ProductDesignIcons");
+
+        // Định nghĩa khóa chính
+        builder.HasKey(x => x.Id);
+
+        // Cấu hình các thuộc tính
+        builder.Property(x => x.ImageUrl)
+            .IsRequired()
+            .HasMaxLength(2000);
+
+        // Quan hệ với ProductDesign
+        builder.HasOne(x => x.ProductDesign)
+            .WithMany(d => d.Icons)
+            .HasForeignKey(x => x.ProductDesignId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+
+public class ProductDesignTemplateConfig : IEntityTypeConfiguration<ProductDesignTemplate>
+{
+    public void Configure(EntityTypeBuilder<ProductDesignTemplate> builder)
+    {
+        // Đặt tên bảng
+        builder.ToTable("ProductDesignTemplates");
+
+        // Composite Key
+        builder.HasKey(x => new { x.ProductDesignId, x.TemplateId });
+
+        // Cấu hình các thuộc tính
+        builder.Property(x => x.DesignImageUrl)
+            .HasMaxLength(2000);
+
+        builder.Property(x => x.PrintAreaName)
+            .HasMaxLength(1000);
+
+        // Quan hệ với ProductDesign
+        builder.HasOne(x => x.ProductDesign)
+            .WithMany() // Không có navigation ngược từ ProductDesign
+            .HasForeignKey(x => x.ProductDesignId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Quan hệ với Template
+        builder.HasOne(x => x.Template)
+            .WithMany() // Giả sử Template có navigation property ProductDesignTemplates
+            .HasForeignKey(x => x.TemplateId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
