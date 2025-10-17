@@ -325,8 +325,8 @@ public class VoucherConfig : IEntityTypeConfiguration<Voucher>
         builder.Property(x => x.Description).HasMaxLength(2000);
 
         builder.Property(x => x.DiscountValue);
-        builder.Property(x => x.MinOrderValue);
-        builder.Property(x => x.MaxDiscountAmount);
+        // builder.Property(x => x.MinOrderValue);
+        // builder.Property(x => x.MaxDiscountAmount);
     }
 }
 

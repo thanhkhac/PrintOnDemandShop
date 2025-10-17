@@ -26,7 +26,7 @@ public class HangfireService : IHangfireService
     {
         var jobId = _backgroundJobClient.Schedule(
             () => _orderService.RestockOrder(orderId),
-            TimeSpan.FromSeconds(10));
+            TimeSpan.FromMinutes(delayMinutes));
 
         return Task.FromResult(jobId);
     }

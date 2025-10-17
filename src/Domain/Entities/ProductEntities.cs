@@ -292,10 +292,7 @@ public class Voucher : BaseAuditableEntity
     public long? DiscountValue { get; set; }   
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
-    public int UsageLimit { get; set; }        
-    public int UsedCount { get; set; }          
-    public long? MinOrderValue { get; set; } 
-    public long? MaxDiscountAmount { get; set; } 
+    public int UsedCount { get; set; }           
     public bool IsActive { get; set; }
 }
 

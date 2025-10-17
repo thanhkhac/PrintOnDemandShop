@@ -46,6 +46,6 @@ public class GetQrCodeQueryHandler : IRequestHandler<GetQrCodeQuery, string>
         var account = _settings.Account;
 
         var url = $"https://qr.sepay.vn/img?acc={account}&bank={bank}&amount={request.Amount}&des={request.PaymentCode}";
-        return "";
+        return url;
     }
 }

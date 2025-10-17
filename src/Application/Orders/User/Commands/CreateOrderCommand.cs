@@ -279,8 +279,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 foreach (var voucher in vouchersForProduct)
                 {
-                    if (voucher.UsedCount >= voucher.UsageLimit)
-                        continue;
+                    // if (voucher.UsedCount >= voucher.UsageLimit)
+                    //     continue;
 
                     long discount = 0;
                     var discountValue = voucher.DiscountValue ?? 0;

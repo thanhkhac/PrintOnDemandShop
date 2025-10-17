@@ -31,12 +31,8 @@ public class PaymentEndpoints : EndpointGroupBase
     }
 
 
-    public async Task<Ok<ApiResponse<string>>> GetQrCode([FromQuery] int amount, ISender sender)
+    public async Task<Ok<ApiResponse<string>>> GetQrCode([FromBody] GetQrCodeQuery request, ISender sender)
     {
-        GetQrCodeQuery request = new GetQrCodeQuery
-        {
-            Amount = amount
-        };
         var result =  await sender.Send(request);
         return result.ToOk();
     }
