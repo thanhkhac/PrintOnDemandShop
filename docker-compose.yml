@@ -25,5 +25,6 @@ services:
     volumes:
 #        - ./src/Web/wwwroot/uploads:/app/wwwroot/uploads
       - web_uploads:/app/wwwroot/uploads
+    user: "0:0"
 volumes:
   web_uploads:
