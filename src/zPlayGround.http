@@ -1,6 +1,23 @@
-﻿POST https://47db5a77fb93.ngrok-free.app/ask_user
+﻿
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijc3Nzc3Nzc3LTc3NzctNzc3Ny03Nzc3LTc3Nzc3Nzc3Nzc3NyIsImV4cCI6MTc4NzEyNzA1OCwiaXNzIjoiSXNzdWVyIiwiYXVkIjoiQXVkaWVuY2UifQ.OzeYQQnnH-EixON84iexsjPm_cfPBWO0kQLCL-xT6X0 
+###
+POST https://47db5a77fb93.ngrok-free.app/ask_user
 
 {
   "uuid": "string",
   "question": "string"
 }
+
+
+### 
+POST http://36.50.135.207:5000/api/Category/CreateOrUpdate
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "HelloNo",
+  "parentCategoryId": "1c848456-b9ca-4cbf-8df2-ad1995b306a7"
+}
+
+
+

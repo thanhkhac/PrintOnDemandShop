@@ -7,7 +7,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Vouchers.Queries;
 
-[Authorize(Roles = Roles.Administrator + "," + Roles.Moderator)]
+// [Authorize(Roles = Roles.Administrator + "," + Roles.Moderator)]
 public class SearchVouchersQuery : IRequest<PaginatedList<VoucherDto>>
 {
     public int PageNumber { get; set; } = 1;
