@@ -8,6 +8,7 @@ using CleanArchitectureBase.Web.Attributes;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.MySql;
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,21 +83,25 @@ app.UseHealthChecks("/health");
 // else
 app.Use(async (context, next) =>
 {
-    var origin = context.Request.Headers["Origin"].ToString();
-    if (!string.IsNullOrEmpty(origin))
-        Console.WriteLine($"🌐 Incoming Origin: {origin}");
+    Console.WriteLine($"Origin: {context.Request.Headers["Origin"]}");
     await next();
 });
     app.UseCors("AllowSpecificOrigins");
     // TODO: Bỏ các option bên trong rồi fetch thử lại
     app.UseStaticFiles(new StaticFileOptions
     {
+        // FileProvider = new PhysicalFileProvider(
+        //     Path.Combine(builder.Environment.ContentRootPath, "uploads")),
+        // RequestPath = "/uploads",
+        //
         OnPrepareResponse = ctx =>
         {
-            var allowedOrigins = ctx.Context.RequestServices
-                .GetRequiredService<IConfiguration>()
-                .GetSection("AllowedOrigins")
-                .Get<string[]>() ?? new[]
+            var allowedOrigins = 
+            // ctx.Context.RequestServices
+            //     .GetRequiredService<IConfiguration>()
+            //     .GetSection("AllowedOrigins")
+            //     .Get<string[]>() ?? 
+                new[]
             {
                 "http://127.0.0.1:3000",
                 "http://localhost:3000",
@@ -106,7 +111,7 @@ app.Use(async (context, next) =>
                 "http://36.50.135.207:5000",
                 "http://36.50.135.207:5555"
             };
-
+        
             var requestOrigin = ctx.Context.Request.Headers.Origin.FirstOrDefault();
             Console.WriteLine("REQUEST_ORIGIN: " + requestOrigin);
             if (!string.IsNullOrEmpty(requestOrigin) && allowedOrigins.Contains(requestOrigin))

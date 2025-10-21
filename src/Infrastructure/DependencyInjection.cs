@@ -129,7 +129,8 @@ public static class DependencyInjection
         {
             options.AddPolicy("AllowSpecificOrigins", policy =>
             {
-                var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ??
+                var allowedOrigins = 
+                // configuration.GetSection("AllowedOrigins").Get<string[]>() ??
                                      new[]
                                      {
                                          "http://localhost:3000", "https://localhost:3000", "http://36.50.135.207:5000", "http://36.50.135.207:5555"
