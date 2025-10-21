@@ -120,6 +120,7 @@ app.Use(async (context, next) =>
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, OPTIONS");
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                ctx.Context.Response.Headers.Append("Cache-Control", "no-store");
             }
             // else
             // {
