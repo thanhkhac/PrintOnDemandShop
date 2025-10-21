@@ -80,7 +80,13 @@ app.UseHealthChecks("/health");
 // if (app.Environment.IsDevelopment())
 //     app.UseCors("AllowAll");
 // else
-
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers["Origin"].ToString();
+    if (!string.IsNullOrEmpty(origin))
+        Console.WriteLine($"🌐 Incoming Origin: {origin}");
+    await next();
+});
     app.UseCors("AllowSpecificOrigins");
     // TODO: Bỏ các option bên trong rồi fetch thử lại
     app.UseStaticFiles(new StaticFileOptions
