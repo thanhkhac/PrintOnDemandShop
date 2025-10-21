@@ -81,8 +81,40 @@ app.UseHealthChecks("/health");
 //     app.UseCors("AllowAll");
 // else
 
-    app.UseStaticFiles();
     app.UseCors("AllowSpecificOrigins");
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            var allowedOrigins = ctx.Context.RequestServices
+                .GetRequiredService<IConfiguration>()
+                .GetSection("AllowedOrigins")
+                .Get<string[]>() ?? new[]
+            {
+                "http://127.0.0.1:3000",
+                "http://localhost:3000",
+                "https://localhost:3000",
+                "http://192.168.1.100:8080", // Thêm các origin khác
+                "https://example.com",
+                "http://36.50.135.207:5000",
+                "http://36.50.135.207:5555"
+            };
+
+            var requestOrigin = ctx.Context.Request.Headers.Origin.FirstOrDefault();
+            if (!string.IsNullOrEmpty(requestOrigin) && allowedOrigins.Contains(requestOrigin))
+            {
+                ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", requestOrigin);
+                ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, OPTIONS");
+                ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
+                ctx.Context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            }
+            else
+            {
+                // Nếu origin không được phép, có thể trả về lỗi hoặc không thêm header CORS
+                ctx.Context.Response.StatusCode = 403; // Forbidden
+            }
+        }
+    });
 app.UseAuthentication();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
