@@ -102,6 +102,7 @@ app.UseHealthChecks("/health");
             };
 
             var requestOrigin = ctx.Context.Request.Headers.Origin.FirstOrDefault();
+            Console.WriteLine("REQUEST_ORIGIN: " + requestOrigin);
             if (!string.IsNullOrEmpty(requestOrigin) && allowedOrigins.Contains(requestOrigin))
             {
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", requestOrigin);
