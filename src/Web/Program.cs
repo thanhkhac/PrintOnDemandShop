@@ -82,6 +82,7 @@ app.UseHealthChecks("/health");
 // else
 
     app.UseCors("AllowSpecificOrigins");
+    // TODO: Bỏ các option bên trong rồi fetch thử lại
     app.UseStaticFiles(new StaticFileOptions
     {
         OnPrepareResponse = ctx =>
@@ -108,11 +109,11 @@ app.UseHealthChecks("/health");
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
                 ctx.Context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
             }
-            else
-            {
-                // Nếu origin không được phép, có thể trả về lỗi hoặc không thêm header CORS
-                ctx.Context.Response.StatusCode = 403; // Forbidden
-            }
+            // else
+            // {
+            //     // Nếu origin không được phép, có thể trả về lỗi hoặc không thêm header CORS
+            //     ctx.Context.Response.StatusCode = 403; // Forbidden
+            // }
         }
     });
 app.UseAuthentication();
