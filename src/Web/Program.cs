@@ -80,9 +80,9 @@ app.UseHealthChecks("/health");
 // if (app.Environment.IsDevelopment())
 //     app.UseCors("AllowAll");
 // else
-    app.UseCors("AllowSpecificOrigins");
 
     app.UseStaticFiles();
+    app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
