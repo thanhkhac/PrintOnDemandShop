@@ -25,8 +25,8 @@ public class ChangeAccountRoleCommandValidator : AbstractValidator<ChangeAccount
             .NotEmpty().WithMessage("Role không được trống");
         RuleFor(x => x.Role)
             .NotEmpty().WithMessage("Role không được trống")
-            .Must(role => role == Domain.Constants.Roles.User || role == Domain.Constants.Roles.Moderator)
-            .WithMessage("Role không hợp lệ. Chỉ được phép: 'Moderator' hoặc 'User'");
+            .Must(role => role == Domain.Constants.Roles.User || role == Domain.Constants.Roles.Administrator)
+            .WithMessage("Role không hợp lệ. Chỉ được phép: 'Administrator' hoặc 'User'");
     }
 }
 
@@ -50,7 +50,7 @@ public class ChangeAccountRoleCommandHandler : IRequestHandler<ChangeAccountRole
     {
         var result = await _identityService.ChangeRoleAsync(rq.UserId, rq.Role, new List<string>
         {
-            Domain.Constants.Roles.Administrator
+            // Domain.Constants.Roles.Administrator
         });
         return result;
     }

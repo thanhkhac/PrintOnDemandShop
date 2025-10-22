@@ -61,3 +61,103 @@ Authorization: Bearer {{token}}
 
 
 
+
+
+
+{
+  "errors": {},
+  "validationErrors": {},
+  "data": {
+    "productId": "ad98fe82-b689-4910-9b6e-032965f47263",
+    "name": "Áo phông",
+    "description": "<Bổ sung require>",
+    "imageUrl": "http://36.50.135.207:5000/uploads/f59e8a7d-30f1-40a3-a3fe-f928729dfb65.jpg",
+    "basePrice": 500000,
+    "category": {
+      "categoryId": "052762ac-63ce-42a5-bad7-1cb352f553b2",
+      "name": "Hello"
+    },
+    "options": [
+      {
+        "optionId": "1652f546-fbe5-4a9d-b5ee-b4eb05105be7",
+        "name": "COLOR",
+        "values": [
+          {
+            "optionValueId": "ab8d743f-17ae-4fce-ad53-82fc397c0d2d",
+            "value": "Xanh",
+            "images": [
+              "http://36.50.135.207:5000/uploads/aafad46f-793a-4cdf-a2b8-b81ac4cd55eb.jpeg"
+            ]
+          },
+          {
+            "optionValueId": "f024a653-d425-43da-a131-59ca442bec8e",
+            "value": "Be",
+            "images": [
+              "http://36.50.135.207:5000/uploads/5ab8b696-0104-4af7-bb72-93ebb008cf62.jpeg"
+            ]
+          }
+        ]
+      },
+      {
+        "optionId": "ed91506e-05ca-4451-ae7f-c691ee7453fa",
+        "name": "SIZE",
+        "values": [
+          {
+            "optionValueId": "10ef1da7-754f-425b-90d7-4135c9ceb04d",
+            "value": "S",
+            "images": []
+          },
+          {
+            "optionValueId": "19fe9edf-a5cd-43af-9646-374d2bb02d7c",
+            "value": "Hello",
+            "images": []
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "variantId": "22e417c0-9bd9-48a1-8224-d2bc903dbe0d",
+        "sku": "ÁOPHÔNG_BE_S",
+        "price": 500000,
+        "stock": 0,
+        "optionValues": {
+          "SIZE": "S",
+          "COLOR": "Be"
+        }
+      },
+      {
+        "variantId": "7a676234-a674-4b06-9cb5-1fc0b573f063",
+        "sku": "AO_PHONG_XANH_HELLO",
+        "price": 500000,
+        "stock": 0,
+        "optionValues": {
+          "SIZE": "Hello",
+          "COLOR": "Xanh"
+        }
+      },
+      {
+        "variantId": "9e3c7537-bd81-4bb5-8474-5e4c1ece0ee4",
+        "sku": "AO_PHONG_BE_HELLO",
+        "price": 500000,
+        "stock": 0,
+        "optionValues": {
+          "SIZE": "Hello",
+          "COLOR": "Be"
+        }
+      },
+      {
+        "variantId": "c50483f0-68cd-479a-bc33-ad04004ad558",
+        "sku": "ÁOPHÔNG_XANH_S",
+        "price": 500000,
+        "stock": 0,
+        "optionValues": {
+          "SIZE": "S",
+          "COLOR": "Xanh"
+        }
+      }
+    ]
+  },
+  "success": true
+}
+

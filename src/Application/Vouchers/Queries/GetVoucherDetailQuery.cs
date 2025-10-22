@@ -6,7 +6,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Vouchers.Queries;
 
-[Authorize(Roles = Roles.Administrator + "," + Roles.Moderator)]
+// [Authorize(Roles = Roles.Administrator + "," + Roles.Moderator)]
 public class GetVoucherDetailQuery : IRequest<VoucherDetailDto>
 {
     public Guid VoucherId { get; set; }

@@ -460,7 +460,7 @@ public class IdentityService : IIdentityService
 
         var subject = "Xác thực email";
         var body =
-            $@"<html><body><h2>Xác thực email</h2><p>Mã xác thực của bạn: <strong>{user.EmailVerificationCode}</strong></p><p>Mã xác thực sẽ hết hạn sau {LockoutSettings.EmailVerificationCodeExpiryMinutes} phút.</p><p>Nếu bạn không gửi yêu cầu xác thực, vui lòng bỏ qua email này.</p><br/><p>Trân trọng,<br/>AIQuizzizz</p></body></html>";
+            $@"<html><body><h2>Xác thực email</h2><p>Mã xác thực của bạn: <strong>{user.EmailVerificationCode}</strong></p><p>Mã xác thực sẽ hết hạn sau {LockoutSettings.EmailVerificationCodeExpiryMinutes} phút.</p><p>Nếu bạn không gửi yêu cầu xác thực, vui lòng bỏ qua email này.</p><br/><p>Trân trọng,<br/>Teecraft</p></body></html>";
         await _emailService.SendEmailAsync(email, subject, body);
     }
 
@@ -538,7 +538,7 @@ public class IdentityService : IIdentityService
         // Gửi email reset mật khẩu
         var subject = "Đặt lại mật khẩu";
         var body =
-            $@"<html><body><h2>Đặt lại mật khẩu</h2><p>Mã đặt lại mật khẩu của bạn: <strong>{resetCode}</strong></p><p>Mã này sẽ hết hạn sau {LockoutSettings.PasswordResetCodeExpiryMinutes} phút.</p><p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p><br/><p>Trân trọng,<br/>AIQuizzizz</p></body></html>";
+            $@"<html><body><h2>Đặt lại mật khẩu</h2><p>Mã đặt lại mật khẩu của bạn: <strong>{resetCode}</strong></p><p>Mã này sẽ hết hạn sau {LockoutSettings.PasswordResetCodeExpiryMinutes} phút.</p><p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p><br/><p>Trân trọng,<br/>Teecraft</p></body></html>";
         await _emailService.SendEmailAsync(dto.Email, subject, body);
     }
 

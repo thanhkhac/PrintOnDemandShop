@@ -301,17 +301,17 @@ public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationT
                     IsDeleted = false
                 };
 
-                // for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
-                // {
-                //     newValue.Images.Add(new ProductOptionValueImage
-                //     {
-                //         Id = Guid.NewGuid(),
-                //         ProductOptionValueId = newValue.Id,
-                //         ImageUrl = valueRequest.ImageUrl[i],
-                //         Order = i,
-                //         IsDeleted = false
-                //     });
-                // }
+                for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
+                {
+                    newValue.Images.Add(new ProductOptionValueImage
+                    {
+                        Id = Guid.NewGuid(),
+                        ProductOptionValueId = newValue.Id,
+                        ImageUrl = valueRequest.ImageUrl[i],
+                        Order = i,
+                        IsDeleted = false
+                    });
+                }
 
                 // option.Values.Add(newValue);
                 _context.ProductOptionValues.Add(newValue);
