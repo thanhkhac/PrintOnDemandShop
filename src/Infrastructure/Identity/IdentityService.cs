@@ -1,4 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Dynamic.Core;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using CleanArchitectureBase.Application.Common.Exceptions;
@@ -633,9 +635,64 @@ public class IdentityService : IIdentityService
 
         return await _userManager.GetRolesAsync(identityUser);
     }
-    public Task<PaginatedList<UserForListDto>> SearchUserWithRole(SearchUserDto dto)
+    
+    
+    
+    
+    
+    
+ public async Task<PaginatedList<UserForListDto>> SearchUserWithRole(SearchUserDto dto)
     {
-        throw new NotImplementedException();
+        var query = from user in _dbContext.Users.IgnoreQueryFilters()
+            join domainUser in _dbContext.DomainUsers.IgnoreQueryFilters() on user.Id equals domainUser.Id into domainGroup
+            from du in domainGroup.DefaultIfEmpty()
+            
+            join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId into userRoleGroup
+            from ur in userRoleGroup.DefaultIfEmpty()
+            
+            join role in _dbContext.Roles on ur.RoleId equals role.Id into roleGroup
+            from r in roleGroup.DefaultIfEmpty()
+            where user.IsDeleted == false 
+            select new
+            {
+                user,
+                domain = du,
+                RoleName = r.Name
+            } ;
+            
+        query = query.OrderBy(x => x.RoleName);
+
+        // Lọc theo từ khóa
+        if (!string.IsNullOrEmpty(dto.Keyword) && !string.IsNullOrEmpty(dto.FieldName))
+        {
+            var property = typeof(User).GetProperty(dto.FieldName, BindingFlags.Public | BindingFlags.Instance);
+            if (property == null || property.PropertyType != typeof(string))
+                throw new ErrorCodeException(ErrorCodes.FIELD_NAME_NOT_FOUND, "Trường tìm kiếm không hợp lệ hoặc không phải kiểu string");
+
+            string stm = $"domain.{dto.FieldName}.ToLower().Contains(@0)";
+            query = query.Where(stm, dto.Keyword.ToLower());
+        }
+
+        if (dto.IsBanned.HasValue)
+        {
+            query = query.Where(x => x.domain.IsBanned == dto.IsBanned.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Role))
+        {
+            query = query.Where(x => x.RoleName == dto.Role);
+        }
+
+        var projected = query.Select(x => new UserForListDto
+        {
+            Id = x.user.Id,
+            Email = x.user.Email!,
+            FullName = x.domain.FullName,
+            IsBanned = x.domain.IsBanned,
+            Token = x.domain.TokenCount,
+            Role = x.RoleName ?? "User",
+        });
+        return await PaginatedList<UserForListDto>.CreateAsync(projected.AsNoTracking(), dto.PageNumber, dto.PageSize);
     }
 
     // SELECT a."Id", a."Email", d."FullName", d."IsBanned", d."TokenCount" AS "Token", COALESCE(a1."Name", 'User') AS "Role", d."Balance"

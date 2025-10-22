@@ -13,7 +13,7 @@ public class UpdateOrderStatusCommand : IRequest
     public Guid OrderId { get; set; }
     public OrderStatus Status { get; set; }
     public string? Notes { get; set; }
-    public bool IsRestock { get; set; }
+    public bool IsRestock { get; set; } = true;
 }
 
 public class UpdateOrderStatusCommandValidator : AbstractValidator<UpdateOrderStatusCommand>
@@ -64,6 +64,11 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         if (oldStatus != newStatus)
         {
             await HandleOrderStateChange(order, newStatus, request.IsRestock, cancellationToken);
+        }
+        
+        if(newStatus == OrderStatus.REJECTED)
+        {
+            order.PaymentStatus = nameof(OrderPaymentStatus.REJECTED);
         }
         
         order.Status = newStatus.ToString();

@@ -27,7 +27,8 @@ public enum OrderPaymentStatus
     COD,
     REFUNDING,
     REFUNDED, 
-    EXPIRED // Hết hạn thanh toán
+    EXPIRED, // Hết hạn thanh toán
+    REJECTED,
 }
 
 
