@@ -58,47 +58,44 @@ public class UpdateOrderPaymentStatusCommandHandler : IRequestHandler<UpdateOrde
         ValidatePaymentStatusTransition(oldPaymentStatus, newPaymentStatus);
 
         order.PaymentStatus = newPaymentStatus;
-        
+
         //TODO: Liệu có nên để admin có thể đặt Online payment thành paid không
         // Hủy job hoàn stock nếu thanh toán thành công
-        if (oldPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING) && 
+        if (oldPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_AWAITING) &&
             newPaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID))
         {
             await _hangfireService.CancelStockRestorationAsync(order.Id);
         }
-        
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 
     private static void ValidatePaymentStatusTransition(string? currentPaymentStatus, string newPaymentStatus)
     {
         if (string.IsNullOrEmpty(currentPaymentStatus))
-            return;
+            return; // Cho phép set lần đầu (nếu chưa có status)
 
         var current = Enum.Parse<OrderPaymentStatus>(currentPaymentStatus);
         var target = Enum.Parse<OrderPaymentStatus>(newPaymentStatus);
 
-        // Define invalid payment status transitions
-        var invalidTransitions = new Dictionary<OrderPaymentStatus, OrderPaymentStatus[]>
+        // Cho phép duy nhất 2 chuyển đổi:
+        var allowedTransitions = new Dictionary<OrderPaymentStatus, OrderPaymentStatus[]>
         {
-            [OrderPaymentStatus.ONLINE_PAYMENT_PAID] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING],
-            [OrderPaymentStatus.REFUNDED] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING, OrderPaymentStatus.ONLINE_PAYMENT_PAID, OrderPaymentStatus.COD],
-            [OrderPaymentStatus.COD] = [OrderPaymentStatus.ONLINE_PAYMENT_AWAITING, OrderPaymentStatus.ONLINE_PAYMENT_PAID]
+            [OrderPaymentStatus.ONLINE_PAYMENT_PAID] = [OrderPaymentStatus.REFUNDING],
+            [OrderPaymentStatus.REFUNDING] = [OrderPaymentStatus.REFUNDED]
         };
 
-        if (invalidTransitions.ContainsKey(current) && invalidTransitions[current].Contains(target))
+        // Kiểm tra nếu chuyển đổi nằm trong danh sách được phép
+        if (!allowedTransitions.TryGetValue(current, out var allowedTargets) || !allowedTargets.Contains(target))
         {
-            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
-                new { currentPaymentStatus, newPaymentStatus }, 
-                $"Cannot change payment status from {current} to {target}");
-        }
-
-        // Business rules
-        if (current == OrderPaymentStatus.REFUNDED)
-        {
-            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL, 
-                new { currentPaymentStatus, newPaymentStatus }, 
-                "Cannot change payment status once it has been refunded");
+            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_MODEL,
+                new
+                {
+                    currentPaymentStatus,
+                    newPaymentStatus
+                },
+                $"Invalid transition: cannot change payment status from {current} to {target}");
         }
     }
+
 }

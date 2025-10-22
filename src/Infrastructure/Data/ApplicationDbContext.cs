@@ -6,6 +6,7 @@ using CleanArchitectureBase.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CleanArchitectureBase.Infrastructure.Data;
 
@@ -19,6 +20,34 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     ApplicationUserToken
 >, IApplicationDbContext
 {
+    // private IDbContextTransaction? _currentTransaction;
+
+    // public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+    // {
+    //     _currentTransaction ??= await Database.BeginTransactionAsync(cancellationToken);
+    //     return _currentTransaction;
+    // }
+    //
+    // public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+    // {
+    //     if (_currentTransaction != null)
+    //     {
+    //         await _currentTransaction.CommitAsync(cancellationToken);
+    //         await _currentTransaction.DisposeAsync();
+    //         _currentTransaction = null;
+    //     }
+    // }
+    //
+    // public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
+    // {
+    //     if (_currentTransaction != null)
+    //     {
+    //         await _currentTransaction.RollbackAsync(cancellationToken);
+    //         await _currentTransaction.DisposeAsync();
+    //         _currentTransaction = null;
+    //     }
+    // }
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     public DbSet<TodoList> TodoLists => Set<TodoList>();
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
@@ -49,6 +78,8 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     
     public DbSet<Voucher> Vouchers => Set<Voucher>();
     public DbSet<ProductVoucher> ProductVouchers => Set<ProductVoucher>();
+    public DbSet<TokenPackage> TokenPackages => Set<TokenPackage>();
+    public DbSet<UserTokenPackage> UserTokenPackages => Set<UserTokenPackage>();
 
     // public override DbSet<ApplicationRole> Roles { get; set; }
     // public override DbSet<ApplicationUserClaim> UserClaims { get; set; }

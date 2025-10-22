@@ -73,7 +73,12 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
         _context = context;
     }
 
-    public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
+public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
+{
+    // Bắt đầu transaction
+    await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+    
+    try
     {
         // 1. Kiểm tra category có tồn tại không
         var categoryExists = await _context.Categories
@@ -85,7 +90,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
         Product? product;
         if (request.ProductId.HasValue)
         {
-            // @formatter:off
             product = await _context.Products
                 .Include(p => p.Options)
                     .ThenInclude(o => o.Values.Where(v => !v.IsDeleted))
@@ -94,7 +98,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     .ThenInclude(v => v.VariantValues)
                 .Include(p => p.ProductCategories)
                 .FirstOrDefaultAsync(p => p.Id == request.ProductId.Value && !p.IsDeleted, cancellationToken);
-            // @formatter:on
+                
             if (product == null)
                 throw new ErrorCodeException(ErrorCodes.PRODUCT_NOT_FOUND);
 
@@ -115,12 +119,17 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 });
             }
 
-
             // Update options và values
             UpdateProductOptions(product, request.Options, cancellationToken);
-            //
-            // // Update variants
+            
+            // ✅ SAVE LẦN 1 - Sau khi update options
+            await _context.SaveChangesAsync(cancellationToken);
+            
+            // Update variants
             UpdateProductVariants(product, request.Variants, cancellationToken);
+            
+            // ✅ SAVE LẦN 2 - Sau khi update variants
+            await _context.SaveChangesAsync(cancellationToken);
         }
         else
         {
@@ -135,7 +144,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 IsDeleted = false
             };
             
-            //Gán category cho nó
             product.ProductCategories.Add(new ProductCategory
             {
                 ProductId = product.Id,
@@ -161,7 +169,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                         IsDeleted = false
                     };
 
-                    // Add images for option values
                     for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
                     {
                         var image = new ProductOptionValueImage
@@ -181,7 +188,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 product.Options.Add(option);
             }
 
-
             foreach (var variantRequest in request.Variants)
             {
                 var variant = new ProductVariant
@@ -193,7 +199,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     Stock = variantRequest.Stock,
                     IsDeleted = false
                 };
-
 
                 foreach (var optionValuePair in variantRequest.OptionValues)
                 {
@@ -219,13 +224,37 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             }
 
             _context.Products.Add(product);
+            
+            // ✅ SAVE CHO CREATE
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-
-        await _context.SaveChangesAsync(cancellationToken);
+        // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
+        await transaction.CommitAsync(cancellationToken);
+        
         return product.Id;
     }
-
+    catch (DbUpdateConcurrencyException ex)
+    {
+        // ❌ ROLLBACK nếu có lỗi concurrency
+        await transaction.RollbackAsync(cancellationToken);
+        
+        foreach (var entry in ex.Entries)
+        {
+            var entityType = entry.Metadata.Name;
+            var entityId = entry.Entity.GetType().GetProperty("Id")?.GetValue(entry.Entity);
+            var errorMessage = $"Concurrency conflict in entity {entityType} with Id {entityId}. Database state may have changed.";
+            throw new ErrorCodeException("CONCURRENCY_CONFLICT", errorMessage);
+        }
+        throw;
+    }
+    catch
+    {
+        // ❌ ROLLBACK nếu có bất kỳ lỗi nào
+        await transaction.RollbackAsync(cancellationToken);
+        throw;
+    }
+}
 
     private void UpdateOptionValues(ProductOption option, List<UpsertOptionValueRequest> valueRequests, CancellationToken cancellationToken)
     {
@@ -272,19 +301,20 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     IsDeleted = false
                 };
 
-                for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
-                {
-                    newValue.Images.Add(new ProductOptionValueImage
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductOptionValueId = newValue.Id,
-                        ImageUrl = valueRequest.ImageUrl[i],
-                        Order = i,
-                        IsDeleted = false
-                    });
-                }
+                // for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
+                // {
+                //     newValue.Images.Add(new ProductOptionValueImage
+                //     {
+                //         Id = Guid.NewGuid(),
+                //         ProductOptionValueId = newValue.Id,
+                //         ImageUrl = valueRequest.ImageUrl[i],
+                //         Order = i,
+                //         IsDeleted = false
+                //     });
+                // }
 
-                option.Values.Add(newValue);
+                // option.Values.Add(newValue);
+                _context.ProductOptionValues.Add(newValue);
             }
         }
     }
@@ -372,7 +402,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     }
                 }
 
-                product.Variants.Add(variant);
+                _context.ProductVariants.Add(variant);
             }
         }
     }

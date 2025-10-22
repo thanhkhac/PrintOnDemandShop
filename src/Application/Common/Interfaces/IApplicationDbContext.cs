@@ -1,4 +1,6 @@
 ﻿using CleanArchitectureBase.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CleanArchitectureBase.Application.Common.Interfaces;
 
@@ -35,6 +37,11 @@ public interface
     DbSet<Voucher> Vouchers { get; }
     DbSet<ProductVoucher> ProductVouchers { get; }
     
-    
+    DbSet<TokenPackage>  TokenPackages { get; }
+    DbSet<UserTokenPackage>  UserTokenPackages { get; } 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    // Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+    // Task CommitTransactionAsync(CancellationToken cancellationToken = default);
+    // Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+    DatabaseFacade Database { get; }
 }

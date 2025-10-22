@@ -94,4 +94,6 @@ public static class ErrorCodes
     public const string ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT = nameof(ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT);
     public const string ORDER_INSUFFICIENT_PAYMENT_AMOUNT = nameof(ORDER_INSUFFICIENT_PAYMENT_AMOUNT);
     
+    
+    public const string TOKEN_PACKAGE_NOT_FOUND = nameof(TOKEN_PACKAGE_NOT_FOUND);
 }

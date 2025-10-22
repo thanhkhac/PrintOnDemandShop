@@ -42,9 +42,9 @@ public class DeleteVoucherCommandHandler : IRequestHandler<DeleteVoucherCommand,
         var productVouchers = await _context.ProductVouchers
             .Where(pv => pv.VoucherId == request.VoucherId)
             .ToListAsync(cancellationToken);
+        if (productVouchers.Count == 0)
+            throw new ErrorCodeException("VOUCHER_IN_USE");            
         
-        _context.ProductVouchers.RemoveRange(productVouchers);
-
         // Remove voucher
         _context.Vouchers.Remove(voucher);
 

@@ -10,13 +10,53 @@ POST https://47db5a77fb93.ngrok-free.app/ask_user
 
 
 ### 
-POST http://36.50.135.207:5000/api/Category/CreateOrUpdate
+POST http://localhost:5000/api/Product/CreateOrUpdateProduct
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "HelloNo",
-  "parentCategoryId": "1c848456-b9ca-4cbf-8df2-ad1995b306a7"
+  "productId": "61f0ffb7-97bc-4acd-a0f5-f2a423a0122c",
+  "name": "Test",
+  "description": "test",
+  "imageUrl": "http://36.50.135.207:5000/uploads/e9527e40-6ed7-4961-824c-8325175b346b.png",
+  "basePrice": 10000,
+  "categoryId": "a3889c74-e136-4e5a-87cd-9c0c7c35c7ef",
+  "options": [
+    {
+      "optionId": "e158e777-52a2-46d1-827c-3550f9c86e68",
+      "name": "SIZE",
+      "values": [
+        {
+          "optionValueId": "a6401d2a-a530-42dc-9d8b-18ec05c491ab",
+          "value": "S",
+          "imageUrl": []
+        }
+      ]
+    },
+    {
+      "optionId": "f603255f-f9e4-4b01-95c1-2cb0b2e2c2ac",
+      "name": "COLOR",
+      "values": [
+        {
+          "optionValueId": null,
+          "value": "Đỏ",
+          "imageUrl": []
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": null,
+      "sku": "TEST_ĐỎ_S",
+      "price": 10000,
+      "stock": 0,
+      "optionValues": {
+        "COLOR": "Đỏ",
+        "SIZE": "S"
+      }
+    }
+  ]
 }
 
 

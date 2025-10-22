@@ -23,3 +23,18 @@ public class Transaction
 
 }
 
+public class TokenPackage
+{
+    public Guid Id { get; set; }
+    public int TokenAmount { get; set; }
+    public long Price { get; set; }
+}
+
+public class UserTokenPackage
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public int TokenAmount { get; set; }
+    public long Price { get; set; }
+}
+
