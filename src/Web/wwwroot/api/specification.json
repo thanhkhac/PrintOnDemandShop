@@ -3273,15 +3273,14 @@
       },
       "OrderPaymentStatus": {
         "type": "integer",
-        "description": "0 = ONLINE_PAYMENT_AWAITING\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED\n5 = EXPIRED\n6 = REJECTED",
+        "description": "0 = ONLINE_PAYMENT_AWAITING\n1 = ONLINE_PAYMENT_PAID\n2 = COD\n3 = REFUNDING\n4 = REFUNDED\n5 = EXPIRED",
         "x-enumNames": [
           "ONLINE_PAYMENT_AWAITING",
           "ONLINE_PAYMENT_PAID",
           "COD",
           "REFUNDING",
           "REFUNDED",
-          "EXPIRED",
-          "REJECTED"
+          "EXPIRED"
         ],
         "enum": [
           0,
@@ -3289,8 +3288,7 @@
           2,
           3,
           4,
-          5,
-          6
+          5
         ]
       },
       "UpdateOrderStatusRequest": {

@@ -67,194 +67,198 @@ public class CreateProductCommandValidator : AbstractValidator<CreateUpdateProdu
 public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCommand, Guid>
 {
     private readonly IApplicationDbContext _context;
+    private List<Guid> _newProductVariantIds = new();
+    private List<Guid> _deleteProductVariantIds = new();
 
     public CreateProductCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
-{
-    // Bắt đầu transaction
-    await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-    
-    try
+    public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
     {
-        // 1. Kiểm tra category có tồn tại không
-        var categoryExists = await _context.Categories
-            .AnyAsync(c => c.Id == request.CategoryId, cancellationToken);
+        // Bắt đầu transaction
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        if (!categoryExists)
-            throw new ErrorCodeException(ErrorCodes.CATEGORY_NOT_FOUND);
-
-        Product? product;
-        if (request.ProductId.HasValue)
+        try
         {
-            product = await _context.Products
-                .Include(p => p.Options)
+            // 1. Kiểm tra category có tồn tại không
+            var categoryExists = await _context.Categories
+                .AnyAsync(c => c.Id == request.CategoryId, cancellationToken);
+
+            if (!categoryExists)
+                throw new ErrorCodeException(ErrorCodes.CATEGORY_NOT_FOUND);
+
+            Product? product;
+            if (request.ProductId.HasValue)
+            {
+                product = await _context.Products
+                    .Include(p => p.Options)
                     .ThenInclude(o => o.Values.Where(v => !v.IsDeleted))
                     .ThenInclude(v => v.Images.Where(i => !i.IsDeleted))
-                .Include(p => p.Variants.Where(v => !v.IsDeleted))
+                    .Include(p => p.Variants.Where(v => !v.IsDeleted))
                     .ThenInclude(v => v.VariantValues)
-                .Include(p => p.ProductCategories)
-                .FirstOrDefaultAsync(p => p.Id == request.ProductId.Value && !p.IsDeleted, cancellationToken);
-                
-            if (product == null)
-                throw new ErrorCodeException(ErrorCodes.PRODUCT_NOT_FOUND);
+                    .Include(p => p.ProductCategories)
+                    .FirstOrDefaultAsync(p => p.Id == request.ProductId.Value && !p.IsDeleted, cancellationToken);
 
-            // Update các thuộc tính chung
-            product.Name = request.Name;
-            product.Description = request.Description;
-            product.ImageUrl = request.ImageUrl;
-            product.BasePrice = request.BasePrice;
+                if (product == null)
+                    throw new ErrorCodeException(ErrorCodes.PRODUCT_NOT_FOUND);
 
-            var currentCategory = product.ProductCategories.FirstOrDefault();
-            if (currentCategory?.CategoryId != request.CategoryId)
+                // Update các thuộc tính chung
+                product.Name = request.Name;
+                product.Description = request.Description;
+                product.ImageUrl = request.ImageUrl;
+                product.BasePrice = request.BasePrice;
+
+                var currentCategory = product.ProductCategories.FirstOrDefault();
+                if (currentCategory?.CategoryId != request.CategoryId)
+                {
+                    _context.ProductCategories.RemoveRange(product.ProductCategories);
+                    product.ProductCategories.Add(new ProductCategory
+                    {
+                        ProductId = product.Id,
+                        CategoryId = request.CategoryId
+                    });
+                }
+
+                // Update options và values
+                UpdateProductOptions(product, request.Options, cancellationToken);
+
+                // ✅ SAVE LẦN 1 - Sau khi update options
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // Update variants
+                UpdateProductVariants(product, request.Variants, cancellationToken);
+
+                // ✅ SAVE LẦN 2 - Sau khi update variants
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
             {
-                _context.ProductCategories.RemoveRange(product.ProductCategories);
+                // Tạo sản phẩm mới
+                product = new Product
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.Name,
+                    Description = request.Description,
+                    ImageUrl = request.ImageUrl,
+                    BasePrice = request.BasePrice,
+                    IsDeleted = false
+                };
+
                 product.ProductCategories.Add(new ProductCategory
                 {
                     ProductId = product.Id,
                     CategoryId = request.CategoryId
                 });
-            }
 
-            // Update options và values
-            UpdateProductOptions(product, request.Options, cancellationToken);
-            
-            // ✅ SAVE LẦN 1 - Sau khi update options
-            await _context.SaveChangesAsync(cancellationToken);
-            
-            // Update variants
-            UpdateProductVariants(product, request.Variants, cancellationToken);
-            
-            // ✅ SAVE LẦN 2 - Sau khi update variants
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        else
-        {
-            // Tạo sản phẩm mới
-            product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Description = request.Description,
-                ImageUrl = request.ImageUrl,
-                BasePrice = request.BasePrice,
-                IsDeleted = false
-            };
-            
-            product.ProductCategories.Add(new ProductCategory
-            {
-                ProductId = product.Id,
-                CategoryId = request.CategoryId
-            });
-
-            foreach (var optionRequest in request.Options)
-            {
-                var option = new ProductOption
+                foreach (var optionRequest in request.Options)
                 {
-                    Id = Guid.NewGuid(),
-                    ProductId = product.Id,
-                    Name = optionRequest.Name
-                };
-
-                foreach (var valueRequest in optionRequest.Values)
-                {
-                    var optionValue = new ProductOptionValue
+                    var option = new ProductOption
                     {
                         Id = Guid.NewGuid(),
-                        ProductOptionId = option.Id,
-                        Value = valueRequest.Value,
-                        IsDeleted = false
+                        ProductId = product.Id,
+                        Name = optionRequest.Name
                     };
 
-                    for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
+                    foreach (var valueRequest in optionRequest.Values)
                     {
-                        var image = new ProductOptionValueImage
+                        var optionValue = new ProductOptionValue
                         {
                             Id = Guid.NewGuid(),
-                            ProductOptionValueId = optionValue.Id,
-                            ImageUrl = valueRequest.ImageUrl[i],
-                            Order = i,
+                            ProductOptionId = option.Id,
+                            Value = valueRequest.Value,
                             IsDeleted = false
                         };
-                        optionValue.Images.Add(image);
-                    }
 
-                    option.Values.Add(optionValue);
-                }
-
-                product.Options.Add(option);
-            }
-
-            foreach (var variantRequest in request.Variants)
-            {
-                var variant = new ProductVariant
-                {
-                    Id = Guid.NewGuid(),
-                    ProductId = product.Id,
-                    Sku = variantRequest.Sku,
-                    UnitPrice = variantRequest.Price,
-                    Stock = variantRequest.Stock,
-                    IsDeleted = false
-                };
-
-                foreach (var optionValuePair in variantRequest.OptionValues)
-                {
-                    var optionName = optionValuePair.Key;
-                    var optionValueText = optionValuePair.Value;
-
-                    var optionValue = product.Options
-                        .Where(o => o.Name == optionName)
-                        .SelectMany(o => o.Values)
-                        .FirstOrDefault(v => v.Value == optionValueText);
-
-                    if (optionValue != null)
-                    {
-                        variant.VariantValues.Add(new ProductVariantValue
+                        for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
                         {
-                            ProductVariantId = variant.Id,
-                            ProductOptionValueId = optionValue.Id
-                        });
+                            var image = new ProductOptionValueImage
+                            {
+                                Id = Guid.NewGuid(),
+                                ProductOptionValueId = optionValue.Id,
+                                ImageUrl = valueRequest.ImageUrl[i],
+                                Order = i,
+                                IsDeleted = false
+                            };
+                            optionValue.Images.Add(image);
+                        }
+
+                        option.Values.Add(optionValue);
                     }
+
+                    product.Options.Add(option);
                 }
 
-                product.Variants.Add(variant);
+                foreach (var variantRequest in request.Variants)
+                {
+                    var variant = new ProductVariant
+                    {
+                        Id = Guid.NewGuid(),
+                        ProductId = product.Id,
+                        Sku = variantRequest.Sku,
+                        UnitPrice = variantRequest.Price,
+                        Stock = variantRequest.Stock,
+                        IsDeleted = false
+                    };
+                    
+                    _newProductVariantIds.Add(product.Id);
+
+                    foreach (var optionValuePair in variantRequest.OptionValues)
+                    {
+                        var optionName = optionValuePair.Key;
+                        var optionValueText = optionValuePair.Value;
+
+                        var optionValue = product.Options
+                            .Where(o => o.Name == optionName)
+                            .SelectMany(o => o.Values)
+                            .FirstOrDefault(v => v.Value == optionValueText);
+
+                        if (optionValue != null)
+                        {
+                            variant.VariantValues.Add(new ProductVariantValue
+                            {
+                                ProductVariantId = variant.Id,
+                                ProductOptionValueId = optionValue.Id
+                            });
+                        }
+                    }
+
+                    product.Variants.Add(variant);
+                }
+
+                _context.Products.Add(product);
+
+                // ✅ SAVE CHO CREATE
+                await _context.SaveChangesAsync(cancellationToken);
             }
 
-            _context.Products.Add(product);
-            
-            // ✅ SAVE CHO CREATE
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+            // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
+            await transaction.CommitAsync(cancellationToken);
 
-        // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
-        await transaction.CommitAsync(cancellationToken);
-        
-        return product.Id;
-    }
-    catch (DbUpdateConcurrencyException ex)
-    {
-        // ❌ ROLLBACK nếu có lỗi concurrency
-        await transaction.RollbackAsync(cancellationToken);
-        
-        foreach (var entry in ex.Entries)
-        {
-            var entityType = entry.Metadata.Name;
-            var entityId = entry.Entity.GetType().GetProperty("Id")?.GetValue(entry.Entity);
-            var errorMessage = $"Concurrency conflict in entity {entityType} with Id {entityId}. Database state may have changed.";
-            throw new ErrorCodeException("CONCURRENCY_CONFLICT", errorMessage);
+            return product.Id;
         }
-        throw;
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // ❌ ROLLBACK nếu có lỗi concurrency
+            await transaction.RollbackAsync(cancellationToken);
+
+            foreach (var entry in ex.Entries)
+            {
+                var entityType = entry.Metadata.Name;
+                var entityId = entry.Entity.GetType().GetProperty("Id")?.GetValue(entry.Entity);
+                var errorMessage = $"Concurrency conflict in entity {entityType} with Id {entityId}. Database state may have changed.";
+                throw new ErrorCodeException("CONCURRENCY_CONFLICT", errorMessage);
+            }
+            throw;
+        }
+        catch
+        {
+            // ❌ ROLLBACK nếu có bất kỳ lỗi nào
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
-    catch
-    {
-        // ❌ ROLLBACK nếu có bất kỳ lỗi nào
-        await transaction.RollbackAsync(cancellationToken);
-        throw;
-    }
-}
 
     private void UpdateOptionValues(ProductOption option, List<UpsertOptionValueRequest> valueRequests, CancellationToken cancellationToken)
     {
@@ -276,7 +280,7 @@ public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationT
 
                     existingValue.Images.ForEach(i => i.IsDeleted = true);
                     for (int i = 0; i < valueRequest.ImageUrl.Count; i++)
-                    {    
+                    {
                         //TODO: Tìm hiểu tại sao code cũ lỗi
                         //Code cũ existingValue.Images.Add(new ProductOptionValueImage 
                         _context.ProductOptionValueImages.Add(new ProductOptionValueImage
@@ -351,6 +355,8 @@ public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationT
         {
             variantToDelete.IsDeleted = true;
         }
+        
+        _deleteProductVariantIds.AddRange(variantsToSoftDelete.Select(x => x.Id).ToList());
 
         // Xử lý variant
         foreach (var variantRequest in variantRequests)
@@ -380,6 +386,8 @@ public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationT
                     Stock = variantRequest.Stock,
                     IsDeleted = false
                 };
+                
+                _newProductVariantIds.Add(variant.Id);
 
                 // Link variant with option values
                 foreach (var optionValuePair in variantRequest.OptionValues)

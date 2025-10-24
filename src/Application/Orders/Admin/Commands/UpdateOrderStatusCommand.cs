@@ -66,10 +66,10 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             await HandleOrderStateChange(order, newStatus, request.IsRestock, cancellationToken);
         }
         
-        if(newStatus == OrderStatus.REJECTED)
-        {
-            order.PaymentStatus = nameof(OrderPaymentStatus.REJECTED);
-        }
+        // if(newStatus == OrderStatus.REJECTED)
+        // {
+        //     order.PaymentStatus = nameof(OrderPaymentStatus.REJECTED);
+        // }    
         
         order.Status = newStatus.ToString();
         

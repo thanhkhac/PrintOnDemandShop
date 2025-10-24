@@ -32,6 +32,10 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
                 .ThenInclude(pv => pv!.VariantValues)
                     .ThenInclude(vv => vv.ProductOptionValue)
                         .ThenInclude(pov => pov!.ProductOption)
+            .Include(ci => ci.ProductVariant)
+            .ThenInclude(pv => pv!.VariantValues)
+                .ThenInclude(vv => vv.ProductOptionValue)
+                    .ThenInclude(pov => pov!.Images)
             .Include(ci => ci.ProductDesign)
             .Where(ci => ci.CreatedBy == _user.UserId
                          && !ci.ProductVariant!.IsDeleted
@@ -39,12 +43,44 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
             .OrderByDescending(ci => ci.LastModifiedAt)
             .ToListAsync(cancellationToken);
         // @formatter:on
+
+        var imageDic = new Dictionary<Guid, string>();
+
+        foreach (var item in cartItems)
+        {
+            if (item.ProductDesign != null)
+            {
+               var image =  item.ProductDesign.DesignTemplates.First().DesignImageUrl;
+               if (image != null)
+               {
+                   imageDic.Add(item.Id, image);
+                   break;
+               }
+            }
+            else
+            {
+                foreach (var variantValue in item.ProductVariant!.VariantValues)
+                {
+                    if (variantValue.ProductOptionValue?.ProductOption?.Name == "COLOR")
+                    {
+                        var image = variantValue.ProductOptionValue.Images.First().ImageUrl;
+                        if (image != null)
+                        {
+                            imageDic.Add(item.Id, image);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
         return cartItems.Select(ci => new CartItemResponseDto
         {
             CartId = ci.Id,
             ProductId = ci.ProductVariant!.ProductId,
             ProductName = ci.ProductVariant.Product!.Name,
-            ProductImageUrl = ci.ProductVariant.Product.ImageUrl,
+            ProductImageUrl =  imageDic.TryGetValue(ci.Id, out string? value)? value :  ci.ProductVariant.Product.ImageUrl ,
             ProductVariantId = ci.ProductVariantId,
             ProductVariantSku = ci.ProductVariant.Sku,
             UnitPrice = ci.ProductVariant.UnitPrice,

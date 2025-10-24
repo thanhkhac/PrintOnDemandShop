@@ -432,6 +432,11 @@ public class ProductDesignConfig : IEntityTypeConfiguration<ProductDesign>
             .WithOne(i => i.ProductDesign)
             .HasForeignKey(i => i.ProductDesignId)
             .OnDelete(DeleteBehavior.Cascade);
+            
+        builder.HasMany(x => x.DesignTemplates)
+            .WithOne(dt => dt.ProductDesign)
+            .HasForeignKey(dt => dt.ProductDesignId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Kế thừa từ BaseAuditableEntity sẽ tự động có các trường như CreatedAt, UpdatedAt, v.v.
     }

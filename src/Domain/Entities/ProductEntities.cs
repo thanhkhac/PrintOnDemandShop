@@ -190,7 +190,9 @@ public class ProductDesign : BaseAuditableEntity
     public string? Name { get; set; } // ví dụ "Thiết kế áo Tết 2025"
     
     public List<ProductDesignIcons> Icons { get; set; } = new();
+    public List<ProductDesignTemplate> DesignTemplates { get; set; } = new();
     public bool IsDeleted { get; set; }
+    
 }    
 
 public class ProductDesignIcons : BaseEntity

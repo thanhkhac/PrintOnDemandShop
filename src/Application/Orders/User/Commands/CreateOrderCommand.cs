@@ -288,7 +288,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     if (voucher.DiscountType == "PERCENT")
                     {
                         discount = (long)Math.Round(unitPrice * (discountValue / 100m));
-                        voucherDiscountPercent = discount;
+                        voucherDiscountPercent = discountValue;
                     }
                     else if (voucher.DiscountType == "FIXED_AMOUNT")
                     {

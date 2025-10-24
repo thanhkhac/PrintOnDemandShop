@@ -19,7 +19,9 @@ public static class ErrorCodes
     public const string ACCOUNT_BANNED = nameof(ACCOUNT_BANNED);
     public const string ACCOUNT_INVALID_CREDENTIALS = nameof(ACCOUNT_INVALID_CREDENTIALS);
     public const string ACCOUNT_INVALID_VERIFICATION_CODE = nameof(ACCOUNT_INVALID_VERIFICATION_CODE);
+    
     public const string ACCOUNT_EMAIL_NOT_VERIFIED = nameof(ACCOUNT_EMAIL_NOT_VERIFIED);
+    
     public const string ACCOUNT_EMAIL_BANNED = nameof(ACCOUNT_EMAIL_BANNED);
     public const string ACCOUNT_INVALID_RESET_CODE = nameof(ACCOUNT_INVALID_RESET_CODE);
     public const string ACCOUNT_WRONG_PASSWORD = nameof(ACCOUNT_WRONG_PASSWORD);

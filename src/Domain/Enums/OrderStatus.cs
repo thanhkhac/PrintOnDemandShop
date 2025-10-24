@@ -28,7 +28,7 @@ public enum OrderPaymentStatus
     REFUNDING,
     REFUNDED, 
     EXPIRED, // Hết hạn thanh toán
-    REJECTED,
+    // REJECTED,
 }
 
 

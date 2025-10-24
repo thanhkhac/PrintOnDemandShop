@@ -73,3 +73,14 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
+###
+GET http://36.50.135.207:5000/api/ProductDesign/08de12b4-d762-4758-84b6-00e78881bd01
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+GET http://localhost:5000/api/Cart/item
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

@@ -1,3 +1,6 @@
 ﻿namespace CleanArchitectureBase.Domain.Entities;
 
-// public 
+public class SampleImage : BaseAuditableEntity
+{
+    
+}
