@@ -70,11 +70,12 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
     private readonly IApplicationDbContext _context;
     private List<Guid> _newProductVariantIds = new();
     private List<Guid> _deleteProductVariantIds = new();
-    // private readonly IAiClient _aiClient = new();
+    private readonly IAiClient _aiClient;
 
-    public CreateProductCommandHandler(IApplicationDbContext context)
+    public CreateProductCommandHandler(IApplicationDbContext context, IAiClient aiClient)
     {
         _context = context;
+        _aiClient = aiClient;
     }
 
     public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
@@ -238,7 +239,21 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
             await transaction.CommitAsync(cancellationToken);
 
-            
+            try
+            {
+                await _aiClient.CreateProduct(new
+                {
+                    product_variant_ids = _newProductVariantIds
+                });
+                
+                await _aiClient.DeleteProductVariant(new
+                {
+                    product_variant_ids = _deleteProductVariantIds
+                });
+            }
+            catch (Exception)
+            {
+            }
 
             return product.Id;
         }
@@ -262,6 +277,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
+        
+        
     }
 
     private void UpdateOptionValues(ProductOption option, List<UpsertOptionValueRequest> valueRequests, CancellationToken cancellationToken)

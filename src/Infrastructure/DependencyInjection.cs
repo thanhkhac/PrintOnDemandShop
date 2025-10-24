@@ -3,6 +3,7 @@ using CleanArchitectureBase.Application.Common.FileServices;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Settings;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Application.Orders.Interfaces;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Infrastructure.Data;
@@ -20,6 +21,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Refit;
 
 namespace CleanArchitectureBase.Infrastructure;
 
@@ -168,6 +170,11 @@ public static class DependencyInjection
         services.AddScoped<IPlayGroundService, PlayGroundService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddSingleton<IRedisService, RedisService>();
+        services.AddRefitClient<IAiClient>()
+            .ConfigureHttpClient(c =>
+            {
+                c.BaseAddress = new Uri("https://dd4a4b4b8a03.ngrok-free.app");
+            });
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>
         {
