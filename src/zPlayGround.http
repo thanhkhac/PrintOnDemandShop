@@ -84,3 +84,30 @@ GET http://localhost:5000/api/Cart/item
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+
+###
+POST http://36.50.135.207:5000/api/ProductDesign/CreateOrUpdateProductDesign
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "productDesignId": null,
+    "productId": "6c9273bf-3721-48bf-b683-76fe69197a97",
+    "productOptionValueId": "92739e8f-655c-425b-b89a-74de815fda76",
+    "name": "Thiết kế Áo Thun",
+    "icons": [
+        {
+            "imageUrl": "http://36.50.135.207:5000/uploads/01967a1a-7415-443a-b8e1-726c43fbf75f.webp"
+        }
+    ],
+    "templates": [
+        {
+            "templateId": "08de12b4-7bcb-4148-8f6e-37a9b34b0685",
+            "designImageUrl": "http://36.50.135.207:5000/uploads/23332292-2567-45f1-a756-e43eaba4ade2.png"
+        },
+        {
+            "templateId": "08de12b4-7bcb-4146-8f93-fcef445f0911",
+            "designImageUrl": "http://36.50.135.207:5000/uploads/4771b232-0be9-4efb-b887-5d75130c732c.png"
+        }
+    ]
+}

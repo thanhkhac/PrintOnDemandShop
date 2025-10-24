@@ -4,16 +4,19 @@ using CleanArchitectureBase.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CleanArchitectureBase.Infrastructure.Data.Migrations
+namespace CleanArchitectureBase.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251024152410_UpdateDatabase8")]
+    partial class UpdateDatabase8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,7 +393,12 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
+                    b.Property<Guid?>("ProductDesignId1")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("ProductDesignId", "TemplateId");
+
+                    b.HasIndex("ProductDesignId1");
 
                     b.HasIndex("TemplateId");
 
@@ -1251,10 +1259,14 @@ namespace CleanArchitectureBase.Infrastructure.Data.Migrations
             modelBuilder.Entity("CleanArchitectureBase.Domain.Entities.ProductDesignTemplate", b =>
                 {
                     b.HasOne("CleanArchitectureBase.Domain.Entities.ProductDesign", "ProductDesign")
-                        .WithMany("DesignTemplates")
+                        .WithMany()
                         .HasForeignKey("ProductDesignId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CleanArchitectureBase.Domain.Entities.ProductDesign", null)
+                        .WithMany("DesignTemplates")
+                        .HasForeignKey("ProductDesignId1");
 
                     b.HasOne("CleanArchitectureBase.Domain.Entities.Template", "Template")
                         .WithMany()

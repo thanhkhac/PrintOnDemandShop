@@ -1,6 +1,7 @@
 ﻿using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Security;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Application.Products.Dtos;
 using CleanArchitectureBase.Application.Products.Dtos.Request;
 using CleanArchitectureBase.Domain.Constants;
@@ -69,6 +70,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
     private readonly IApplicationDbContext _context;
     private List<Guid> _newProductVariantIds = new();
     private List<Guid> _deleteProductVariantIds = new();
+    // private readonly IAiClient _aiClient = new();
 
     public CreateProductCommandHandler(IApplicationDbContext context)
     {
@@ -235,6 +237,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
 
             // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
             await transaction.CommitAsync(cancellationToken);
+
+            
 
             return product.Id;
         }

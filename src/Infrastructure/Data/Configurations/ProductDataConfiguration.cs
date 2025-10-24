@@ -485,7 +485,7 @@ public class ProductDesignTemplateConfig : IEntityTypeConfiguration<ProductDesig
 
         // Quan hệ với ProductDesign
         builder.HasOne(x => x.ProductDesign)
-            .WithMany() // Không có navigation ngược từ ProductDesign
+            .WithMany(d => d.DesignTemplates) // Không có navigation ngược từ ProductDesign
             .HasForeignKey(x => x.ProductDesignId)
             .OnDelete(DeleteBehavior.Cascade);
 
