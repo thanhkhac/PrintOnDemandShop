@@ -12,10 +12,10 @@ public interface IAiClient
     [Post("/ask_user")]
     Task<AskUserResponse> AskUser();
     
-    [Post("/update_product")]
+    [Post("/admin/update_product")]
     Task CreateProduct(object data);
     
-    [Post("/delete_product")]
+    [Post("/admin/delete_product")]
     Task DeleteProductVariant(object data);
 }
 

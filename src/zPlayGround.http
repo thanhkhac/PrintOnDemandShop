@@ -15,26 +15,26 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "productId": "61f0ffb7-97bc-4acd-a0f5-f2a423a0122c",
+  "productId": null,
   "name": "Test",
   "description": "test",
   "imageUrl": "http://36.50.135.207:5000/uploads/e9527e40-6ed7-4961-824c-8325175b346b.png",
   "basePrice": 10000,
-  "categoryId": "a3889c74-e136-4e5a-87cd-9c0c7c35c7ef",
+  "categoryId": "558f9bc6-6a24-4774-9bec-f6eec868f6f8",
   "options": [
     {
-      "optionId": "e158e777-52a2-46d1-827c-3550f9c86e68",
+      "optionId": null,
       "name": "SIZE",
       "values": [
         {
-          "optionValueId": "a6401d2a-a530-42dc-9d8b-18ec05c491ab",
+          "optionValueId": null,
           "value": "S",
           "imageUrl": []
         }
       ]
     },
     {
-      "optionId": "f603255f-f9e4-4b01-95c1-2cb0b2e2c2ac",
+      "optionId": null,
       "name": "COLOR",
       "values": [
         {
@@ -50,7 +50,7 @@ Authorization: Bearer {{token}}
       "id": null,
       "sku": "TEST_ĐỎ_S",
       "price": 10000,
-      "stock": 0,
+      "stock": 5,
       "optionValues": {
         "COLOR": "Đỏ",
         "SIZE": "S"
@@ -61,7 +61,7 @@ Authorization: Bearer {{token}}
 
 
 ### 
-GET http://36.50.135.207:5000/api/Order/admin/all?PageNumber=1&PageSize=10&PaymentStatus=ONLINE_PAYMENT_PAID
+GET http://localhost:5000/api/ProductDesign/Search?PageNumber=1&PageSize=10
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -80,9 +80,19 @@ Authorization: Bearer {{token}}
 
 
 ###
-GET http://localhost:5000/api/Cart/item
+POST http://localhost:5000/api/Cart/itemByOption
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+{
+  "productId": "6c9273bf-3721-48bf-b683-76fe69197a97",
+  "productOptionValueIds": [
+    "92739e8f-655c-425b-b89a-74de815fda76",
+    "bafd7403-94e2-49ee-8c3e-c2831f95b1a8"
+  ],
+  "productDesignId": "08de1329-61d9-4bbc-848c-0ea8088e3fe0",
+  "quantity": 1
+}
 
 
 ###

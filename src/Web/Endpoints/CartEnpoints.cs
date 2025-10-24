@@ -15,12 +15,22 @@ public class CartEndpoints : EndpointGroupBase
         var group = app.MapGroup(this);
 
         group.MapPost(AddToCart, "/item");
+        group.MapPost(AddToCartByOption, "/itemByOption");
         group.MapDelete(RemoveFromCart, "/item");
         group.MapGet(GetCartItems, "/item");
     }
 
     public async Task<Ok<ApiResponse<Guid>>> AddToCart(
         [FromBody] AddToCartCommand command,
+        ISender sender)
+    {
+        var result = await sender.Send(command);
+        return result.ToOk();
+    }
+    
+    
+    public async Task<Ok<ApiResponse<Guid>>> AddToCartByOption(
+        [FromBody] AddToCartByOptionValueCommand command,
         ISender sender)
     {
         var result = await sender.Send(command);

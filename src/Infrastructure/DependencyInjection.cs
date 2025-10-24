@@ -12,6 +12,7 @@ using CleanArchitectureBase.Infrastructure.FileServices;
 using CleanArchitectureBase.Infrastructure.Google;
 using CleanArchitectureBase.Infrastructure.Hangfire;
 using CleanArchitectureBase.Infrastructure.Identity;
+using CleanArchitectureBase.Infrastructure.Loggers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CleanArchitectureBase.Infrastructure.Redis;
 using Google.Apis.Auth.OAuth2;
@@ -170,11 +171,14 @@ public static class DependencyInjection
         services.AddScoped<IPlayGroundService, PlayGroundService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddSingleton<IRedisService, RedisService>();
+        
+        services.AddTransient<RefitLoggingHandler>();
+
         services.AddRefitClient<IAiClient>()
             .ConfigureHttpClient(c =>
             {
                 c.BaseAddress = new Uri("https://dd4a4b4b8a03.ngrok-free.app");
-            });
+            }).AddHttpMessageHandler<RefitLoggingHandler>();
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>
         {

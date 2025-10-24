@@ -205,7 +205,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                         IsDeleted = false
                     };
                     
-                    _newProductVariantIds.Add(product.Id);
+                    _newProductVariantIds.Add(variant.Id);
 
                     foreach (var optionValuePair in variantRequest.OptionValues)
                     {
@@ -245,11 +245,14 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                 {
                     product_variant_ids = _newProductVariantIds
                 });
-                
-                await _aiClient.DeleteProductVariant(new
+
+                if (_deleteProductVariantIds.Any())
                 {
-                    product_variant_ids = _deleteProductVariantIds
-                });
+                    await _aiClient.DeleteProductVariant(new
+                    {
+                        product_variant_ids = _deleteProductVariantIds
+                    });
+                }
             }
             catch (Exception)
             {

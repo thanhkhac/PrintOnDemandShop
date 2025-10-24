@@ -510,6 +510,38 @@
         }
       }
     },
+    "/api/Cart/itemByOption": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "operationId": "AddToCartByOption",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartByOptionValueCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfGuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Category/CreateOrUpdate": {
       "post": {
         "tags": [
@@ -2614,6 +2646,32 @@
             "type": "string",
             "format": "guid",
             "nullable": true
+          },
+          "productDesignId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AddToCartByOptionValueCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "productOptionValueIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
           },
           "productDesignId": {
             "type": "string",

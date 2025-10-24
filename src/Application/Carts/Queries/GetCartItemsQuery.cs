@@ -26,6 +26,8 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
     {
         // @formatter:off
         var cartItems = await _context.CartItems
+            .Include(x=>x.ProductDesign)
+                .ThenInclude(y=>y!.DesignTemplates)
             .Include(ci => ci.ProductVariant)
                 .ThenInclude(pv => pv!.Product)
             .Include(ci => ci.ProductVariant)

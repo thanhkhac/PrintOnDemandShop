@@ -1,5 +1,6 @@
 ﻿using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Interfaces;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.Products.Commands;
@@ -22,10 +23,13 @@ public class DeleteProductCommandValidator : AbstractValidator<DeleteProductComm
 public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, bool>
 {
     private readonly IApplicationDbContext _context;
+    private List<Guid> _deleteProductVariantIds = new();
+    private readonly IAiClient _aiClient;
 
-    public DeleteProductCommandHandler(IApplicationDbContext context)
+    public DeleteProductCommandHandler(IApplicationDbContext context, IAiClient aiClient)
     {
         _context = context;
+        _aiClient = aiClient;
     }
 
     public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
@@ -55,6 +59,7 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
         foreach (var variant in product.Variants)
         {
             variant.IsDeleted = true;
+            _deleteProductVariantIds.Add(variant.Id);
         }
 
         // Soft delete all option values
@@ -67,6 +72,18 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+        
+        
+        try
+        {               
+            await _aiClient.DeleteProductVariant(new
+            {
+                product_variant_ids = _deleteProductVariantIds
+            });
+        }
+        catch (Exception)
+        {
+        }
 
         return true;
     }
