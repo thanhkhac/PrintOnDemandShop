@@ -121,9 +121,9 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
                 throw new ErrorCodeException(ErrorCodes.ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT);
             }
             
-            var order = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
-            if (order == null)
-                throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
+            // var order = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
+            // if (order == null)
+            //     throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
 
             var paymentId = command.Id!.ToString();
 
