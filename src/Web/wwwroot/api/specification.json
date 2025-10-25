@@ -830,7 +830,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseOfOrderDetailResponseDto"
+                  "$ref": "#/components/schemas/ApiResponseOfBoolean"
                 }
               }
             }

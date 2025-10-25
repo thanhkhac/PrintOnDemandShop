@@ -30,9 +30,20 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 
     public CreateOrderCommandValidator()
     {
-        RuleFor(x => x.RecipientPhone).NotEmpty();
-        RuleFor(x => x.RecipientName).NotEmpty();
-        RuleFor(x => x.RecipientAddress).NotEmpty();
+        When(x => !x.IsCreated, () =>
+        {
+            RuleFor(x => x.RecipientPhone)
+                .NotEmpty()
+                .WithMessage("Recipient phone is required.");
+
+            RuleFor(x => x.RecipientName)
+                .NotEmpty()
+                .WithMessage("Recipient name is required.");
+
+            RuleFor(x => x.RecipientAddress)
+                .NotEmpty()
+                .WithMessage("Recipient address is required.");
+        });    
         RuleFor(x => x.PaymentMethod)
             .NotEmpty()
             .Must(x => AllowPaymentMethods.Contains(x))
@@ -265,8 +276,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var totalBeforeDiscount = quantity * unitPrice;
 
             // Trừ stock cho variant
-            variant.Stock -= quantity;
-            variantsToUpdate.Add(variant);
+                variant.Stock -= quantity;
+                variantsToUpdate.Add(variant);
 
             long finalUnitPrice = unitPrice;
             long discountPerUnit = 0;

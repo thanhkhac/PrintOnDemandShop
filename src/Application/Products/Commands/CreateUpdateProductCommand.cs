@@ -81,7 +81,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
     public async Task<Guid> Handle(CreateUpdateProductCommand request, CancellationToken cancellationToken)
     {
         // Bắt đầu transaction
-        // await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -204,8 +204,12 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                         Stock = variantRequest.Stock,
                         IsDeleted = false
                     };
-                    
-                    _newProductVariantIds.Add(variant.Id);
+
+                    if (variant.Stock > 0)
+                    {
+                        _newProductVariantIds.Add(variant.Id);
+                    }
+                   
 
                     foreach (var optionValuePair in variantRequest.OptionValues)
                     {
@@ -237,7 +241,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             }
 
             // ✅ COMMIT TRANSACTION - Tất cả thay đổi được confirm
-            // await transaction.CommitAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
             try
             {
@@ -263,7 +267,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
         catch (DbUpdateConcurrencyException ex)
         {
             // ❌ ROLLBACK nếu có lỗi concurrency
-            // await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(cancellationToken);
 
             foreach (var entry in ex.Entries)
             {
@@ -277,7 +281,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
         catch
         {
             // ❌ ROLLBACK nếu có bất kỳ lỗi nào
-            // await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(cancellationToken);
             throw;
         }
         
@@ -411,7 +415,10 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
                     IsDeleted = false
                 };
                 
-                _newProductVariantIds.Add(variant.Id);
+                if (variant.Stock > 0)
+                {
+                    _newProductVariantIds.Add(variant.Id);
+                }
 
                 // Link variant with option values
                 foreach (var optionValuePair in variantRequest.OptionValues)
