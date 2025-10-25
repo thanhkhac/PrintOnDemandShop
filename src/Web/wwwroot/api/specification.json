@@ -657,6 +657,26 @@
         }
       }
     },
+    "/api/Statistics/DashboardData": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "operationId": "GetDashboardData",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfDashBoardData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/File/UploadImage": {
       "post": {
         "tags": [
@@ -3060,6 +3080,75 @@
           },
           "success": {
             "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseOfDashBoardData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DashBoardData"
+              }
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DashBoardData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "totalUser": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalProduct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPendingOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalAcceptedOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalProcessingOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalShippedOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalConfirmReceived": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

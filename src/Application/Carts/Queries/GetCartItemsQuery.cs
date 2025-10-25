@@ -56,7 +56,11 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
             }
             if (item.ProductDesign != null)
             {
-               var image =  item.ProductDesign.DesignTemplates.First().DesignImageUrl;
+                var image = item.ProductDesign.DesignTemplates
+                    .OrderBy(x => x.PrintAreaName != "Mặt trước") // "Mặt trước" sẽ có giá trị false → đứng trước
+                    .ThenBy(x => x.PrintAreaName)                  // sắp xếp tiếp theo tên nếu cần
+                    .First()
+                    .DesignImageUrl;
                if (image != null)
                {
                    imageDic.Add(item.Id, image);
