@@ -5,4 +5,5 @@ public class PaymentSettings
     public string? Apikey { get; set; }
     public string? Bank { get; set; }
     public string? Account { get; set; }
+    public string? VirtualAccount { get; set; }
 }
