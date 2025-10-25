@@ -83,3 +83,7 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.nginx.yml down || true
             docker compose -f docker-compose.yml -f docker-compose.nginx.yml up --build -d
             echo "CD hoàn tất"
+            
+            docker compose -f docker-compose.nginx.yml down || true
+            
+            docker compose -f docker-compose.nginx.yml up --build -d
