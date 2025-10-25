@@ -1560,10 +1560,10 @@
         }
       }
     },
-    "/api/SampleImageEnpoints": {
+    "/api/SampleImage": {
       "post": {
         "tags": [
-          "SampleImageEnpoints"
+          "SampleImage"
         ],
         "operationId": "AddImage",
         "requestBody": {
@@ -1593,7 +1593,7 @@
       },
       "delete": {
         "tags": [
-          "SampleImageEnpoints"
+          "SampleImage"
         ],
         "operationId": "DeleteImage",
         "requestBody": {
@@ -1623,7 +1623,7 @@
       },
       "get": {
         "tags": [
-          "SampleImageEnpoints"
+          "SampleImage"
         ],
         "operationId": "GetAllSampleImages",
         "responses": {
