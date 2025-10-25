@@ -123,7 +123,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             // Schedule stock restoration job cho đơn hàng online payment
             if (request.PaymentMethod == "ONLINE_PAYMENT")
             {
-                await _hangfireService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 5);
+                await _hangfireService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 2);
             }
         }
 

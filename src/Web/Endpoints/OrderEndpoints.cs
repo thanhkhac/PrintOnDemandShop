@@ -24,7 +24,7 @@ public class OrderEndpoints : EndpointGroupBase
         group.MapPost(CreateOrder);
         group.MapGet(GetMyOrders);
         group.MapGet("{orderId:guid}", GetOrderDetail);
-        group.MapGet("{orderId:guid}/IsPaid", GetOrderDetail);
+        group.MapGet("{orderId:guid}/IsPaid", IsPaid);
         group.MapPut("{orderId:guid}/status", UpdateMyOrderStatus);
         
         // Admin endpoints
