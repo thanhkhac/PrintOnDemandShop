@@ -51,6 +51,7 @@ public class SearchProductDesignsQueryHandler : IRequestHandler<SearchProductDes
                 .ThenInclude(pov => pov!.ProductOption)
             .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
             .Where(pd => pd.CreatedBy == _user.UserId && !pd.IsDeleted)
+            .Where(pd => pd.ProductOptionValue!.IsDeleted == false)
             .OrderByDescending(pd => pd.CreatedAt)
             .AsQueryable();
 

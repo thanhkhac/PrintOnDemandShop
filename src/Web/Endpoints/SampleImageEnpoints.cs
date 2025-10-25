@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitectureBase.Web.Endpoints;
 
-public class SampleImageEnpoints : EndpointGroupBase
+public class SampleImageEndpoints : EndpointGroupBase
 {
     public override void Map(WebApplication app)
     {
