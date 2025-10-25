@@ -27,6 +27,8 @@ public class DeleteSampleImageCommandHandler : IRequestHandler<DeleteSampleImage
         {
             _context.SampleImages.Remove(entity);
         }
+        
+        _context.SaveChangesAsync(cancellationToken);
         return Task.FromResult(request.Id);
     }
 }
