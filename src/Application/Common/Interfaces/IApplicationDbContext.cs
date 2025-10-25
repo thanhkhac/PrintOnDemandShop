@@ -43,5 +43,5 @@ public interface
     // Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     // Task CommitTransactionAsync(CancellationToken cancellationToken = default);
     // Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
-    DatabaseFacade Database { get; }
+    // DatabaseFacade Database { get; }
 }
