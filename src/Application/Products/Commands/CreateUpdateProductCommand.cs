@@ -395,8 +395,17 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             {
                 // Update existing variant
                 variant = product.Variants.FirstOrDefault(v => v.Id == variantRequest.Id.Value);
+                
+                
                 if (variant != null)
                 {
+                    if(variant.Stock > 0 && variantRequest.Stock <=0)
+                    {
+                        _deleteProductVariantIds.Add(variant.Id);
+                    }else if(variant.Stock <= 0 && variantRequest.Stock > 0)
+                    {
+                        _newProductVariantIds.Add(variant.Id);
+                    }
                     variant.Sku = variantRequest.Sku;
                     variant.UnitPrice = variantRequest.Price;
                     variant.Stock = variantRequest.Stock;

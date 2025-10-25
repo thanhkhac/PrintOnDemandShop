@@ -76,7 +76,7 @@ public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, Guid>
         if (existingCartItem != null)
         {
             // Update quantity if item already exists
-            var newQuantity = existingCartItem.Quantity + request.Quantity;
+            var newQuantity =  request.Quantity;
             
             if (newQuantity > productVariant.Stock)
                 throw new ErrorCodeException(ErrorCodes.INSUFFICIENT_STOCK);

@@ -2,6 +2,7 @@
 using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Security;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Application.Orders.Dtos;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
@@ -43,7 +44,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             RuleFor(x => x.RecipientAddress)
                 .NotEmpty()
                 .WithMessage("Recipient address is required.");
-        });    
+        });
         RuleFor(x => x.PaymentMethod)
             .NotEmpty()
             .Must(x => AllowPaymentMethods.Contains(x))
@@ -62,15 +63,19 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly IApplicationDbContext _context;
     private readonly TimeProvider _dateTime;
     private readonly IHangfireService _hangfireService;
+    private List<Guid> _deleteProductVariantIds = new();
+    private readonly IAiClient _aiClient;
+
 
     public CreateOrderCommandHandler(
         IApplicationDbContext context,
         TimeProvider dateTime,
-        IHangfireService hangfireService)
+        IHangfireService hangfireService, IAiClient aiClient)
     {
         _context = context;
         _dateTime = dateTime;
         _hangfireService = hangfireService;
+        _aiClient = aiClient;
     }
 
     public async Task<OrderDetailResponseDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -136,6 +141,20 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 await _hangfireService.ScheduleStockRestorationAsync(order.Id, delayMinutes: 2);
             }
+        }
+
+        try
+        {
+            if (_deleteProductVariantIds.Any())
+            {
+                await _aiClient.DeleteProductVariant(new
+                {
+                    product_variant_ids = _deleteProductVariantIds
+                });
+            }
+        }
+        catch (Exception)
+        {
         }
 
         return MapToDto(order);
@@ -276,8 +295,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var totalBeforeDiscount = quantity * unitPrice;
 
             // Trừ stock cho variant
-                variant.Stock -= quantity;
-                variantsToUpdate.Add(variant);
+            variant.Stock -= quantity;
+            if (variant.Stock == 0)
+            {
+                _deleteProductVariantIds.Add(variant.Id);
+            }
+            variantsToUpdate.Add(variant);
 
             long finalUnitPrice = unitPrice;
             long discountPerUnit = 0;
