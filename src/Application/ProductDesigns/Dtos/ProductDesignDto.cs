@@ -8,7 +8,6 @@ public class ProductDesignDto
     public string? Name { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset LastModifiedAt { get; set; }
-    
     // Navigation properties
     public string? ProductName { get; set; }
     public string? ProductOptionValue { get; set; }

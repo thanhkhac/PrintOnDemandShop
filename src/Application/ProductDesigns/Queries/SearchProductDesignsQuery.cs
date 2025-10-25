@@ -3,6 +3,7 @@ using CleanArchitectureBase.Application.Common.Mappings;
 using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Common.Security;
 using CleanArchitectureBase.Application.ProductDesigns.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitectureBase.Application.ProductDesigns.Queries;
 
@@ -47,15 +48,16 @@ public class SearchProductDesignsQueryHandler : IRequestHandler<SearchProductDes
         var query = _context.ProductDesigns
             .Include(pd => pd.Product)
             .Include(pd => pd.ProductOptionValue)
-            .ThenInclude(pov => pov!.ProductOption)
+                .ThenInclude(pov => pov!.ProductOption)
             .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
-            .Where(pd => pd.CreatedBy == _user.UserId && !pd.IsDeleted) // Only user's own non-deleted designs
+            .Where(pd => pd.CreatedBy == _user.UserId && !pd.IsDeleted)
+            .OrderByDescending(pd => pd.CreatedAt)
             .AsQueryable();
 
         // Apply filters
         if (!string.IsNullOrEmpty(request.SearchTerm))
         {
-            query = query.Where(pd => 
+            query = query.Where(pd =>
                 (pd.Name != null && pd.Name.Contains(request.SearchTerm)) ||
                 (pd.Product != null && pd.Product.Name != null && pd.Product.Name.Contains(request.SearchTerm)));
         }
@@ -70,10 +72,30 @@ public class SearchProductDesignsQueryHandler : IRequestHandler<SearchProductDes
             query = query.Where(pd => pd.ProductOptionValueId == request.ProductOptionValueId.Value);
         }
 
-        // Order by creation date descending
-        query = query.OrderByDescending(pd => pd.CreatedAt);
+        // Get total count before pagination
+        var totalCount = await query.CountAsync(cancellationToken);
 
-        var projectedQuery = query.Select(pd => new ProductDesignDto
+        // Paginate
+        var productDesigns = await query
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        // Get all design templates related to these designs
+        var designIds = productDesigns.Select(pd => pd.Id).ToList();
+
+        var designTemplates = await _context.ProductDesignTemplates
+            .Include(pdt => pdt.Template)
+            .Where(pdt => designIds.Contains(pdt.ProductDesignId) && !pdt.IsDeleted)
+            .ToListAsync(cancellationToken);
+
+        // Group templates by ProductDesignId
+        var templateGroups = designTemplates
+            .GroupBy(t => t.ProductDesignId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Map to DTOs
+        var items = productDesigns.Select(pd => new ProductDesignDto
         {
             Id = pd.Id,
             ProductId = pd.ProductId,
@@ -81,17 +103,26 @@ public class SearchProductDesignsQueryHandler : IRequestHandler<SearchProductDes
             Name = pd.Name,
             CreatedAt = pd.CreatedAt,
             LastModifiedAt = pd.LastModifiedAt,
-            ProductName = pd.Product != null ? pd.Product.Name : null,
-            ProductOptionValue = pd.ProductOptionValue != null ? pd.ProductOptionValue.Value : null,
+            ProductName = pd.Product?.Name,
+            ProductOptionValue = pd.ProductOptionValue?.Value,
             Icons = pd.Icons.Select(i => new ProductDesignIconDto
             {
                 Id = i.Id,
                 ProductDesignId = i.ProductDesignId,
                 ImageUrl = i.ImageUrl
             }).ToList(),
-            Templates = new List<ProductDesignTemplateDto>() // Will be loaded separately if needed for performance
-        });
+            Templates = templateGroups.TryGetValue(pd.Id, out var templates)
+                ? templates.Select(dt => new ProductDesignTemplateDto
+                {
+                    ProductDesignId = dt.ProductDesignId,
+                    TemplateId = dt.TemplateId,
+                    DesignImageUrl = dt.DesignImageUrl,
+                    PrintAreaName = dt.PrintAreaName,
+                    TemplateImageUrl = dt.Template?.ImageUrl
+                }).ToList()
+                : new List<ProductDesignTemplateDto>()
+        }).ToList();
 
-        return await projectedQuery.PaginatedListAsync(request.PageNumber, request.PageSize);
+        return new PaginatedList<ProductDesignDto>(items, totalCount, request.PageNumber, request.PageSize);
     }
 }
