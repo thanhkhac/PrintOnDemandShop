@@ -73,7 +73,7 @@ public class ApplicationDbContextInitialiser
     {
         try
         {
-            // await TrySeedAsync();
+            await TrySeedAsync();
             await Task.CompletedTask;
         }
 
@@ -296,7 +296,8 @@ public class ApplicationDbContextInitialiser
         //     };
         //
         //     _context.ProductVariants.AddRange(blackM, whiteL);
-            await _context.SaveChangesAsync();
-        }
+        await _context.SaveChangesAsync();
     }
 }
+
+
