@@ -39,15 +39,15 @@ public class DeleteVoucherCommandHandler : IRequestHandler<DeleteVoucherCommand,
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "Voucher not found");
 
         // Remove product associations first
-        var productVouchers = await _context.ProductVouchers
-            .Where(pv => pv.VoucherId == request.VoucherId)
-            .ToListAsync(cancellationToken);
+        // var productVouchers = await _context.ProductVouchers
+        //     .Where(pv => pv.VoucherId == request.VoucherId)
+        //     .ToListAsync(cancellationToken);
         // if (productVouchers.Count == 0)
         //     throw new ErrorCodeException("VOUCHER_IN_USE");            
-        _context.ProductVouchers.RemoveRange(productVouchers);
+        // _context.ProductVouchers.RemoveRange(productVouchers);
         // Remove voucher
-        _context.Vouchers.Remove(voucher);
-
+        // _context.Vouchers.Remove(voucher);
+        voucher.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;

@@ -296,6 +296,7 @@ public class Voucher : BaseAuditableEntity
     public DateTimeOffset EndDate { get; set; }
     public int UsedCount { get; set; }           
     public bool IsActive { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 public class ProductVoucher : BaseEntity

@@ -315,7 +315,7 @@ public class VoucherConfig : IEntityTypeConfiguration<Voucher>
     public void Configure(EntityTypeBuilder<Voucher> builder)
     {
         builder.ToTable("Vouchers");
-
+        builder.HasQueryFilter(x => x.IsDeleted == true);
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Code)
@@ -351,6 +351,7 @@ public class TemplateConfig : IEntityTypeConfiguration<Template>
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+
 public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVoucher>
 {
     public void Configure(EntityTypeBuilder<ProductVoucher> builder)
@@ -359,7 +360,11 @@ public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVouch
         builder.ToTable("ProductVouchers");
 
         // Composite Key
-        builder.HasKey(pv => new { pv.ProductId, pv.VoucherId });
+        builder.HasKey(pv => new
+        {
+            pv.ProductId,
+            pv.VoucherId
+        });
 
         // Relationships
         builder.HasOne(pv => pv.Product)
@@ -394,7 +399,7 @@ public class ProductOptionValueImageConfig : IEntityTypeConfiguration<ProductOpt
             .HasDefaultValue(false);
 
         builder.HasOne(x => x.ProductOptionValue)
-            .WithMany(v => v.Images) 
+            .WithMany(v => v.Images)
             .HasForeignKey(x => x.ProductOptionValueId)
             .OnDelete(DeleteBehavior.Cascade);
     }
@@ -432,7 +437,7 @@ public class ProductDesignConfig : IEntityTypeConfiguration<ProductDesign>
             .WithOne(i => i.ProductDesign)
             .HasForeignKey(i => i.ProductDesignId)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         builder.HasMany(x => x.DesignTemplates)
             .WithOne(dt => dt.ProductDesign)
             .HasForeignKey(dt => dt.ProductDesignId)
@@ -465,7 +470,6 @@ public class ProductDesignIconsConfig : IEntityTypeConfiguration<ProductDesignIc
     }
 }
 
-
 public class ProductDesignTemplateConfig : IEntityTypeConfiguration<ProductDesignTemplate>
 {
     public void Configure(EntityTypeBuilder<ProductDesignTemplate> builder)
@@ -474,7 +478,11 @@ public class ProductDesignTemplateConfig : IEntityTypeConfiguration<ProductDesig
         builder.ToTable("ProductDesignTemplates");
 
         // Composite Key
-        builder.HasKey(x => new { x.ProductDesignId, x.TemplateId });
+        builder.HasKey(x => new
+        {
+            x.ProductDesignId,
+            x.TemplateId
+        });
 
         // Cấu hình các thuộc tính
         builder.Property(x => x.DesignImageUrl)

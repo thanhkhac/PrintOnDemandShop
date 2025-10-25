@@ -42,6 +42,7 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
             .Where(ci => ci.CreatedBy == _user.UserId
                          && !ci.ProductVariant!.IsDeleted
                          && !ci.ProductVariant.Product!.IsDeleted)
+            .Where(ci => (ci.ProductDesign == null || ci.ProductDesign.IsDeleted == false))
             .OrderByDescending(ci => ci.LastModifiedAt)
             .ToListAsync(cancellationToken);
         // @formatter:on
@@ -64,7 +65,7 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
                if (image != null)
                {
                    imageDic.Add(item.Id, image);
-                   break;
+                   // break;
                }
             }
             else

@@ -6,7 +6,7 @@ using CleanArchitectureBase.Domain.Constants;
 
 namespace CleanArchitectureBase.Application.ProductDesigns.Queries;
 
-[Authorize]
+// [Authorize]
 public class GetProductDesignDetailQuery : IRequest<ProductDesignDetailDto>
 {
     public Guid ProductDesignId { get; set; }
@@ -40,7 +40,10 @@ public class GetProductDesignDetailQueryHandler : IRequestHandler<GetProductDesi
             .Include(pd => pd.ProductOptionValue)
             .ThenInclude(pov => pov!.ProductOption)
             .Include(pd => pd.Icons.Where(i => !i.IsDeleted))
-            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId && pd.CreatedBy == _user.UserId && !pd.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(pd => pd.Id == request.ProductDesignId 
+            // && pd.CreatedBy == _user.UserId 
+            // &&  !pd.IsDeleted
+            , cancellationToken);
 
         if (productDesign == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "ProductDesign not found or you don't have permission to view it");
