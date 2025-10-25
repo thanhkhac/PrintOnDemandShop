@@ -470,6 +470,20 @@ public class ProductDesignIconsConfig : IEntityTypeConfiguration<ProductDesignIc
     }
 }
 
+
+public class ProductFeedbackIconsConfig : IEntityTypeConfiguration<ProductFeedback>
+{
+    public void Configure(EntityTypeBuilder<ProductFeedback> builder)
+    {
+        // Đặt tên bảng
+        builder.ToTable("ProductFeedbacks");
+
+        // Định nghĩa khóa chính
+        builder.HasKey(x => x.Id);
+
+    }
+}
+
 public class ProductDesignTemplateConfig : IEntityTypeConfiguration<ProductDesignTemplate>
 {
     public void Configure(EntityTypeBuilder<ProductDesignTemplate> builder)

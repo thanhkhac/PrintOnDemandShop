@@ -39,6 +39,7 @@ public interface
     
     DbSet<TokenPackage>  TokenPackages { get; }
     DbSet<UserTokenPackage>  UserTokenPackages { get; } 
+    DbSet<ProductFeedback>  ProductFeedbacks { get; } 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     // Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     // Task CommitTransactionAsync(CancellationToken cancellationToken = default);

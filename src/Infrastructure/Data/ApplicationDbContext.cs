@@ -81,6 +81,7 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<ProductVoucher> ProductVouchers => Set<ProductVoucher>();
     public DbSet<TokenPackage> TokenPackages => Set<TokenPackage>();
     public DbSet<UserTokenPackage> UserTokenPackages => Set<UserTokenPackage>();
+    public DbSet<ProductFeedback> ProductFeedbacks => Set<ProductFeedback>();
 
     // public override DbSet<ApplicationRole> Roles { get; set; }
     // public override DbSet<ApplicationUserClaim> UserClaims { get; set; }

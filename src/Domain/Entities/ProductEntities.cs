@@ -45,6 +45,15 @@ public class Product : BaseAuditableEntity
     public bool IsDeleted { get; set; }
 }
 
+public class ProductFeedback : BaseAuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid ProductId { get; set; }
+    public Guid OrderId { get; set; }    
+    public string? Feedback { get; set; }
+    public int Rating { get; set; }
+}
+
 public class ProductOption :  BaseEntity
 {
     public Guid Id { get; set; }

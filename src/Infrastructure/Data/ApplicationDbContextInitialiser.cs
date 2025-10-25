@@ -22,7 +22,7 @@ public static class InitialiserExtensions
 
         await initialiser.InitialiseAsync();
 
-        // await initialiser.SeedAsync();
+        await initialiser.SeedAsync();
 
         await Task.CompletedTask;
     }
@@ -167,135 +167,135 @@ public class ApplicationDbContextInitialiser
         }
 
 
-        if (!_context.Categories.Any())
-        {
-            var menCategory = new Category
-            {
-                Id = Guid.NewGuid(),
-                Name = "Men",
-                IsDeleted = false,
-                CreatedBy = adminId
-            };
-            var womenCategory = new Category
-            {
-                Id = Guid.NewGuid(),
-                Name = "Women",
-                IsDeleted = false,
-                CreatedBy = adminId
-            };
-            var tshirtCategory = new Category
-            {
-                Id = Guid.NewGuid(),
-                Name = "T-Shirts",
-                ParentCategory = menCategory,
-                IsDeleted = false,
-                CreatedBy = adminId
-            };
-
-            _context.Categories.AddRange(menCategory, womenCategory, tshirtCategory);
-            await _context.SaveChangesAsync();
-        }
-
-
-        if (!_context.Products.Any())
-        {
-            var menCategory = _context.Categories.First(c => c.Name == "Men");
-            var tshirtCategory = _context.Categories.First(c => c.Name == "T-Shirts");
-
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Basic Black T-Shirt",
-                Description = "Comfortable cotton t-shirt",
-                BasePrice = 150000,
-                ImageUrl = "https://example.com/tshirt-black.jpg",
-                IsDeleted = false,
-                ProductCategories = new List<ProductCategory>
-                {
-                    new ProductCategory
-                    {
-                        CategoryId = menCategory.Id,
-                    },
-                    new ProductCategory
-                    {
-                        CategoryId = tshirtCategory.Id
-                    }
-                },
-                CreatedBy = adminId
-            };
-
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-
-            // ==== Product Options ====
-            var sizeOption = new ProductOption
-            {
-                Id = Guid.NewGuid(),
-                Name = "Size",
-                ProductId = product.Id,
-                Values = new List<ProductOptionValue>
-                {
-                    new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        Value = "S"
-                    },
-                    new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        Value = "M"
-                    },
-                    new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        Value = "L"
-                    },
-                }
-            };
-
-            var colorOption = new ProductOption
-            {
-                Id = Guid.NewGuid(),
-                Name = "Color",
-                ProductId = product.Id,
-                Values = new List<ProductOptionValue>
-                {
-                    new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        Value = "Black"
-                    },
-                    new ProductOptionValue
-                    {
-                        Id = Guid.NewGuid(),
-                        Value = "White"
-                    }
-                }
-            };
-
-            _context.ProductOptions.AddRange(sizeOption, colorOption);
-            await _context.SaveChangesAsync();
-
-            // ==== Product Variants ====
-            var blackM = new ProductVariant
-            {
-                Id = Guid.NewGuid(),
-                ProductId = product.Id,
-                UnitPrice = 150000,
-                Stock = 50,
-                Sku = "TSHIRT-BLK-M",
-            };
-
-            var whiteL = new ProductVariant
-            {
-                Id = Guid.NewGuid(),
-                ProductId = product.Id,
-                UnitPrice = 160000,
-                Stock = 30,
-                Sku = "TSHIRT-WHT-L",
-            };
-
-            _context.ProductVariants.AddRange(blackM, whiteL);
+        // if (!_context.Categories.Any())
+        // {
+        //     var menCategory = new Category
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "Men",
+        //         IsDeleted = false,
+        //         CreatedBy = adminId
+        //     };
+        //     var womenCategory = new Category
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "Women",
+        //         IsDeleted = false,
+        //         CreatedBy = adminId
+        //     };
+        //     var tshirtCategory = new Category
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "T-Shirts",
+        //         ParentCategory = menCategory,
+        //         IsDeleted = false,
+        //         CreatedBy = adminId
+        //     };
+        //
+        //     _context.Categories.AddRange(menCategory, womenCategory, tshirtCategory);
+        //     await _context.SaveChangesAsync();
+        // }
+        //
+        //
+        // if (!_context.Products.Any())
+        // {
+        //     var menCategory = _context.Categories.First(c => c.Name == "Men");
+        //     var tshirtCategory = _context.Categories.First(c => c.Name == "T-Shirts");
+        //
+        //     var product = new Product
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "Basic Black T-Shirt",
+        //         Description = "Comfortable cotton t-shirt",
+        //         BasePrice = 150000,
+        //         ImageUrl = "https://example.com/tshirt-black.jpg",
+        //         IsDeleted = false,
+        //         ProductCategories = new List<ProductCategory>
+        //         {
+        //             new ProductCategory
+        //             {
+        //                 CategoryId = menCategory.Id,
+        //             },
+        //             new ProductCategory
+        //             {
+        //                 CategoryId = tshirtCategory.Id
+        //             }
+        //         },
+        //         CreatedBy = adminId
+        //     };
+        //
+        //     _context.Products.Add(product);
+        //     await _context.SaveChangesAsync();
+        //
+        //     // ==== Product Options ====
+        //     var sizeOption = new ProductOption
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "Size",
+        //         ProductId = product.Id,
+        //         Values = new List<ProductOptionValue>
+        //         {
+        //             new ProductOptionValue
+        //             {
+        //                 Id = Guid.NewGuid(),
+        //                 Value = "S"
+        //             },
+        //             new ProductOptionValue
+        //             {
+        //                 Id = Guid.NewGuid(),
+        //                 Value = "M"
+        //             },
+        //             new ProductOptionValue
+        //             {
+        //                 Id = Guid.NewGuid(),
+        //                 Value = "L"
+        //             },
+        //         }
+        //     };
+        //
+        //     var colorOption = new ProductOption
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         Name = "Color",
+        //         ProductId = product.Id,
+        //         Values = new List<ProductOptionValue>
+        //         {
+        //             new ProductOptionValue
+        //             {
+        //                 Id = Guid.NewGuid(),
+        //                 Value = "Black"
+        //             },
+        //             new ProductOptionValue
+        //             {
+        //                 Id = Guid.NewGuid(),
+        //                 Value = "White"
+        //             }
+        //         }
+        //     };
+        //
+        //     _context.ProductOptions.AddRange(sizeOption, colorOption);
+        //     await _context.SaveChangesAsync();
+        //
+        //     // ==== Product Variants ====
+        //     var blackM = new ProductVariant
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         ProductId = product.Id,
+        //         UnitPrice = 150000,
+        //         Stock = 50,
+        //         Sku = "TSHIRT-BLK-M",
+        //     };
+        //
+        //     var whiteL = new ProductVariant
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         ProductId = product.Id,
+        //         UnitPrice = 160000,
+        //         Stock = 30,
+        //         Sku = "TSHIRT-WHT-L",
+        //     };
+        //
+        //     _context.ProductVariants.AddRange(blackM, whiteL);
             await _context.SaveChangesAsync();
         }
     }
