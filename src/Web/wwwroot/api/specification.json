@@ -3391,15 +3391,6 @@
         "properties": {
           "action": {
             "$ref": "#/components/schemas/UserOrderAction"
-          },
-          "feedback": {
-            "type": "string",
-            "nullable": true
-          },
-          "rating": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
           }
         }
       },

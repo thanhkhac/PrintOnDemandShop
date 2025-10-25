@@ -172,6 +172,6 @@ public class UpdateOrderPaymentStatusRequest
 public class UpdateMyOrderStatusRequest
 {
     public UserOrderAction Action { get; set; }
-    public string? Feedback { get; set; }
-    public int? Rating { get; set; }
+    // public string? Feedback { get; set; }
+    // public int? Rating { get; set; }
 }
