@@ -24,6 +24,7 @@ public class OrderEndpoints : EndpointGroupBase
         group.MapPost(CreateOrder);
         group.MapGet(GetMyOrders);
         group.MapGet("{orderId:guid}", GetOrderDetail);
+        group.MapGet("{orderId:guid}/IsPaid", GetOrderDetail);
         group.MapPut("{orderId:guid}/status", UpdateMyOrderStatus);
         
         // Admin endpoints
@@ -57,6 +58,18 @@ public class OrderEndpoints : EndpointGroupBase
         var result = await sender.Send(query);
         return result.ToOk();
     }
+    
+    
+    public async Task<Ok<ApiResponse<bool>>> IsPaid(
+        Guid orderId,
+        ISender sender)
+    {
+        var query = new CheckOrderStatusPaidQuery { OrderId = orderId };
+        var result = await sender.Send(query);
+        return result.ToOk();
+    }
+
+    
 
     public async Task<Ok<ApiResponse<string>>> UpdateMyOrderStatus(
         Guid orderId,
@@ -67,8 +80,8 @@ public class OrderEndpoints : EndpointGroupBase
         { 
             OrderId = orderId,
             Action = request.Action,
-            Feedback = request.Feedback,
-            Rating = request.Rating
+            // Feedback = request.Feedback,
+            // Rating = request.Rating
         };
         await sender.Send(command);
         

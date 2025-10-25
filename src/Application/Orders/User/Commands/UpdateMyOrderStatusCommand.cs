@@ -12,8 +12,8 @@ public class UpdateMyOrderStatusCommand : IRequest
 {
     public Guid OrderId { get; set; }
     public UserOrderAction Action { get; set; }
-    public string? Feedback { get; set; }
-    public int? Rating { get; set; }
+    // public string? Feedback { get; set; }
+    // public int? Rating { get; set; }
 }
 
 public enum UserOrderAction
@@ -34,15 +34,15 @@ public class UpdateMyOrderStatusCommandValidator : AbstractValidator<UpdateMyOrd
             .IsInEnum()
             .WithMessage("Invalid action");
 
-        RuleFor(x => x.Rating)
-            .InclusiveBetween(1, 5)
-            .When(x => x.Action == UserOrderAction.CONFIRM_RECEIVED && x.Rating.HasValue)
-            .WithMessage("Rating must be between 1 and 5");
-
-        RuleFor(x => x.Feedback)
-            .MaximumLength(500)
-            .When(x => !string.IsNullOrEmpty(x.Feedback))
-            .WithMessage("Feedback cannot exceed 500 characters");
+        // RuleFor(x => x.Rating)
+        //     .InclusiveBetween(1, 5)
+        //     .When(x => x.Action == UserOrderAction.CONFIRM_RECEIVED && x.Rating.HasValue)
+        //     .WithMessage("Rating must be between 1 and 5");
+        //
+        // RuleFor(x => x.Feedback)
+        //     .MaximumLength(500)
+        //     .When(x => !string.IsNullOrEmpty(x.Feedback))
+        //     .WithMessage("Feedback cannot exceed 500 characters");
     }
 }
 
@@ -79,7 +79,7 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
                 break;
                 
             case UserOrderAction.CONFIRM_RECEIVED:
-                HandleConfirmReceived(order, oldStatus, request.Feedback, request.Rating);
+                HandleConfirmReceived(order, oldStatus, "", 1);
                 break;
                 
             default:

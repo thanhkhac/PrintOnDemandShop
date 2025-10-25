@@ -32,7 +32,7 @@ public interface
     DbSet<CartItem> CartItems { get; }
     DbSet<Order> Orders { get; }
     DbSet<OrderItem> OrderItems { get; }
-    
+    DbSet<SampleImage> SampleImages { get; }
     
     DbSet<Voucher> Vouchers { get; }
     DbSet<ProductVoucher> ProductVouchers { get; }

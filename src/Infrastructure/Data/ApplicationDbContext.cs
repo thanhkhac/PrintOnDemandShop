@@ -74,8 +74,9 @@ public class ApplicationDbContext : IdentityDbContext<UserAccount,
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    
-    
+    public DbSet<SampleImage> SampleImages => Set<SampleImage>();
+
+
     public DbSet<Voucher> Vouchers => Set<Voucher>();
     public DbSet<ProductVoucher> ProductVouchers => Set<ProductVoucher>();
     public DbSet<TokenPackage> TokenPackages => Set<TokenPackage>();

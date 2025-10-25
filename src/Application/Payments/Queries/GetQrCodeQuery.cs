@@ -18,7 +18,7 @@ public class GetQrCodeQueryValidator : AbstractValidator<GetQrCodeQuery>
 {
     public GetQrCodeQueryValidator()
     {
-        RuleFor(x => x.Amount).GreaterThan(5000);
+        RuleFor(x => x.Amount).GreaterThan(1000);
 
         RuleFor(x => x.PaymentCode).NotEmpty();
     }
