@@ -50,6 +50,10 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
 
         foreach (var item in cartItems)
         {
+            if (item.Quantity > item.ProductVariant!.Stock)
+            {
+                item.Quantity = item.ProductVariant.Stock;
+            }
             if (item.ProductDesign != null)
             {
                var image =  item.ProductDesign.DesignTemplates.First().DesignImageUrl;
@@ -75,6 +79,8 @@ public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, List<
                 }
             }
         }
+        
+        await _context.SaveChangesAsync(cancellationToken);
 
 
         return cartItems.Select(ci => new CartItemResponseDto
