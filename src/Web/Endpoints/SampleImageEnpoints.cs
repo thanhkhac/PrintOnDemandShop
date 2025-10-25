@@ -39,7 +39,7 @@ public class SampleImageEndpoints : EndpointGroupBase
 
 
 
-    public async Task<Ok<ApiResponse<List<string>>>> GetAllSampleImages(
+    public async Task<Ok<ApiResponse<List<SampleImageDto>>>> GetAllSampleImages(
         ISender sender)
     {
         var query = new GetImageQuery();

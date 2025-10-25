@@ -2,12 +2,18 @@
 
 namespace CleanArchitectureBase.Application.SampleImages;
 
-public class GetImageQuery : IRequest<List<string>>
+public class SampleImageDto
 {
-    
+    public Guid SampleImageId { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
-public class AddSampleImageCommandHandler : IRequestHandler<GetImageQuery, List<string>>
+public class GetImageQuery : IRequest<List<SampleImageDto>>
+{
+
+}
+
+public class AddSampleImageCommandHandler : IRequestHandler<GetImageQuery, List<SampleImageDto>>
 {
     private readonly IApplicationDbContext _context;
     public AddSampleImageCommandHandler(IApplicationDbContext context)
@@ -15,10 +21,17 @@ public class AddSampleImageCommandHandler : IRequestHandler<GetImageQuery, List<
         _context = context;
     }
 
-    public async Task<List<string>> Handle(GetImageQuery request, CancellationToken cancellationToken)
+    public async Task<List<SampleImageDto>> Handle(GetImageQuery request, CancellationToken cancellationToken)
     {
-        var data = await  _context.SampleImages.Where(x => x.ImageUrl != null).Select(x => x.ImageUrl!).ToListAsync();
-        
+        var data = await _context.SampleImages.Where(x => x.ImageUrl != null)
+            .Select(x =>
+                new SampleImageDto
+                {
+                    SampleImageId = x.Id,
+                    ImageUrl = x.ImageUrl!
+                }
+            ).ToListAsync();
+
         return data;
     }
 }

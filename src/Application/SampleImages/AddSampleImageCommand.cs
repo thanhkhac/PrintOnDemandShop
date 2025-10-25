@@ -20,7 +20,6 @@ public class AddSampleImageCommandValidator : AbstractValidator<AddSampleImageCo
     }
 }
 
-
 public class AddSampleImageHandler : IRequestHandler<AddSampleImageCommand, Guid>
 {
     private readonly IApplicationDbContext _context;
@@ -34,6 +33,7 @@ public class AddSampleImageHandler : IRequestHandler<AddSampleImageCommand, Guid
     {
         var newSI = new SampleImage
         {
+            Id = Guid.NewGuid(),
             ImageUrl = request.ImageUrl
         };
         _context.SampleImages.Add(newSI);

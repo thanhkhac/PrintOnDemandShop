@@ -1632,7 +1632,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseOfListOfString"
+                  "$ref": "#/components/schemas/ApiResponseOfListOfSampleImageDto"
                 }
               }
             }
@@ -4324,7 +4324,7 @@
           }
         }
       },
-      "ApiResponseOfListOfString": {
+      "ApiResponseOfListOfSampleImageDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -4350,11 +4350,25 @@
             "type": "array",
             "nullable": true,
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/SampleImageDto"
             }
           },
           "success": {
             "type": "boolean"
+          }
+        }
+      },
+      "SampleImageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sampleImageId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
