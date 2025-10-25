@@ -178,7 +178,7 @@ public static class DependencyInjection
             .ConfigureHttpClient(c =>
             {
                 c.BaseAddress = new Uri("https://dd4a4b4b8a03.ngrok-free.app");
-                c.Timeout = TimeSpan.FromSeconds(10);
+                c.Timeout = TimeSpan.FromSeconds(5);
             }).AddHttpMessageHandler<RefitLoggingHandler>();
 
         services.AddSingleton<IGoogleAccessTokenProvider>(provider =>
