@@ -120,55 +120,55 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
             {
                 throw new ErrorCodeException(ErrorCodes.ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT);
             }
+            
+            var user = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
+            if (user == null)
+                throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
+
+            var paymentId = command.Id!.ToString();
+
+
+            var existedTransaction = await _context.Transactions.FirstOrDefaultAsync(x => x.PaymentId == paymentId, cancellationToken);
+            if (existedTransaction != null)
+                throw new ErrorCodeException(ErrorCodes.PAYMENT_TRANSACTION_EXISTED);
+
+            // if (command.TransactionDate != null)
+            // {
+            //     string timeZoneId;
+            //
+            //     if (OperatingSystem.IsWindows())
+            //         timeZoneId = "SE Asia Standard Time";
+            //     else
+            //         timeZoneId = "Asia/Ho_Chi_Minh";
+            //     var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            //     var utcTransactionDate = TimeZoneInfo.ConvertTimeToUtc(
+            //         DateTime.SpecifyKind(command.TransactionDate!.Value, DateTimeKind.Unspecified),
+            //         timeZone);
+            // }
+
+
+            var transaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                PaymentId = paymentId,
+                Code = command.Code,
+                Gateway = command.Gateway,
+                TransferType = command.TransferType,
+                TransferAmount = command.TransferAmount,
+                TransactionDate = command.TransactionDate,
+                AccountNumber = command.AccountNumber,
+                SubAccount = command.SubAccount,
+                Accumulated = command.Accumulated,
+                Content = command.Content,
+                Description = command.Description,
+                Created = DateTimeOffset.UtcNow,
+            };
+        
+            _context.Transactions.Add(transaction);
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-
-        var user = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
-        if (user == null)
-            throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
-
-        var paymentId = command.Id!.ToString();
-
-
-        var existedTransaction = await _context.Transactions.FirstOrDefaultAsync(x => x.PaymentId == paymentId, cancellationToken);
-        if (existedTransaction != null)
-            throw new ErrorCodeException(ErrorCodes.PAYMENT_TRANSACTION_EXISTED);
-
-        // if (command.TransactionDate != null)
-        // {
-        //     string timeZoneId;
-        //
-        //     if (OperatingSystem.IsWindows())
-        //         timeZoneId = "SE Asia Standard Time";
-        //     else
-        //         timeZoneId = "Asia/Ho_Chi_Minh";
-        //     var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-        //     var utcTransactionDate = TimeZoneInfo.ConvertTimeToUtc(
-        //         DateTime.SpecifyKind(command.TransactionDate!.Value, DateTimeKind.Unspecified),
-        //         timeZone);
-        // }
-
-
-        var transaction = new Transaction
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            PaymentId = paymentId,
-            Code = command.Code,
-            Gateway = command.Gateway,
-            TransferType = command.TransferType,
-            TransferAmount = command.TransferAmount,
-            TransactionDate = command.TransactionDate,
-            AccountNumber = command.AccountNumber,
-            SubAccount = command.SubAccount,
-            Accumulated = command.Accumulated,
-            Content = command.Content,
-            Description = command.Description,
-            Created = DateTimeOffset.UtcNow,
-        };
-        
-        _context.Transactions.Add(transaction);
-
-        await _context.SaveChangesAsync(cancellationToken);
     }
 }

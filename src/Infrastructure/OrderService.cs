@@ -1,4 +1,5 @@
 ﻿using CleanArchitectureBase.Application.Common.Interfaces;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Application.Orders.Interfaces;
 using CleanArchitectureBase.Domain.Enums;
 using CleanArchitectureBase.Infrastructure.Data;
@@ -12,10 +13,15 @@ public class OrderService : IOrderService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<OrderService> _logger;
-    public OrderService(ApplicationDbContext context, ILogger<OrderService> logger)
+    private readonly IAiClient _aiClient;
+    private List<Guid> _newProductVariantIds = new();
+
+    
+    public OrderService(ApplicationDbContext context, ILogger<OrderService> logger, IAiClient aiClient)
     {
         _context = context;
         _logger = logger;
+        _aiClient = aiClient;
     }
 
 [Queue("stock")]
@@ -70,7 +76,10 @@ public async Task RestockOrder(Guid orderId)
                     item.ProductVariantId, orderId);
                 continue;
             }
-
+            if (variant.Stock == 0 && item.Quantity > 0)
+            {
+                _newProductVariantIds.Add(variant.Id);
+            }
             variant.Stock += item.Quantity;
 
             _logger.LogInformation("Restored {Quantity} stock for variant {VariantId} from order {OrderId}",
@@ -83,6 +92,21 @@ public async Task RestockOrder(Guid orderId)
 
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
+        
+        try
+        {
+            if (_newProductVariantIds.Any())
+            {
+                await _aiClient.CreateProduct(new
+                {
+                    product_variant_ids = _newProductVariantIds
+                });
+            }
+        }
+        catch (Exception)
+        {
+        }
+
 
         _logger.LogInformation("Stock restoration completed for order {OrderId}", orderId);
     }

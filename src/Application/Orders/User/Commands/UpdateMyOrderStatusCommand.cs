@@ -1,6 +1,7 @@
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Application.Common.Exceptions;
 using CleanArchitectureBase.Application.Common.Security;
+using CleanArchitectureBase.Application.IClients;
 using CleanArchitectureBase.Domain.Entities;
 using CleanArchitectureBase.Domain.Enums;
 using CleanArchitectureBase.Domain.Constants;
@@ -50,11 +51,16 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
 {
     private readonly IApplicationDbContext _context;
     private readonly IUser _currentUser;
+    
+    private List<Guid> _newProductVariantIds = new();
+    private readonly IAiClient _aiClient;
 
-    public UpdateMyOrderStatusCommandHandler(IApplicationDbContext context, IUser currentUser)
+
+    public UpdateMyOrderStatusCommandHandler(IApplicationDbContext context, IUser currentUser, IAiClient aiClient)
     {
         _context = context;
         _currentUser = currentUser;
+        _aiClient = aiClient;
     }
 
     public async Task Handle(UpdateMyOrderStatusCommand request, CancellationToken cancellationToken)
@@ -88,6 +94,23 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
         }
         
         await _context.SaveChangesAsync(cancellationToken);
+        
+        
+        
+        try
+        {
+            if (_newProductVariantIds.Any())
+            {
+                await _aiClient.CreateProduct(new
+                {
+                    product_variant_ids = _newProductVariantIds
+                });
+            }
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
     }
 
     private async Task HandleCancelOrder(Order order, string? currentStatus, CancellationToken cancellationToken)
@@ -163,6 +186,11 @@ public class UpdateMyOrderStatusCommandHandler : IRequestHandler<UpdateMyOrderSt
             var variant = variants.FirstOrDefault(x => x.Id == item.ProductVariantId);
             if (variant != null)
             {
+                if (variant.Stock == 0 && item.Quantity > 0)
+                {
+                    _newProductVariantIds.Add(item.ProductVariantId);
+                }
+                
                 variant.Stock += item.Quantity;
                 _context.ProductVariants.Update(variant);
             }

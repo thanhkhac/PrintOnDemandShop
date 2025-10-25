@@ -245,10 +245,13 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
 
             try
             {
-                await _aiClient.CreateProduct(new
+                if (_newProductVariantIds.Any())
                 {
-                    product_variant_ids = _newProductVariantIds
-                });
+                    await _aiClient.CreateProduct(new
+                    {
+                        product_variant_ids = _newProductVariantIds
+                    });
+                }
 
                 if (_deleteProductVariantIds.Any())
                 {
