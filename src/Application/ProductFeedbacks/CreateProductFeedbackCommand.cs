@@ -44,6 +44,11 @@ public class CreateProductFeedbackCommandHandler : IRequestHandler<CreateProduct
 
         if (order == null)
             throw new ErrorCodeException(ErrorCodes.ORDER_NOT_FOUND);
+            
+        if(order.IsFeedback)
+        {
+            throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "Order này đã có feedback");
+        }
 
         if (order.CreatedBy != _user.UserId)
             throw new ErrorCodeException(ErrorCodes.COMMON_FORBIDDEN);
@@ -55,7 +60,8 @@ public class CreateProductFeedbackCommandHandler : IRequestHandler<CreateProduct
             .Select(i => i.ProductVariant!.Product!)
             .Distinct()
             .ToList();
-
+        
+        order.IsFeedback = true;
         foreach (var product in products)
         {
             var feedback = new ProductFeedback

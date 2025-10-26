@@ -46,6 +46,7 @@ public class GetMyOrdersQueryHandler : IRequestHandler<GetMyOrdersQuery, Paginat
                 SubTotal = o.SubTotal,
                 DiscountAmount = o.DiscountAmount,
                 TotalAmount = o.TotalAmount,
+                IsFeedback = o.IsFeedback,
                 Items = o.Items.Select(oi => new OrderItemResponseDto
                     {
                         Id = oi.Id,

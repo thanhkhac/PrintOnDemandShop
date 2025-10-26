@@ -25,7 +25,7 @@ public class OrderDetailResponseDto
     // User feedback fields
     public string? UserFeedback { get; set; }
     public int? Rating { get; set; }
-    
+    public bool IsFeedback { get; set; }
     public required string? PaymentCode { get; set; }
 }
 

@@ -259,6 +259,8 @@ public class Order : BaseAuditableEntity
     public string? PaymentCode { get; set; }
     
     public string? AdminNote { get; set; }
+    
+    public bool IsFeedback { get; set; }    
 }
 
 public class OrderItem : BaseEntity

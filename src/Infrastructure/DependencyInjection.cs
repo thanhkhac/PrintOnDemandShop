@@ -181,7 +181,7 @@ public static class DependencyInjection
         services.AddRefitClient<IAiClient>()
             .ConfigureHttpClient(c =>
             {
-                c.BaseAddress = new Uri("https://dd4a4b4b8a03.ngrok-free.app");
+                c.BaseAddress = new Uri("http://172.17.0.1:8000/aiapi");
                 c.Timeout = TimeSpan.FromSeconds(5);
             }).AddHttpMessageHandler<RefitLoggingHandler>();
 

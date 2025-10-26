@@ -106,6 +106,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
                 TotalAmount = order.TotalAmount,
                 UserFeedback = order.UserFeedback,
                 Rating = order.Rating, // Giữ nguyên nullable, không cần check > 0
+                IsFeedback = order.IsFeedback,
                 CreatedBy = new CreatedByDto
                 {
                     UserId = order.CreatedBy,

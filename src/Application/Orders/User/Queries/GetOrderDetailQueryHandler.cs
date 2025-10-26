@@ -42,7 +42,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             SubTotal = order.SubTotal,
             DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
-
+            IsFeedback = order.IsFeedback,
             Items = order.Items.Select(oi => new OrderItemResponseDto
                 {
                     Id = oi.Id,

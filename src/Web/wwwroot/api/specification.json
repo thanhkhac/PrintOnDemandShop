@@ -3258,6 +3258,9 @@
             "format": "int32",
             "nullable": true
           },
+          "isFeedback": {
+            "type": "boolean"
+          },
           "paymentCode": {
             "type": "string",
             "nullable": true
