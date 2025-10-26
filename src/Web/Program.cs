@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using CleanArchitectureBase.Application;
 using CleanArchitectureBase.Application.Common.Interfaces;
 using CleanArchitectureBase.Infrastructure;
@@ -8,6 +9,7 @@ using CleanArchitectureBase.Web.Attributes;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.MySql;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
@@ -29,7 +31,10 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
 builder.Services.AddScoped<PaymentAuthEndpointFilter>();
-
+// builder.Services.Configure<JsonOptions>(options =>
+// {
+//     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()

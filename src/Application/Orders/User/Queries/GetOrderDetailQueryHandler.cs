@@ -4,6 +4,7 @@ using CleanArchitectureBase.Application.Common.Models;
 using CleanArchitectureBase.Application.Orders.Dtos;
 using CleanArchitectureBase.Domain.Constants;
 using CleanArchitectureBase.Domain.Entities;
+using CleanArchitectureBase.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitectureBase.Application.Orders.User.Queries;
@@ -25,6 +26,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             .Include(o => o.Items)
             .Include(o => o.CreatedByUser)
             .Where(o => o.Id == request.OrderId && o.CreatedBy == _currentUser.UserId)
+            .Where(o => o.Status != nameof(OrderStatus.CANCELLED) )
             .FirstOrDefaultAsync(cancellationToken);
 
         if (order == null)
