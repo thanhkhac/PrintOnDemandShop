@@ -101,7 +101,7 @@ public class IdentityService : IIdentityService
             Id = Guid.NewGuid(),
             Email = email,
             FullName = fullName ?? email,
-            TokenCount = 10
+            TokenCount = 0
         };
         var userAccount = new UserAccount
         {
