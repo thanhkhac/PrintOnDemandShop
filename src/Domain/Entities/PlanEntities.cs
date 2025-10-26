@@ -28,6 +28,7 @@ public class TokenPackage
     public Guid Id { get; set; }
     public int TokenAmount { get; set; }
     public long Price { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 public class UserTokenPackage
@@ -36,5 +37,8 @@ public class UserTokenPackage
     public Guid UserId { get; set; }
     public int TokenAmount { get; set; }
     public long Price { get; set; }
+    public string? PaymentCode { get; set; }
+    public bool? IsPaid { get; set; }
+    public DateTimeOffset? TimeEnd { get; set; }
 }
 

@@ -120,7 +120,7 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
             {
                 throw new ErrorCodeException(ErrorCodes.ORDER_IS_NOT_AWAITING_ONLINE_PAYMENT);
             }
-            
+
             // var order = await _context.Orders.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
             // if (order == null)
             //     throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
@@ -164,11 +164,77 @@ public class BuyPointCommandHandler : IRequestHandler<PaymentCommand>
                 Description = command.Description,
                 Created = DateTimeOffset.UtcNow,
             };
-        
+
             _context.Transactions.Add(transaction);
 
             await _context.SaveChangesAsync(cancellationToken);
         }
 
+        if (command.Code!.StartsWith(PaymentConst.TokenPackagePrefix))
+        {
+            var userTokenPackage = await _context.UserTokenPackages.FirstOrDefaultAsync(x => x.PaymentCode == command.Code, cancellationToken);
+            if (userTokenPackage == null)
+                throw new ErrorCodeException(ErrorCodes.TOKEN_PACKAGE_NOT_FOUND);
+            if (userTokenPackage.TimeEnd < DateTimeOffset.Now)
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "Quá hạn thanh toán");
+            if (userTokenPackage.IsPaid == true)
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "Đơn Token packaged đã thanh toán");
+
+            if (command.TransferAmount < userTokenPackage.Price)
+                throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST,
+                    $"Không đủ tiền, ck: {command.TransferAmount}, require: {userTokenPackage.Price}");
+            var userId = userTokenPackage.UserId;
+
+            var user = _context.DomainUsers.FirstOrDefault(x => x.Id == userId);
+            if (user == null)
+                throw new ErrorCodeException(ErrorCodes.USER_NOTFOUND);
+
+            user.TokenCount += userTokenPackage.TokenAmount;
+            userTokenPackage.IsPaid = true;
+
+            var paymentId = command.Id!.ToString();
+
+
+            var existedTransaction = await _context.Transactions.FirstOrDefaultAsync(x => x.PaymentId == paymentId, cancellationToken);
+            if (existedTransaction != null)
+                throw new ErrorCodeException(ErrorCodes.PAYMENT_TRANSACTION_EXISTED);
+
+            // if (command.TransactionDate != null)
+            // {
+            //     string timeZoneId;
+            //
+            //     if (OperatingSystem.IsWindows())
+            //         timeZoneId = "SE Asia Standard Time";
+            //     else
+            //         timeZoneId = "Asia/Ho_Chi_Minh";
+            //     var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            //     var utcTransactionDate = TimeZoneInfo.ConvertTimeToUtc(
+            //         DateTime.SpecifyKind(command.TransactionDate!.Value, DateTimeKind.Unspecified),
+            //         timeZone);
+            // }
+
+
+            var transaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                PaymentId = paymentId,
+                Code = command.Code,
+                Gateway = command.Gateway,
+                TransferType = command.TransferType,
+                TransferAmount = command.TransferAmount,
+                TransactionDate = command.TransactionDate,
+                AccountNumber = command.AccountNumber,
+                SubAccount = command.SubAccount,
+                Accumulated = command.Accumulated,
+                Content = command.Content,
+                Description = command.Description,
+                Created = DateTimeOffset.UtcNow,
+            };
+
+            _context.Transactions.Add(transaction);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

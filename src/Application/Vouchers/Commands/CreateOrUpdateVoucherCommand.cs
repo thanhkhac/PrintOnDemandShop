@@ -73,8 +73,10 @@ public class CreateOrUpdateVoucherCommandHandler : IRequestHandler<CreateOrUpdat
     public async Task<Guid> Handle(CreateOrUpdateVoucherCommand request, CancellationToken cancellationToken)
     {
         // Validate that code is unique (except for current voucher if updating)
+        var codeNormalized = request.Code.ToUpperInvariant();
         var existingVoucherWithCode = await _context.Vouchers
-            .FirstOrDefaultAsync(v => v.Code == request.Code && v.Id != request.VoucherId, cancellationToken);
+            .FirstOrDefaultAsync(v => v.Code.ToUpper() == codeNormalized && v.Id != request.VoucherId && !v.IsDeleted, cancellationToken);
+
 
         if (existingVoucherWithCode != null)
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "Voucher code already exists");

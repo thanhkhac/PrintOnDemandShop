@@ -54,7 +54,7 @@ public class CreateOrUpdateTemplateCommandHandler : IRequestHandler<CreateOrUpda
         // Validate Product exists
         var productExists = await _context.Products
             .AnyAsync(p => p.Id == request.ProductId && !p.IsDeleted, cancellationToken);
-        
+
         if (!productExists)
             throw new ErrorCodeException(ErrorCodes.PRODUCT_NOT_FOUND);
 
@@ -62,7 +62,7 @@ public class CreateOrUpdateTemplateCommandHandler : IRequestHandler<CreateOrUpda
         var productOptionValue = await _context.ProductOptionValues
             .Include(pov => pov.ProductOption)
             .FirstOrDefaultAsync(pov => pov.Id == request.ProductOptionValueId && !pov.IsDeleted, cancellationToken);
-        
+
         if (productOptionValue == null)
             throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "ProductOptionValue not found");
 
@@ -71,7 +71,7 @@ public class CreateOrUpdateTemplateCommandHandler : IRequestHandler<CreateOrUpda
             throw new ErrorCodeException(ErrorCodes.COMMON_INVALID_REQUEST, "ProductOptionValue does not belong to the specified Product");
 
         Template? template;
-
+        bool imageUpdated = false;
         if (request.TemplateId.HasValue)
         {
             // Update existing template
@@ -80,6 +80,12 @@ public class CreateOrUpdateTemplateCommandHandler : IRequestHandler<CreateOrUpda
 
             if (template == null)
                 throw new ErrorCodeException(ErrorCodes.COMMON_NOT_FOUND, "Template not found");
+
+            if (template.ImageUrl != request.ImageUrl)
+            {
+                imageUpdated = true;
+            }
+
 
             template.ProductId = request.ProductId;
             template.ProductOptionValueId = request.ProductOptionValueId;
@@ -99,6 +105,37 @@ public class CreateOrUpdateTemplateCommandHandler : IRequestHandler<CreateOrUpda
 
             _context.Templates.Add(template);
         }
+
+
+        if (imageUpdated)
+        {
+            // Lấy tất cả các ProductDesignTemplate liên quan
+            var designTemplates = await _context.ProductDesignTemplates
+                .Where(dt => dt.TemplateId == template.Id && !dt.IsDeleted)
+                .ToListAsync(cancellationToken);
+
+            // Lấy danh sách ProductDesign Id liên quan
+            var designIds = designTemplates.Select(dt => dt.ProductDesignId).Distinct().ToList();
+
+            // Soft delete tất cả ProductDesignTemplate
+            foreach (var dt in designTemplates)
+            {
+                dt.IsDeleted = true;
+            }
+
+            // Lấy tất cả ProductDesign liên quan
+            var designs = await _context.ProductDesigns
+                .Where(pd => designIds.Contains(pd.Id) && !pd.IsDeleted)
+                .ToListAsync(cancellationToken);
+
+            // Soft delete ProductDesign
+            foreach (var pd in designs)
+            {
+                pd.IsDeleted = true;
+            }
+
+        }
+
 
         await _context.SaveChangesAsync(cancellationToken);
 

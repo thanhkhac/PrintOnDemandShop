@@ -315,7 +315,7 @@ public class VoucherConfig : IEntityTypeConfiguration<Voucher>
     public void Configure(EntityTypeBuilder<Voucher> builder)
     {
         builder.ToTable("Vouchers");
-        builder.HasQueryFilter(x => x.IsDeleted == true);
+        builder.HasQueryFilter(x => x.IsDeleted == false);
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Code)

@@ -19,14 +19,14 @@ public class CreateOrUpdateTokenPackageCommandValidator : AbstractValidator<Crea
     public CreateOrUpdateTokenPackageCommandValidator()
     {
         RuleFor(x => x.TokenAmount).GreaterThan(0);
-        RuleFor(x => x.Price).GreaterThan(0);
+        RuleFor(x => x.Price).GreaterThanOrEqualTo(2000);
     }
 }
 
 public class CreateOrUpdateTokenPackageCommandHandler : IRequestHandler<CreateOrUpdateTokenPackageCommand, Guid>
 {
     private readonly IApplicationDbContext _context;
-    
+
     public CreateOrUpdateTokenPackageCommandHandler(IApplicationDbContext context)
     {
         _context = context;
@@ -35,14 +35,15 @@ public class CreateOrUpdateTokenPackageCommandHandler : IRequestHandler<CreateOr
     public async Task<Guid> Handle(CreateOrUpdateTokenPackageCommand request, CancellationToken cancellationToken)
     {
         TokenPackage? tokenPackage = null;
-        if(request.Id.HasValue)
+        if (request.Id.HasValue)
         {
             tokenPackage = _context.TokenPackages.FirstOrDefault(t => t.Id == request.Id.Value);
-            if(tokenPackage == null)
+            if (tokenPackage == null)
                 throw new ErrorCodeException(ErrorCodes.TOKEN_PACKAGE_NOT_FOUND);
             tokenPackage.Price = request.Price;
             tokenPackage.TokenAmount = request.TokenAmount;
-        }else
+        }
+        else
         {
             tokenPackage = new TokenPackage()
             {
@@ -52,10 +53,9 @@ public class CreateOrUpdateTokenPackageCommandHandler : IRequestHandler<CreateOr
             };
             _context.TokenPackages.Add(tokenPackage);
         }
-        
+
         await _context.SaveChangesAsync(cancellationToken);
-        
+
         return tokenPackage.Id;
     }
 }
-
