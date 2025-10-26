@@ -109,7 +109,8 @@ app.Use(async (context, next) =>
                 "http://192.168.1.100:8080", // Thêm các origin khác
                 "https://example.com",
                 "http://36.50.135.207:5000",
-                "http://36.50.135.207:5555"
+                "http://36.50.135.207:5555",
+                "https://teecraft.com.vn"
             };
         
             var requestOrigin = ctx.Context.Request.Headers.Origin.FirstOrDefault();

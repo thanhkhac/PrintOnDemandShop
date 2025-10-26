@@ -52,7 +52,7 @@ jobs:
             if [ ! -d "$PROJECT_DIR/.git" ]; then
               echo "==> Repo chưa tồn tại hoặc bị lỗi. Xóa và clone lại"
               rm -rf $PROJECT_DIR
-              git clone https://x-access-token:${GIT_AUTH_TOKEN}@github.com/thanhkhac/PrintOnDemandShop.git $PROJECT_DIR
+              git clone -b production https://x-access-token:${GIT_AUTH_TOKEN}@github.com/thanhkhac/PrintOnDemandShop.git $PROJECT_DIR
             else
               echo "==> Repo đã tồn tại. Pulling..."
               cd $PROJECT_DIR

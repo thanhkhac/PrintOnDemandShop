@@ -30,6 +30,6 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommand, str
     {
         var url = await _imageService.UploadAsync(request.File!);
 
-        return "http://36.50.135.207:5000" + url;
+        return "https://teecraft.com.vn" + url;
     }
 }
