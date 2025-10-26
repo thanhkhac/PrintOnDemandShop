@@ -50,7 +50,7 @@ public class GetQrCodeQueryHandler : IRequestHandler<GetQrCodeQuery, string>
         if (bank!.ToLower() == "bidv")
             url = $"https://qr.sepay.vn/img?acc={account}&bank={bank}&amount={request.Amount}&des={request.PaymentCode}";
 
-        if (bank!.ToLower() != "VPBank".ToLower())
+        if (bank!.ToLower() == "VPBank".ToLower())
             url = $"https://qr.sepay.vn/img?acc={account}&bank=VPBank&amount={request.Amount}&des={virtualAccount}+{request.PaymentCode}";
 
         
