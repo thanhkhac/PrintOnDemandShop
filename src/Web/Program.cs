@@ -115,14 +115,16 @@ app.Use(async (context, next) =>
         
             var requestOrigin = ctx.Context.Request.Headers.Origin.FirstOrDefault();
             Console.WriteLine("REQUEST_ORIGIN: " + requestOrigin);
-            if (!string.IsNullOrEmpty(requestOrigin) && allowedOrigins.Contains(requestOrigin))
-            {
-                ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", requestOrigin);
-                ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, OPTIONS");
-                ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
-                ctx.Context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-                ctx.Context.Response.Headers.Append("Cache-Control", "no-store");
-            }
+            // if (!string.IsNullOrEmpty(requestOrigin) && allowedOrigins.Contains(requestOrigin))
+            // {
+            //     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", requestOrigin);
+            //     ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, OPTIONS");
+            //     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
+            //     ctx.Context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+            //     ctx.Context.Response.Headers.Append("Cache-Control", "no-store");
+            // }
+            ctx.Context.Response.Headers.Append("Cache-Control", "no-store");
+
             // else
             // {
             //     // Nếu origin không được phép, có thể trả về lỗi hoặc không thêm header CORS
