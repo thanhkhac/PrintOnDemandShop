@@ -63,7 +63,8 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             CreatedBy = order.CreatedByUser != null ? new CreatedByDto
             {
                 UserId = order.CreatedBy,
-                Name = order.CreatedByUser.FullName
+                Name = order.CreatedByUser.FullName,
+                Email = order.CreatedByUser.Email,
             } : null,
             Items = order.Items.Select(item => new OrderItemResponseDto
             {

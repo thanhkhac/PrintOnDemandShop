@@ -122,7 +122,8 @@ public class SearchProductQueryHandler : IRequestHandler<SearchProductQuery, Pag
             CreatedBy = new CreatedByDto
             {
                 UserId = x.Product.CreatedBy,
-                Name = x.Product.CreatedBy.HasValue ? "Admin" : null
+                Name = x.Product.CreatedBy.HasValue ? "Admin" : null,
+                Email = x.Product.CreatedByUser!.Email
             }
         });
 

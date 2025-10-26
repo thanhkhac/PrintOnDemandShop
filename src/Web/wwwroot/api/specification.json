@@ -1931,7 +1931,7 @@
         "tags": [
           "TokenPackage"
         ],
-        "summary": "Mua gói token (tạo lệnh thanh toán)",
+        "summary": "🟢 Người dùng mua gói token (tạo lệnh thanh toán)",
         "description": "Người dùng chọn gói token, hệ thống tạo PaymentCode và hạn thanh toán (3 phút)",
         "operationId": "BuyTokenPackage",
         "requestBody": {
@@ -1958,7 +1958,7 @@
         "tags": [
           "TokenPackage"
         ],
-        "summary": "Kiểm tra trạng thái thanh toán",
+        "summary": "🟢 Kiểm tra trạng thái thanh toán của token package",
         "description": "Trả về true nếu đã thanh toán, false nếu chưa hoặc hết hạn",
         "operationId": "CheckTokenPackageIsPaid",
         "parameters": [
@@ -1970,6 +1970,43 @@
               "type": "string"
             },
             "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/TokenPackage/Admin/History": {
+      "get": {
+        "tags": [
+          "TokenPackage"
+        ],
+        "summary": "🔵 Admin xem lịch sử token package đã thanh toán",
+        "description": "Bao gồm thông tin người mua, giá, token nhận được, và thời gian mua",
+        "operationId": "AdminGetPaidTokenPackages",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -3471,6 +3508,10 @@
             "nullable": true
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
             "type": "string",
             "nullable": true
           }

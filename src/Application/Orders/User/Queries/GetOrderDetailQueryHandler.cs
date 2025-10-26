@@ -65,7 +65,8 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             CreatedBy = new CreatedByDto
             {
                 UserId = order.CreatedBy,
-                Name = order.CreatedByUser?.FullName ?? string.Empty
+                Name = order.CreatedByUser?.FullName ?? string.Empty,
+                Email = order.CreatedByUser?.FullName
             },
             PaymentStatus = order.PaymentStatus,
             PaymentCode = order.PaymentCode

@@ -60,7 +60,8 @@ public class CreateProductFeedbackCommandHandler : IRequestHandler<CreateProduct
             .Select(i => i.ProductVariant!.Product!)
             .Distinct()
             .ToList();
-        
+        order.UserFeedback = request.Feedback;
+        order.Rating = request.Rating;
         order.IsFeedback = true;
         foreach (var product in products)
         {

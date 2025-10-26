@@ -71,7 +71,8 @@ public class GetMyOrdersQueryHandler : IRequestHandler<GetMyOrdersQuery, Paginat
                     UserId = o.CreatedBy!,
                     Name = o.CreatedByUser != null
                         ? o.CreatedByUser.FullName
-                        : string.Empty
+                        : string.Empty,
+                    Email = o.CreatedByUser!.Email
                 },
                 PaymentStatus = o.PaymentStatus,
                 PaymentCode = o.PaymentCode

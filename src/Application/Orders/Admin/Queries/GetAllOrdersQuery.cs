@@ -110,7 +110,8 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
                 CreatedBy = new CreatedByDto
                 {
                     UserId = order.CreatedBy,
-                    Name = order.CreatedByUser != null ? order.CreatedByUser.FullName : string.Empty
+                    Name = order.CreatedByUser != null ? order.CreatedByUser.FullName : string.Empty,
+                    Email = order.CreatedByUser != null ? order.CreatedByUser.Email : string.Empty,
                 },
                 PaymentCode = order.PaymentCode,
                 Items = order.Items.Select(item => new OrderItemResponseDto
