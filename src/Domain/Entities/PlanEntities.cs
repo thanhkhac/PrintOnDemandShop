@@ -38,7 +38,7 @@ public class UserTokenPackage
     public int TokenAmount { get; set; }
     public long Price { get; set; }
     public string? PaymentCode { get; set; }
-    public bool? IsPaid { get; set; }
+    public bool IsPaid { get; set; }
     public DateTimeOffset? TimeEnd { get; set; }
 }
 

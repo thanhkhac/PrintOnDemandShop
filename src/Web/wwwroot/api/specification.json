@@ -1932,7 +1932,8 @@
           "TokenPackage"
         ],
         "summary": "Mua gói token (tạo lệnh thanh toán)",
-        "operationId": "PostApiTokenPackageBuy",
+        "description": "Người dùng chọn gói token, hệ thống tạo PaymentCode và hạn thanh toán (3 phút)",
+        "operationId": "BuyTokenPackage",
         "requestBody": {
           "x-name": "command",
           "content": {
@@ -1945,6 +1946,32 @@
           "required": true,
           "x-position": 1
         },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/TokenPackage/CheckIsPaid": {
+      "get": {
+        "tags": [
+          "TokenPackage"
+        ],
+        "summary": "Kiểm tra trạng thái thanh toán",
+        "description": "Trả về true nếu đã thanh toán, false nếu chưa hoặc hết hạn",
+        "operationId": "CheckTokenPackageIsPaid",
+        "parameters": [
+          {
+            "name": "paymentCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
