@@ -3,6 +3,7 @@ using CleanArchitectureBase.Application.TokenPackages.Queries;
 using CleanArchitectureBase.Application.TokenPackages.Queries.Admin;
 using CleanArchitectureBase.Application.Common.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitectureBase.Web.Endpoints;
@@ -35,7 +36,7 @@ public class TokenPackageEndpoints : EndpointGroupBase
     /// <summary>
     /// 🟢 Người dùng mua gói token (tạo lệnh thanh toán)
     /// </summary>
-    private async Task<IResult> Buy(
+    private async Task<Ok<ApiResponse<TokenPackageOrderDto>>> Buy(
         ISender sender,
         [FromBody] CreateTokenPackageOrderCommand command,
         CancellationToken cancellationToken)
@@ -47,7 +48,7 @@ public class TokenPackageEndpoints : EndpointGroupBase
     /// <summary>
     /// 🟢 Kiểm tra trạng thái thanh toán của token package
     /// </summary>
-    private async Task<IResult> CheckIsPaid(
+    private async Task<Ok<ApiResponse<bool>>> CheckIsPaid(
         ISender sender,
         [FromQuery] string paymentCode,
         CancellationToken cancellationToken)
@@ -60,7 +61,7 @@ public class TokenPackageEndpoints : EndpointGroupBase
     /// <summary>
     /// 🔵 Admin xem lịch sử token package đã thanh toán
     /// </summary>
-    private async Task<IResult> AdminGetHistory(
+    private async Task<Ok<ApiResponse<PaginatedList<PaidTokenPackageDto>>>> AdminGetHistory(
         ISender sender,
         [AsParameters] AdminGetTokenPackageHistoryQuery query,
         CancellationToken cancellationToken)
