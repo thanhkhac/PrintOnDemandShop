@@ -677,6 +677,33 @@
         }
       }
     },
+    "/api/Feedback": {
+      "post": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Tạo đánh giá sản phẩm sau khi mua",
+        "description": "Người dùng gửi feedback và rating cho các sản phẩm trong đơn hàng đã mua.",
+        "operationId": "CreateProductFeedback",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductFeedbackCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/File/UploadImage": {
       "post": {
         "tags": [
@@ -1868,6 +1895,32 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/TokenPackage/Buy": {
+      "post": {
+        "tags": [
+          "TokenPackage"
+        ],
+        "summary": "Mua gói token (tạo lệnh thanh toán)",
+        "operationId": "PostApiTokenPackageBuy",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTokenPackageOrderCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
           }
         }
       }
@@ -3147,6 +3200,24 @@
             "format": "int32"
           },
           "totalConfirmReceived": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CreateProductFeedbackCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
             "type": "integer",
             "format": "int32"
           }
@@ -4739,6 +4810,16 @@
           },
           "success": {
             "type": "boolean"
+          }
+        }
+      },
+      "CreateTokenPackageOrderCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tokenPackageId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },
