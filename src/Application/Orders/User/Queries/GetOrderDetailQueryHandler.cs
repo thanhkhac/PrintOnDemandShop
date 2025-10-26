@@ -26,7 +26,7 @@ public class GetOrderDetailQueryHandler : IRequestHandler<GetOrderDetailQuery, O
             .Include(o => o.Items)
             .Include(o => o.CreatedByUser)
             .Where(o => o.Id == request.OrderId && o.CreatedBy == _currentUser.UserId)
-            .Where(o => o.Status != nameof(OrderStatus.CANCELLED) )
+            // .Where(o => o.Status != nameof(OrderStatus.CANCELLED) )
             .FirstOrDefaultAsync(cancellationToken);
 
         if (order == null)

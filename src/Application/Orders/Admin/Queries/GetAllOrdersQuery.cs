@@ -66,6 +66,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
         var query = _context.Orders
             .Include(x => x.Items)
             .Include(x => x.CreatedByUser)
+            .Where(o => o.Status != nameof(OrderStatus.CANCELLED) )
             .AsQueryable();
 
         if (request.Status.HasValue)
