@@ -683,7 +683,7 @@
           "Feedback"
         ],
         "summary": "Tạo đánh giá sản phẩm sau khi mua",
-        "description": "Người dùng gửi feedback và rating cho các sản phẩm trong đơn hàng đã mua.",
+        "description": "Người dùng gửi feedback và rating cho các sản phẩm trong đơn hàng đã ở trạng thái CONFIRM_RECEIVED.",
         "operationId": "CreateProductFeedback",
         "requestBody": {
           "x-name": "command",
@@ -697,6 +697,33 @@
           "required": true,
           "x-position": 1
         },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/Feedback/Product/{productId}": {
+      "get": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Lấy danh sách đánh giá cho sản phẩm",
+        "description": "Trả về danh sách các đánh giá (feedbacks) và điểm trung bình rating của sản phẩm.",
+        "operationId": "GetProductFeedback",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
