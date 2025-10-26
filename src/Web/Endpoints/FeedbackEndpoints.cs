@@ -1,6 +1,7 @@
 ﻿using CleanArchitectureBase.Application.ProductFeedbacks;
 using CleanArchitectureBase.Application.Common.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitectureBase.Web.Endpoints;
@@ -24,7 +25,7 @@ public class FeedbackEndpoints : EndpointGroupBase
             .WithDescription("Trả về danh sách các đánh giá (feedbacks) và điểm trung bình rating của sản phẩm.");
     }
 
-    private async Task<IResult> CreateFeedback(
+    private async Task<Ok<ApiResponse<Guid>>> CreateFeedback(
         ISender sender,
         [FromBody] CreateProductFeedbackCommand command,
         CancellationToken cancellationToken)
@@ -33,7 +34,7 @@ public class FeedbackEndpoints : EndpointGroupBase
         return result.ToOk();
     }
 
-    private async Task<IResult> GetProductFeedback(
+    private async Task<Ok<ApiResponse<ProductFeedbackListDto>>> GetProductFeedback(
         ISender sender,
         [FromRoute] Guid productId,
         CancellationToken cancellationToken)
