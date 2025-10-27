@@ -101,7 +101,7 @@ public class IdentityService : IIdentityService
             Id = Guid.NewGuid(),
             Email = email,
             FullName = fullName ?? email,
-            TokenCount = 0
+            TokenCount = 5
         };
         var userAccount = new UserAccount
         {
@@ -402,6 +402,7 @@ public class IdentityService : IIdentityService
             Id = Guid.NewGuid(),
             Email = googleUser.Email,
             FullName = googleUser.Name,
+            
         };
 
         var userAccount = new UserAccount
