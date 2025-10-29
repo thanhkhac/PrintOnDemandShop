@@ -72,8 +72,8 @@ public class SearchProductQueryHandler : IRequestHandler<SearchProductQuery, Pag
         // Filter by category
         if (request.CategoryId.HasValue)
         {
-            query = query.Where(p => p.ProductCategories
-                .Any(pc => pc.CategoryId == request.CategoryId.Value));
+            var categoryIds = await GetAllDescendantCategoryIds(request.CategoryId.Value, cancellationToken);
+            query = query.Where(p => p.ProductCategories.Any(pc => categoryIds.Contains(pc.CategoryId)));
         }
 
         // Calculate price range from variants or use base price
@@ -129,5 +129,33 @@ public class SearchProductQueryHandler : IRequestHandler<SearchProductQuery, Pag
 
         return await PaginatedList<ProductForSearchResponseDto>
             .CreateAsync(finalQuery, request.PageNumber, request.PageSize);
+    }
+    
+    
+    
+    private async Task<List<Guid>> GetAllDescendantCategoryIds(Guid categoryId, CancellationToken cancellationToken)
+    {
+        var allCategories = await _context.Categories
+            .Select(c => new { c.Id, c.ParentCategoryId })
+            .ToListAsync(cancellationToken);
+
+        var result = new List<Guid> { categoryId };
+
+        void AddChildren(Guid parentId)
+        {
+            var children = allCategories
+                .Where(c => c.ParentCategoryId == parentId)
+                .Select(c => c.Id)
+                .ToList();
+
+            foreach (var childId in children)
+            {
+                result.Add(childId);
+                AddChildren(childId);
+            }
+        }
+
+        AddChildren(categoryId);
+        return result;
     }
 }
