@@ -14,6 +14,7 @@ public class StatisticsEndpoints : EndpointGroupBase
         var group = app.MapGroup(this);
         
         group.MapGet(GetDashboardData, "DashboardData");
+        group.MapGet(GetData, "Revenue");
         
     }
     
@@ -23,6 +24,14 @@ public class StatisticsEndpoints : EndpointGroupBase
     {
         var request = new GetDashboardDataQuery();
         var result = await sender.Send(request);
+        return result.ToOk();
+    }
+    
+    public async Task<Ok<ApiResponse<RevenueDataDto>>> GetData(
+        [AsParameters] GetRevenueDataQuery query,
+        ISender sender)
+    {
+        var result = await sender.Send(query);
         return result.ToOk();
     }
 }

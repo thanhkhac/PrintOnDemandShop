@@ -709,6 +709,57 @@
         }
       }
     },
+    "/api/Statistics/Revenue": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "operationId": "GetData",
+        "parameters": [
+          {
+            "name": "Month",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "Year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "OrderType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfRevenueDataDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Feedback": {
       "post": {
         "tags": [
@@ -3368,6 +3419,59 @@
             "format": "int32"
           },
           "totalConfirmReceived": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseOfRevenueDataDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RevenueDataDto"
+              }
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RevenueDataDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "totalRevenue": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuantity": {
             "type": "integer",
             "format": "int32"
           }

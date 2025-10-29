@@ -156,7 +156,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             [OrderStatus.PROCESSING] = [OrderStatus.SHIPPED, OrderStatus.REJECTED],
             
             // Khi đơn hàng đã gửi đi nhưng bị trả về
-            [OrderStatus.SHIPPED] = [OrderStatus.RETURNED],
+            [OrderStatus.SHIPPED] = [OrderStatus.RETURNED, OrderStatus.CONFIRM_RECEIVED],
         };
 
         if (!validTransitions.TryGetValue(currentStatus, out var allowedTargets))
