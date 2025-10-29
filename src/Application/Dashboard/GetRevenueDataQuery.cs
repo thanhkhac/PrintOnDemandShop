@@ -64,15 +64,18 @@ public class GetRevenueDataQueryHandler : IRequestHandler<GetRevenueDataQuery, R
             query = query.Where(x => x.CreatedAt.Month == request.Month.Value && x.CreatedAt.Year == request.Year.Value);
         }
         
-        if (!string.IsNullOrEmpty(request.OrderType) &&
-            !request.OrderType.Equals("ALL", StringComparison.OrdinalIgnoreCase))
-        {
-            query = query.Where(x => x.PaymentMethod == request.OrderType.ToUpper());
-        }
+        // if (!string.IsNullOrEmpty(request.OrderType) &&
+        //     !request.OrderType.Equals("ALL", StringComparison.OrdinalIgnoreCase))
+        // {
+        //     query = query.Where(x => x.PaymentMethod == request.OrderType.ToUpper());
+        // }
         
         if(request.OrderType == "ONLINE")
         {
             query = query.Where(x => x.PaymentMethod == "ONLINE_PAYMENT");
+        }else if (request.OrderType == "COD")
+        {
+            query = query.Where(x => x.PaymentMethod == "COD");
         }
         
         var orders = query
