@@ -37,7 +37,7 @@ public class GetRevenueDataQueryValidator : AbstractValidator<GetRevenueDataQuer
         RuleFor(x => x.OrderType)
             .Must(type => string.IsNullOrEmpty(type)
                           || type.Equals("ALL", StringComparison.OrdinalIgnoreCase)
-                          || type.Equals("ONLINE_PAYMENT", StringComparison.OrdinalIgnoreCase)
+                          || type.Equals("ONLINE", StringComparison.OrdinalIgnoreCase)
                           || type.Equals("COD", StringComparison.OrdinalIgnoreCase))
             .WithMessage("OrderType must be one of: ALL, ONLINE, COD.");
     }
