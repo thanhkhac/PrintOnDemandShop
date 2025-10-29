@@ -66,7 +66,13 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
         var query = _context.Orders
             .Include(x => x.Items)
             .Include(x => x.CreatedByUser)
-            .Where(o => o.Status != nameof(OrderStatus.CANCELLED) )
+            .Where(o =>
+                o.Status != nameof(OrderStatus.CANCELLED) ||
+                (o.Status == nameof(OrderStatus.CANCELLED) &&
+                 (o.PaymentStatus == nameof(OrderPaymentStatus.REFUNDED) ||
+                  o.PaymentStatus == nameof(OrderPaymentStatus.REFUNDING) ||
+                  o.PaymentStatus == nameof(OrderPaymentStatus.ONLINE_PAYMENT_PAID)))
+            )
             .AsQueryable();
 
         if (request.Status.HasValue)

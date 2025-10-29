@@ -457,4 +457,49 @@ public class CreateProductCommandHandler : IRequestHandler<CreateUpdateProductCo
             }
         }
     }
+    
+    // private async Task<List<Guid>> GetAllRelatedCategoryIds(Guid categoryId, CancellationToken cancellationToken)
+    // {
+    //     // 1️⃣ Lấy tất cả categories để duyệt cây
+    //     var allCategories = await _context.Categories
+    //         .Select(c => new { c.Id, c.ParentCategoryId })
+    //         .ToListAsync(cancellationToken);
+    //
+    //     // 2️⃣ Hàm đệ quy lấy cha
+    //     List<Guid> GetParentIds(Guid id)
+    //     {
+    //         var result = new List<Guid>();
+    //         var parent = allCategories.FirstOrDefault(c => c.Id == id)?.ParentCategoryId;
+    //         while (parent != null)
+    //         {
+    //             result.Add(parent.Value);
+    //             parent = allCategories.FirstOrDefault(c => c.Id == parent.Value)?.ParentCategoryId;
+    //         }
+    //         return result;
+    //     }
+    //
+    //     // 3️⃣ Hàm đệ quy lấy con
+    //     List<Guid> GetChildIds(Guid id)
+    //     {
+    //         var result = new List<Guid>();
+    //         var children = allCategories.Where(c => c.ParentId == id).Select(c => c.Id).ToList();
+    //         foreach (var childId in children)
+    //         {
+    //             result.Add(childId);
+    //             result.AddRange(GetChildIds(childId)); // đệ quy
+    //         }
+    //         return result;
+    //     }
+    //
+    //     var parentIds = GetParentIds(categoryId);
+    //     var childIds = GetChildIds(categoryId);
+    //
+    //     // 4️⃣ Hợp tất cả
+    //     var allRelated = new List<Guid> { categoryId };
+    //     allRelated.AddRange(parentIds);
+    //     allRelated.AddRange(childIds);
+    //
+    //     return allRelated.Distinct().ToList();
+    // }
+
 }
