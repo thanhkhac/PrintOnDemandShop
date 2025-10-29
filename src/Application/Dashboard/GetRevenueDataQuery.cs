@@ -67,7 +67,12 @@ public class GetRevenueDataQueryHandler : IRequestHandler<GetRevenueDataQuery, R
         if (!string.IsNullOrEmpty(request.OrderType) &&
             !request.OrderType.Equals("ALL", StringComparison.OrdinalIgnoreCase))
         {
-            query = query.Where(x => nameof(x.PaymentMethod) == request.OrderType.ToUpper());
+            query = query.Where(x => x.PaymentMethod == request.OrderType.ToUpper());
+        }
+        
+        if(request.OrderType == "ONLINE")
+        {
+            query = query.Where(x => x.PaymentMethod == "ONLINE_PAYMENT");
         }
         
         var orders = query
